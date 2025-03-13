@@ -1,3 +1,12 @@
+---
+name: Feature request
+about: Feature 관련 이슈
+title: "[Feat]"
+labels: "✨Feat"
+assignees: ''
+
+---
+
 ## 📝 Description - Feature
 
 ex. 뭐가 안되고~ 무슨 이슈고~

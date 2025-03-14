@@ -1,3 +1,4 @@
+import QueryProviderWrapper from "@/components/wrappers/QueryProviderWrapper";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -49,7 +50,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${pretendard.variable} font-pretendard`}>{children}</body>
+            <body className={`${pretendard.variable} font-pretendard`}>
+                <QueryProviderWrapper>{children}</QueryProviderWrapper>
+            </body>
         </html>
     );
 }

@@ -1,3 +1,4 @@
+import { SpinnerProvider } from "@/components/Spinner";
 import QueryProviderWrapper from "@/components/wrappers/QueryProviderWrapper";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -51,7 +52,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${pretendard.variable} font-pretendard`}>
-                <QueryProviderWrapper>{children}</QueryProviderWrapper>
+                <QueryProviderWrapper>
+                    <SpinnerProvider>{children}</SpinnerProvider>
+                </QueryProviderWrapper>
             </body>
         </html>
     );

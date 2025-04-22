@@ -1,0 +1,30 @@
+interface PropsType {
+    label?: string;
+    value: any;
+    onChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void;
+    placeholder: string;
+    type: string;
+    isErr?: boolean;
+    isRequired?: boolean;
+    errMsg?: string;
+    icon?: React.ReactNode;
+    disabled?: boolean;
+}
+
+export default function Input({ label = "", value, onChange, placeholder, type, isErr = false, isRequired = false, errMsg, icon, disabled = false }: PropsType) {
+    return (
+        <div className="flex-1">
+            {label !== "" && (
+                <div className="mb-2 font-medium text-sm">
+                    {label}&nbsp;
+                    {isRequired && <span className="text-red-500">*</span>}
+                </div>
+            )}
+            <div className={`w-full h-10 flex gap-2 rounded-md border ${isErr ? "border-[#ea002c]" : "border-gray-400"} px-4 ${disabled ? "bg-gray-100" : "bg-white"}`}>
+                <input className="flex-1 h-full border-none text-sm focus:outline-none" type={type} value={value} onChange={onChange} placeholder={placeholder} disabled={disabled} />
+                <div className="w-5 h-full flex flex-col justify-center">{icon}</div>
+            </div>
+            {isErr && <div className="text-[#ea002c] text-xs mt-1 pl-2">{errMsg}</div>}
+        </div>
+    );
+}

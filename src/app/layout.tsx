@@ -1,3 +1,4 @@
+import Nav from "@/components/gnb/Nav";
 import { SpinnerProvider } from "@/components/Spinner";
 import QueryProviderWrapper from "@/components/wrappers/QueryProviderWrapper";
 import localFont from "next/font/local";
@@ -53,7 +54,10 @@ export default function RootLayout({
         <html lang="en">
             <body className={`${pretendard.variable} font-pretendard`}>
                 <QueryProviderWrapper>
-                    <SpinnerProvider>{children}</SpinnerProvider>
+                    <SpinnerProvider>
+                        <Nav />
+                        {children}
+                    </SpinnerProvider>
                 </QueryProviderWrapper>
             </body>
         </html>

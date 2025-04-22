@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useEffect } from "react";
+import { RefObject, useEffect, useState } from "react";
 
 /**
  * 요소 외부 클릭을 감지하는 훅
@@ -24,4 +24,22 @@ export const useClickOutside = (ref: RefObject<HTMLElement>, handler: (event: Mo
             document.removeEventListener("touchstart", listener);
         };
     }, [ref, handler]);
+};
+
+/**
+ * 입력 값을 관리하는 훅 (value, onChange)
+ * @param initialValue 초기 값
+ * @returns value, onChange
+ */
+export const useInput = (initialValue: any) => {
+    const [value, setValue] = useState(initialValue);
+    const onChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+        const {
+            target: { value },
+        } = e;
+
+        setValue(value);
+    };
+
+    return { value, onChange };
 };

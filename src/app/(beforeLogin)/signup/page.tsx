@@ -19,7 +19,6 @@ const steps = [
     },
     {
         step: 3,
-        title: "가입이 완료되었습니다",
         component: () => <FinishSignup />,
     },
 ];
@@ -34,15 +33,17 @@ export default function Signup() {
     }
 
     return (
-        <div className="w-[720px] mx-auto py-20">
-            <div className="text-center text-2xl font-bold mb-4">{steps.find((stepItem) => stepItem.step === step)?.title}</div>
+        <div className="w-[420px] mx-auto py-[100px]">
             {steps
                 .filter((stepItem) => stepItem.step === step)
-                .map((step) => (
-                    <div key={step.step}>
-                        <div>{step.component(setStep)}</div>
-                    </div>
-                ))}
+                .map((step) => {
+                    return (
+                        <div key={step.step}>
+                            {step.title && <div className="text-center text-2xl font-semibold mb-8">{step.title}</div>}
+                            {step.component(setStep)}
+                        </div>
+                    );
+                })}
         </div>
     );
 }

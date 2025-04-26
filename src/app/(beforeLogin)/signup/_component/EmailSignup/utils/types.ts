@@ -3,10 +3,6 @@ export interface SignupFormData {
     password: string;
     passwordConfirm: string;
     verificationCode?: string;
-    nickname?: string;
-    occupation?: string;
-    experience?: string;
-    interests?: string;
 }
 
 export interface InputHookType {

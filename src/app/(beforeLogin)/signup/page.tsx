@@ -1,36 +1,49 @@
 "use client";
 
-import Button from "@/components/Button";
 import { redirect } from "next/navigation";
 import { useState } from "react";
-import EmailSignup from "./_component/EmailSignup";
+import EmailSignup from "./_component/EmailSignup/index";
+import FinishSignup from "./_component/FinishSignup";
+import TOS from "./_component/TOS";
+
+const steps = [
+    {
+        step: 1,
+        title: "이용약관동의",
+        component: (setStep: (step: number) => void) => <TOS setStep={setStep} />,
+    },
+    {
+        step: 2,
+        title: "기본 정보 입력",
+        component: (setStep: (step: number) => void) => <EmailSignup setStep={setStep} />,
+    },
+    {
+        step: 3,
+        component: () => <FinishSignup />,
+    },
+];
 
 export default function Signup() {
-    const user = false;
+    const [step, setStep] = useState(1);
 
-    const [isSelectedEmailLogin, setIsSelectedEmailLogin] = useState(false);
+    const user = false;
 
     if (user) {
         redirect("/");
     }
 
-    return isSelectedEmailLogin ? (
-        <EmailSignup />
-    ) : (
-        <div>
-            <SocialLogins />
-            <div>
-                <Button
-                    label="이메일로 회원가입"
-                    onClick={() => {
-                        setIsSelectedEmailLogin(true);
-                    }}
-                />
-            </div>
+    return (
+        <div className="w-[420px] mx-auto py-[100px]">
+            {steps
+                .filter((stepItem) => stepItem.step === step)
+                .map((step) => {
+                    return (
+                        <div key={step.step}>
+                            {step.title && <div className="text-center text-2xl font-semibold mb-8">{step.title}</div>}
+                            {step.component(setStep)}
+                        </div>
+                    );
+                })}
         </div>
     );
 }
-
-const SocialLogins = () => {
-    return <div>SocialLogins</div>;
-};

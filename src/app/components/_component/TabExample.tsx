@@ -15,11 +15,9 @@ const TabExample = () => {
                     code: (
                         <Tab
                             items={[
-                                { value: "tab1", label: "Tab1", children: <div>Tab1</div> },
-                                { value: "tab2", label: "Tab2", children: <div>Tab2</div> },
-                                { value: "tab3", label: "Tab3", children: <div>Tab3</div> },
-                                { value: "tab4", label: "Tab4", children: <div>Tab4</div> },
-                                { value: "tab5", label: "Tab5", children: <div>Tab5</div> },
+                                { value: "tab1", label: "전체", children: <div>Tab1</div> },
+                                { value: "tab2", label: "모집중", children: <div>Tab2</div> },
+                                { value: "tab3", label: "추가모집중", children: <div>Tab3</div> },
                             ]}
                             defaultTab="tab1"
                         />

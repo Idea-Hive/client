@@ -45,12 +45,12 @@ const Selectbox: React.FC<SelectboxProps> = ({ placeholder, options, onChange })
             </button>
 
             {isOpen && (
-                <div className="absolute w-full mt-1 bg-white border border-gray-200 rounded-sm shadow-selectbox z-10">
+                <div className="absolute w-full mt-1 bg-white border border-gray-200 rounded-sm shadow-elevation2 z-10">
                     {options.map((option, index) => (
                         <div
                             key={index}
                             onClick={() => handleSelect(option.value)}
-                            className={`px-3 h-[34px] text-xs leading-[34px] font-normal hover:bg-[#f9fafc] cursor-pointer ${selectedOption === option.value ? "bg-[#f9fafc]" : ""}`}
+                            className={`px-3 h-9 text-sm leading-9 font-normal hover:bg-[#f9fafc] cursor-pointer ${selectedOption === option.value ? "bg-[#f9fafc]" : ""}`}
                         >
                             {option.label}
                         </div>

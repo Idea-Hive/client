@@ -22,10 +22,11 @@ export default function Input({ label = "", value, onChange, placeholder, type, 
                     {isRequired && <span className="text-[#ff6363]">*</span>}
                 </div>
             )}
+
+            {/** disabled 상태의 우선순위 높게 주는 방법이 이거밖에 안보이는데.. */}
             <div
-                className={`w-full h-[46px] flex gap-2 rounded border px-3 border-[#d8dae5] ${isErr && "border-[#d14343]"} ${isConfirm && "border-[#52bd94]"} ${
-                    disabled ? "bg-[#edeff5]" : "bg-white"
-                } has-[:focus]:border-[#696f8c]`}
+                className={`w-full h-[46px] flex gap-2 rounded border px-3 border-[#d8dae5] 
+                    ${disabled ? "bg-[#edeff5] border-[#d8dae5]" : isErr ? "border-[#d14343]" : isConfirm ? "border-[#52bd94]" : value ? "border-[#696f8c]" : "has-[:focus]:border-[#696f8c]"}`}
             >
                 <input
                     className="flex-1 h-full border-none text-sm text-[#474d66] focus:outline-none placeholder:text-[#8f95b2]"

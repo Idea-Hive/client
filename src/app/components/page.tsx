@@ -3,7 +3,11 @@
 import Tab from "@/components/Tab";
 import ButtonExample from "./_component/ButtonExample";
 import CheckboxExample from "./_component/CheckboxExample";
+import InputExample from "./_component/InputExample";
+import ModalExample from "./_component/ModalExample";
+import PaginationExample from "./_component/PaginationExample";
 import RadioExample from "./_component/RadioExample";
+import SelectboxExample from "./_component/SelectboxExample";
 import SpinnerExample from "./_component/SpinnerExample";
 import TabExample from "./_component/TabExample";
 
@@ -19,6 +23,10 @@ export default function Components() {
                     { value: "radio", label: "Radio", children: <RadioExample /> },
                     { value: "tab", label: "Tab", children: <TabExample /> },
                     { value: "spinner", label: "Spinner", children: <SpinnerExample /> },
+                    { value: "input", label: "Input", children: <InputExample /> },
+                    { value: "selectbox", label: "Selectbox", children: <SelectboxExample /> },
+                    { value: "pagination", label: "Pagination", children: <PaginationExample /> },
+                    { value: "modal", label: "Modal", children: <ModalExample /> },
                 ]}
                 defaultTab="button"
             />

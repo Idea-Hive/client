@@ -15,11 +15,11 @@ export default function Tab({ items, defaultTab }: TabProps) {
 
     return (
         <div className="w-full">
-            <div className="flex border-b border-gray-200">
+            <div className="flex border-b border-n300 gap-5">
                 {items.map((item) => (
                     <div
                         key={item.value}
-                        className={`w-fit px-5 py-2.5 cursor-pointer ${activeTab === item.value ? "font-bold border-b-2 border-black text-black" : "border-none text-gray-400"}`}
+                        className={`w-fit cursor-pointer pb-[14px] text-baseEmphasize ${activeTab === item.value ? "border-b-2 border-n900 text-n900" : "border-none text-n700"}`}
                         onClick={() => setActiveTab(item.value)}
                     >
                         <span>{item.label}</span>

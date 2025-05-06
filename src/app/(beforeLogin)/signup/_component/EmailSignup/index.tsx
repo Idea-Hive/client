@@ -1,11 +1,24 @@
 "use client";
 
 import { useInput } from "@/hooks/hooks";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useCallback, useState } from "react";
 import OptionalInfoSection from "./_component/OptionalInfoSection";
 import RequiredInfoSection from "./_component/RequiredInfoSection";
 import { SignupFormData } from "./utils/types";
 import { validateEmail, validatePassword } from "./utils/utils";
+
+interface SignupRequest {
+    email: string;
+    password: string;
+    passwordCheck: string;
+    name: string;
+    job: string;
+    career: number;
+    type: string;
+    hashtagIds: number[];
+}
 
 export default function EmailSignup({ setStep }: { setStep: (step: number) => void }) {
     // 필수 정보
@@ -21,6 +34,29 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
     const [interests, setInterests] = useState<string[]>([]); // 관심사
 
     const [errors, setErrors] = useState<Partial<SignupFormData>>({});
+
+    const signupApi = async (data: SignupRequest) => {
+        return await axios.post("http://localhost:8080/api/member/signup", data);
+    };
+
+    const signupMutation = useMutation({
+        mutationFn: signupApi,
+        onMutate: (variable) => {
+            console.log("onMutate", variable);
+        },
+        onError: (error) => {
+            console.log("signupError", error);
+            window.alert("회원가입에 실패했습니다.");
+        },
+        onSuccess: (data, variables, context) => {
+            console.log("signupSuccess", data, variables, context);
+            // 회원가입 성공 로직 추가
+            setStep(3);
+        },
+        onSettled: () => {
+            console.log("signupEnd");
+        },
+    });
 
     // 필수 사항 validate function
     const validate = () => {
@@ -61,22 +97,22 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
         (e: React.FormEvent) => {
             e.preventDefault();
 
-            const requiredValue = {
-                email: email.value,
-                password: password.value,
-                passwordConfirm: passwordConfirm.value,
-                verificationCode: verificationCode.value,
-            };
-            const optionalValue = {
-                nickname: nickname.value,
-                occupation: occupation.value,
-                career: career,
-                interests: interests,
-            };
-
             if (validate()) {
                 // 회원가입 API 호출
-                setStep(3);
+                const request: SignupRequest = {
+                    email: email.value,
+                    password: password.value,
+                    passwordCheck: passwordConfirm.value,
+                    name: nickname.value,
+                    job: occupation.value,
+                    career: parseInt(career),
+                    type: "email",
+                    hashtagIds: interests.map((interest) => parseInt(interest)), // 나중에 백에서 데이터 받으면 달라질 내용
+                };
+
+                console.log("signup request:::", request);
+
+                signupMutation.mutate(request);
             }
         },
         [validate, email, password, passwordConfirm, verificationCode, nickname, occupation, career, interests]

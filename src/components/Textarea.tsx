@@ -1,39 +1,29 @@
 interface PropsType {
     label?: string;
-    value: any;
-    onChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     placeholder: string;
-    type: string;
     isRequired?: boolean;
     isErr?: boolean;
     errMsg?: string;
     isConfirm?: boolean;
     confirmMsg?: string;
-    icon?: React.ReactNode;
     disabled?: boolean;
-    onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
-    onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>;
-    onFocus?: React.FocusEventHandler<HTMLInputElement>;
-    onBlur?: React.FocusEventHandler<HTMLInputElement>;
+    height?: string;
 }
 
-export default function Input({
+export default function Textarea({
     label = "",
     value,
     onChange,
     placeholder,
-    type,
     isErr = false,
     errMsg,
     isRequired = false,
     isConfirm = false,
     confirmMsg,
-    icon,
     disabled = false,
-    onKeyDown,
-    onKeyUp,
-    onFocus,
-    onBlur,
+    height = "172px",
 }: PropsType) {
     return (
         <div className="flex-1">
@@ -44,24 +34,18 @@ export default function Input({
                 </div>
             )}
 
-            {/** disabled 상태의 우선순위 높게 주는 방법이 이거밖에 안보이는데.. */}
             <div
-                className={`w-full h-[46px] flex gap-2 rounded border px-3 border-n400 
+                className={`w-full flex gap-2 rounded border p-3 border-n400 
                     ${disabled ? "bg-n200 border-n400" : isErr ? "border-red" : isConfirm ? "border-green" : value ? "border-n700" : "has-[:focus]:border-n700"}`}
             >
-                <input
-                    className="flex-1 h-full border-none text-sm text-n800 focus:outline-none placeholder:text-n600"
-                    type={type}
+                <textarea
+                    className="flex-1 border-none text-sm text-n800 focus:outline-none placeholder:text-n600 resize-none"
+                    style={{ height }}
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
                     disabled={disabled}
-                    onKeyDown={onKeyDown}
-                    onKeyUp={onKeyUp}
-                    onFocus={onFocus}
-                    onBlur={onBlur}
                 />
-                <div className="w-5 h-full flex flex-col justify-center">{icon}</div>
             </div>
             {isErr && <div className="text-red text-xs mt-2">{errMsg}</div>}
             {isConfirm && <div className="text-green text-xs mt-2">{confirmMsg}</div>}

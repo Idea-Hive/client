@@ -114,6 +114,7 @@ export default {
             boxShadow: {
                 elevation1: "0px 4px 8px 0px rgba(16, 24, 64, 0.08)",
                 elevation2: "0px 4px 8px 0px rgba(16, 24, 64, 0.16)",
+                floatingCard: "0px 4px 8px 0px rgba(16, 24, 64, 0.08)",
             },
             backgroundImage: {
                 "nav-icon":

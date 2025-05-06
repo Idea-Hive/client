@@ -34,7 +34,8 @@ export default function CreateProject() {
     };
 
     return (
-        <div className="w-[720px] mx-auto">
+        <div className="w-[780px] mx-auto mb-[60px]">
+            <div className="mt-[50px] mb-8 text-h1 text-n900 w-full">프로젝트 등록</div>
             <RequiredInformations requiredValues={requiredValues} setRequiredValues={setRequiredValues} />
             <OptionalInformations
                 searchTerm={searchTerm}
@@ -46,8 +47,8 @@ export default function CreateProject() {
             />
 
             <div className="flex justify-center gap-3 mt-6">
-                <Button label="임시저장" type="button" onClick={onTemporarySave}></Button>
-                <Button label="등록" type="button" onClick={onSave}></Button>
+                <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>
+                <Button label="등록" type="button" btnType="primary" className="w-[191px]" onClick={onSave}></Button>
             </div>
         </div>
     );

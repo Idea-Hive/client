@@ -3,16 +3,20 @@
 import Input from "@/components/Input";
 import Selectbox from "@/components/Selectbox";
 import Textarea from "@/components/Textarea";
-import { useInput } from "@/hooks/hooks";
 import { Dispatch, SetStateAction, useState } from "react";
 import { RequiredValues } from "../_types/type";
 
-const RequiredInformations = ({ requiredValues, setRequiredValues }: { requiredValues: RequiredValues; setRequiredValues: Dispatch<SetStateAction<RequiredValues>> }) => {
-    const name = useInput("");
-    const description = useInput("");
-    const idea = useInput("");
-    const contact = useInput("");
-
+const RequiredInformations = ({
+    requiredValues,
+    setRequiredValues,
+    errors,
+    setErrors,
+}: {
+    requiredValues: RequiredValues;
+    setRequiredValues: Dispatch<SetStateAction<RequiredValues>>;
+    errors: { title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string };
+    setErrors: Dispatch<SetStateAction<{ title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string }>>;
+}) => {
     const [date, setDate] = useState<{ start: string; end: string }>({
         start: "",
         end: "",
@@ -27,32 +31,65 @@ const RequiredInformations = ({ requiredValues, setRequiredValues }: { requiredV
             <h1 className="text-h3 text-black">필수 정보</h1>
 
             <div className="space-y-5">
-                <Input label="프로젝트명" {...name} placeholder="프로젝트명을 입력해주세요" type="text" isRequired={true} />
+                <Input
+                    label="프로젝트명"
+                    value={requiredValues.title}
+                    onChange={(e) => {
+                        setRequiredValues((prev) => ({ ...prev, title: e.target.value }));
+                        setErrors((prev) => ({ ...prev, title: "" }));
+                    }}
+                    placeholder="프로젝트명을 입력해주세요"
+                    type="text"
+                    isRequired={true}
+                    isErr={errors.title !== ""}
+                    errMsg={errors.title}
+                />
 
                 <Textarea
                     label="프로젝트 설명"
                     value={requiredValues.description}
-                    onChange={(e) => setRequiredValues((prev) => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) => {
+                        setRequiredValues((prev) => ({ ...prev, description: e.target.value }));
+                        setErrors((prev) => ({ ...prev, description: "" }));
+                    }}
                     placeholder="💡테스크메이트(Taskmate) 플랫폼에 등록된 미완성 프로젝트"
                     isRequired={true}
+                    isErr={errors.description !== ""}
+                    errMsg={errors.description}
                 />
 
                 <Textarea
                     label="아이디어"
                     value={requiredValues.idea}
-                    onChange={(e) => setRequiredValues((prev) => ({ ...prev, idea: e.target.value }))}
+                    onChange={(e) => {
+                        setRequiredValues((prev) => ({ ...prev, idea: e.target.value }));
+                        setErrors((prev) => ({ ...prev, idea: "" }));
+                    }}
                     placeholder="💡테스크메이트(Taskmate) 플랫폼에 등록된 미완성 프로젝트"
                     isRequired={true}
+                    isErr={errors.idea !== ""}
+                    errMsg={errors.idea}
                 />
 
-                <Input label="연락수단" {...contact} placeholder="연락수단을 입력해주세요" type="text" isRequired={true} />
+                <Input
+                    label="연락수단"
+                    value={requiredValues.contact}
+                    onChange={(e) => {
+                        setRequiredValues((prev) => ({ ...prev, contact: e.target.value }));
+                        setErrors((prev) => ({ ...prev, contact: "" }));
+                    }}
+                    placeholder="연락수단을 입력해주세요"
+                    type="text"
+                    isRequired={true}
+                    isErr={errors.contact !== ""}
+                    errMsg={errors.contact}
+                />
 
                 <div className="flex gap-4">
                     <div className="flex flex-col gap-2 flex-1">
-                        <label htmlFor="peopleNumber" className="text-sm font-medium text-gray-700">
-                            모집 인원
-                        </label>
                         <Selectbox
+                            label="모집 인원"
+                            isRequired={true}
                             placeholder="인원을 선택해주세요"
                             options={[
                                 { value: "1", label: "1" },
@@ -61,6 +98,7 @@ const RequiredInformations = ({ requiredValues, setRequiredValues }: { requiredV
                                 { value: "4", label: "4" },
                                 { value: "5", label: "5" },
                             ]}
+                            onChange={(value) => setRequiredValues((prev) => ({ ...prev, maxMembers: parseInt(value) }))}
                         />
                     </div>
 

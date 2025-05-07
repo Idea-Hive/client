@@ -4,15 +4,14 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { skillCategories } from "../_data/skills";
 
 interface OptionalInformationsProps {
-    searchTerm: string;
-    setSearchTerm: Dispatch<SetStateAction<string>>;
-    selectedSkills: string[];
-    setSelectedSkills: Dispatch<SetStateAction<string[]>>;
-    selectedCategory: keyof typeof skillCategories;
-    setSelectedCategory: Dispatch<SetStateAction<keyof typeof skillCategories>>;
+    setHashTags: Dispatch<SetStateAction<string[]>>;
+    setSkills: Dispatch<SetStateAction<string[]>>;
 }
 
-const OptionalInformations = ({ searchTerm, setSearchTerm, selectedSkills, setSelectedSkills, selectedCategory, setSelectedCategory }: OptionalInformationsProps) => {
+const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: OptionalInformationsProps) => {
+    const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<keyof typeof skillCategories>("frontend");
+
     const hashTag = useInput("");
     const [hashTags, setHashTags] = useState<string[]>([]);
 
@@ -21,6 +20,7 @@ const OptionalInformations = ({ searchTerm, setSearchTerm, selectedSkills, setSe
             e.preventDefault();
             if (!hashTags.includes(hashTag.value.trim())) {
                 setHashTags([...hashTags, hashTag.value.trim()]);
+                setHashTagsProps([...hashTags, hashTag.value.trim()]);
                 hashTag.reset();
             }
         }
@@ -28,14 +28,17 @@ const OptionalInformations = ({ searchTerm, setSearchTerm, selectedSkills, setSe
 
     const removeHashTag = (tagToRemove: string) => {
         setHashTags(hashTags.filter((tag) => tag !== tagToRemove));
+        setHashTagsProps(hashTags.filter((tag) => tag !== tagToRemove));
     };
 
     const handleSkillSelect = (skill: string) => {
         if (selectedSkills.includes(skill)) {
             setSelectedSkills(selectedSkills.filter((s) => s !== skill));
+            setSkills(selectedSkills.filter((s) => s !== skill));
         } else {
             if (selectedSkills.length < 20) {
                 setSelectedSkills([...selectedSkills, skill]);
+                setSkills([...selectedSkills, skill]);
             }
         }
     };
@@ -59,7 +62,7 @@ const OptionalInformations = ({ searchTerm, setSearchTerm, selectedSkills, setSe
                     {hashTags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-3">
                             {hashTags.map((tag) => (
-                                <div className="flex items-center gap-1 px-3 h-8 rounded-md bg-n200">
+                                <div key={tag} className="flex items-center gap-1 px-3 h-8 rounded-md bg-n200">
                                     <div className="text-xs text-n800">{tag}</div>
                                     <svg className="cursor-pointer" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => removeHashTag(tag)}>
                                         <path

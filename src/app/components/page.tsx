@@ -10,7 +10,7 @@ import RadioExample from "./_component/RadioExample";
 import SelectboxExample from "./_component/SelectboxExample";
 import SpinnerExample from "./_component/SpinnerExample";
 import TabExample from "./_component/TabExample";
-
+import CardExample from "./_component/CardExample";
 export default function Components() {
     return (
         <div className="p-8">
@@ -27,6 +27,7 @@ export default function Components() {
                     { value: "selectbox", label: "Selectbox", children: <SelectboxExample /> },
                     { value: "pagination", label: "Pagination", children: <PaginationExample /> },
                     { value: "modal", label: "Modal", children: <ModalExample /> },
+                    { value: "card", label: "Card", children: <CardExample /> },
                 ]}
                 defaultTab="button"
             />

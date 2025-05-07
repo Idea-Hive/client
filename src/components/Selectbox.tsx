@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 
 interface SelectboxProps {
+    label?: string;
+    isRequired?: boolean;
     placeholder?: string;
     options: { value: string; label: string }[];
     onChange?: (value: string) => void;
 }
 
-const Selectbox: React.FC<SelectboxProps> = ({ placeholder, options, onChange }) => {
+const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, placeholder, options, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
     const selectboxRef = useRef<HTMLDivElement>(null);
@@ -32,6 +34,12 @@ const Selectbox: React.FC<SelectboxProps> = ({ placeholder, options, onChange })
 
     return (
         <div className="relative w-full" ref={selectboxRef}>
+            {label !== "" && (
+                <div className="mb-2 text-sm font-medium text-n800">
+                    {label}
+                    {isRequired && <span className="text-taskmateRed">*</span>}
+                </div>
+            )}
             <button type="button" onClick={() => setIsOpen(!isOpen)} className="w-full h-[46px] px-3 bg-white border border-[#d8dae5] rounded flex justify-between items-center cursor-pointer">
                 <span className={`text-sm font-normal ${selectedOption ? "text-[#474d66]" : "text-[#8f95b2]"}`}>{selectedOption || placeholder}</span>
                 <span className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>

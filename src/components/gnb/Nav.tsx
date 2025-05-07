@@ -18,7 +18,7 @@ export default function Nav() {
                     <Link href="/">
                         <Image src={Logo} alt="Taskmate" quality={100} width={140.75} height={30} />
                     </Link>
-                    <Link href="/" className="text-base font-semibold">
+                    <Link href="/project" className="text-base font-semibold">
                         프로젝트탐색
                     </Link>
                 </div>

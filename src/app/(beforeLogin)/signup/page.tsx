@@ -8,7 +8,7 @@ import TOS from "./_component/TOS";
 
 const steps = [
     {
-        step: 1,
+        step: 11,
         title: "이용약관동의",
         component: (setStep: (step: number) => void) => <TOS setStep={setStep} />,
     },
@@ -18,7 +18,7 @@ const steps = [
         component: (setStep: (step: number) => void) => <EmailSignup setStep={setStep} />,
     },
     {
-        step: 3,
+        step: 1,
         component: () => <FinishSignup />,
     },
 ];

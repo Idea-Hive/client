@@ -4,10 +4,12 @@ import Logo from "@/assets/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import FindPwModal from "./FindPwModal";
 import LoginModal from "./LoginModal";
 
 export default function Nav() {
     const [isShowLoginModal, setIsShowLoginModal] = useState(false);
+    const [isShowFindPwModal, setIsShowFindPwModal] = useState(false);
 
     return (
         <nav className="w-full h-[72px] flex justify-center border-b border-[#d8dae5]">
@@ -33,7 +35,8 @@ export default function Nav() {
                     </button>
                 </div>
 
-                {isShowLoginModal && <LoginModal onClose={() => setIsShowLoginModal(false)} />}
+                {isShowLoginModal && <LoginModal onClose={() => setIsShowLoginModal(false)} onOpenFindPwModal={() => setIsShowFindPwModal(true)} />}
+                {isShowFindPwModal && <FindPwModal onClose={() => setIsShowFindPwModal(false)} />}
             </nav>
         </nav>
     );

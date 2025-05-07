@@ -6,7 +6,7 @@ export default function FinishSignup() {
     };
 
     return (
-        <div className="w-full p-10 rounded-lg border border-[#d8dae5] my-[66px]">
+        <div className="w-full p-10 my-[66px]">
             <div className="mb-6 flex justify-center">
                 <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path

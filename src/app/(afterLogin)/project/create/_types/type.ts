@@ -1,9 +1,9 @@
 export interface RequiredValues {
-    name: string;
+    title: string;
     description: string;
     idea: string;
-    peopleNumber: number;
-    startDate: string;
-    endDate: string;
-    link: string;
+    maxMembers: number;
+    dueDateFrom: string;
+    dueDateTo: string;
+    contact: string;
 }

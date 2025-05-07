@@ -27,9 +27,9 @@ export const useClickOutside = (ref: RefObject<HTMLElement>, handler: (event: Mo
 };
 
 /**
- * 입력 값을 관리하는 훅 (value, onChange)
+ * 입력 값을 관리하는 훅 (value, onChange, reset)
  * @param initialValue 초기 값
- * @returns value, onChange
+ * @returns value, onChange, reset
  */
 export const useInput = (initialValue: any) => {
     const [value, setValue] = useState(initialValue);
@@ -41,5 +41,7 @@ export const useInput = (initialValue: any) => {
         setValue(value);
     };
 
-    return { value, onChange };
+    const reset = () => setValue(initialValue);
+
+    return { value, onChange, reset };
 };

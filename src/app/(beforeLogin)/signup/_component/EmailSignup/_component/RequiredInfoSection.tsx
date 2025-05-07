@@ -12,6 +12,7 @@ interface RequiredInfoSectionProps {
 }
 
 export default function RequiredInfoSection({ email, password, passwordConfirm, verificationCode, errors, setErrors }: RequiredInfoSectionProps) {
+    console.log("errors:::", !!errors.passwordConfirm);
     return (
         <div className="p-10 rounded-lg border border-[#d8dae5]">
             <h3 className="text-base font-medium mb-5">필수사항</h3>

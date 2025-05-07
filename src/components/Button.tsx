@@ -1,5 +1,5 @@
 interface ButtonProps {
-    label: string;
+    label: React.ReactNode;
     onClick: (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => void;
     type?: "submit" | "button" | "reset" | undefined;
     btnType?: "primary" | "secondary" | "line_red" | "line" | "minimal";

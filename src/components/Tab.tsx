@@ -4,14 +4,20 @@ import { useState } from "react";
 interface TabProps {
     items: {
         value: string;
-        label: string;
-        children: React.ReactNode;
+        label: React.ReactNode;
+        children?: React.ReactNode;
     }[];
     defaultTab?: string;
+    onChange?: (value: string) => void;
 }
 
-export default function Tab({ items, defaultTab }: TabProps) {
-    const [activeTab, setActiveTab] = useState(defaultTab || items[0]?.value);
+export default function Tab({ items, defaultTab, onChange }: TabProps) {
+    const [tab, setTab] = useState(defaultTab || items[0]?.value);
+
+    const handleTabChange = (value: string) => {
+        setTab(value);
+        onChange?.(value);
+    };
 
     return (
         <div className="w-full">
@@ -19,14 +25,14 @@ export default function Tab({ items, defaultTab }: TabProps) {
                 {items.map((item) => (
                     <div
                         key={item.value}
-                        className={`w-fit cursor-pointer pb-[14px] text-baseEmphasize ${activeTab === item.value ? "border-b-2 border-n900 text-n900" : "border-none text-n700"}`}
-                        onClick={() => setActiveTab(item.value)}
+                        className={`w-fit cursor-pointer pb-[14px] text-baseEmphasize ${tab === item.value ? "border-b-2 border-n900 text-n900" : "border-none text-n700"}`}
+                        onClick={() => handleTabChange(item.value)}
                     >
                         <span>{item.label}</span>
                     </div>
                 ))}
             </div>
-            <div>{items.find((item) => item.value === activeTab)?.children}</div>
+            {items.find((item) => item.value === tab)?.children && <div>{items.find((item) => item.value === tab)?.children}</div>}
         </div>
     );
 }

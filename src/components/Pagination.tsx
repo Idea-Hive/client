@@ -61,7 +61,7 @@ export default function Pagination({ page, totalPage, onChange }: PaginationProp
                         key={index}
                         onClick={() => typeof number === "number" && onChange(number)}
                         className={`w-8 h-8 rounded-[4px] cursor-pointer text-n800 text-base ${
-                            page === number ? "bg-taskmateRed/10 text-taskmateRed text-baseEmphasize" : typeof number === "string" ? "" : "hover:bg-taskmateRed/10 hover:text-taskmateRed"
+                            page === number ? "bg-taskmateRed text-white text-baseEmphasize" : typeof number === "string" ? "" : "hover:bg-taskmateRed hover:text-white"
                         } ${typeof number === "string" ? "cursor-default" : ""}`}
                         disabled={typeof number === "string"}
                     >

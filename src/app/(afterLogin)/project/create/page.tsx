@@ -2,9 +2,9 @@
 
 import Button from "@/components/Button";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { onSaveApi } from "./_api/api";
 import OptionalInformations from "./_component/OptionalInformations";
 import RequiredInformations from "./_component/RequiredInformations";
 import { RequiredValues } from "./_types/type";
@@ -33,54 +33,29 @@ export default function CreateProject() {
     const [skills, setSkills] = useState<string[]>([]);
 
     const validate = () => {
+        const validations = {
+            title: "프로젝트명을 입력해주세요.",
+            description: "프로젝트 설명을 입력해주세요.",
+            idea: "프로젝트 아이디어를 입력해주세요.",
+            maxMembers: "최대 인원을 입력해주세요.",
+            dueDateFrom: "시작일을 입력해주세요.",
+            dueDateTo: "종료일을 입력해주세요.",
+            contact: "연락수단을 입력해주세요.",
+        };
+
+        const newErrors = { ...errors };
         let isValid = true;
 
-        if (requiredValues.title === "") {
-            setErrors((prev) => ({ ...prev, title: "프로젝트명을 입력해주세요." }));
-            isValid = false;
-        }
-
-        if (requiredValues.description === "") {
-            setErrors((prev) => ({ ...prev, description: "프로젝트 설명을 입력해주세요." }));
-            isValid = false;
-        }
-
-        if (requiredValues.idea === "") {
-            setErrors((prev) => ({ ...prev, idea: "프로젝트 아이디어를 입력해주세요." }));
-            isValid = false;
-        }
-
-        if (requiredValues.maxMembers === 0) {
-            setErrors((prev) => ({ ...prev, maxMembers: "최대 인원을 입력해주세요." }));
-            isValid = false;
-        }
-
-        if (requiredValues.dueDateFrom === "") {
-            setErrors((prev) => ({ ...prev, dueDateFrom: "시작일을 입력해주세요." }));
-            isValid = false;
-        }
-
-        if (requiredValues.dueDateTo === "") {
-            setErrors((prev) => ({ ...prev, dueDateTo: "종료일을 입력해주세요." }));
-            isValid = false;
-        }
-
-        if (requiredValues.contact === "") {
-            setErrors((prev) => ({ ...prev, contact: "연락수단을 입력해주세요." }));
-            isValid = false;
-        }
-
-        return isValid;
-    };
-
-    const onSaveApi = async (body: any) => {
-        return await axios.post("http://localhost:8080/api/project/create", body, {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYnN3cGd1cjJAbmF2ZXIuY29tIiwiaXNzIjoiVGFza21hdGUiLCJpYXQiOjE3NDY1MzIzNDUsImV4cCI6MTc0NjU2MjM0NSwidHlwZSI6ImFjY2VzcyJ9.PQ3ikZhJrIK5GPiKk0u0h43jbYItc0j5AwcjMcyNY44`,
-            },
+        Object.entries(validations).forEach(([field, message]) => {
+            const value = requiredValues[field as keyof RequiredValues];
+            if (!value || (field === "maxMembers" && value === 0)) {
+                newErrors[field as keyof RequiredValues] = message;
+                isValid = false;
+            }
         });
+
+        setErrors(newErrors);
+        return isValid;
     };
 
     const onSaveMutation = useMutation({

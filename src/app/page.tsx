@@ -19,7 +19,7 @@ interface ItemType {
     viewCount: number;
 }
 
-const ingProjects = [
+const ingProjects: ItemType[] = [
     {
         id: 1,
         title: "태스크메이트 프로젝트 팀원 모집",
@@ -75,7 +75,7 @@ const ingProjects = [
         viewCount: 30,
     },
 ];
-const moreProjects = [
+const moreProjects: ItemType[] = [
     {
         id: 1,
         title: "태스크메이트 프로젝트 팀원 모집",
@@ -131,7 +131,7 @@ const moreProjects = [
         viewCount: 30,
     },
 ];
-const positionProjects = [
+const positionProjects: ItemType[] = [
     {
         id: 1,
         title: "태스크메이트 프로젝트 팀원 모집",
@@ -196,31 +196,8 @@ export default function Home() {
             <Banner />
 
             <div className="w-[1200px] mx-auto flex flex-col gap-[100px]">
-                <div>
-                    <div className="w-full flex justify-between items-center mb-6">
-                        <div className="text-n900 text-h2">모집중인 프로젝트</div>
-                        <div className="text-n800 text-sm cursor-pointer">전체보기</div>
-                    </div>
-
-                    <div className="w-full grid grid-cols-3 gap-6">
-                        {ingProjects.map((project) => (
-                            <Card key={project.id} item={project} />
-                        ))}
-                    </div>
-                </div>
-
-                <div>
-                    <div className="w-full flex justify-between items-center mb-6">
-                        <div className="text-n900 text-h2">추가 모집중인 프로젝트</div>
-                        <div className="text-n800 text-sm cursor-pointer">전체보기</div>
-                    </div>
-
-                    <div className="w-full grid grid-cols-3 gap-6">
-                        {moreProjects.map((project) => (
-                            <Card key={project.id} item={project} />
-                        ))}
-                    </div>
-                </div>
+                <ProjectList projects={ingProjects} label="모집중인 프로젝트" type="ingProjects" />
+                <ProjectList projects={moreProjects} label="추가 모집중인 프로젝트" type="moreProjects" />
 
                 <div>
                     <div className="w-full flex justify-between items-center mb-4">
@@ -273,6 +250,23 @@ const Banner = () => {
                     </div>
                 </SwiperSlide>
             </Swiper>
+        </div>
+    );
+};
+
+const ProjectList = ({ projects, label, type }: { projects: ItemType[]; label: string; type: string }) => {
+    return (
+        <div>
+            <div className="w-full flex justify-between items-center mb-6">
+                <div className="text-n900 text-h2">{label}</div>
+                <div className="text-n800 text-sm cursor-pointer">전체보기</div>
+            </div>
+
+            <div className="w-full grid grid-cols-3 gap-6">
+                {projects.map((project) => (
+                    <Card key={project.id} item={project} />
+                ))}
+            </div>
         </div>
     );
 };

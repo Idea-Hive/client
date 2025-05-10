@@ -1,11 +1,17 @@
+import { QueryFunction } from "@tanstack/react-query";
 import axios from "axios";
+import { SkillStack } from "../_types/type";
 
-export const onSaveApi = async (body: any) => {
-    return await axios.post("http://localhost:8080/api/project/create", body, {
-        withCredentials: true,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYnN3cGd1cjJAbmF2ZXIuY29tIiwiaXNzIjoiVGFza21hdGUiLCJpYXQiOjE3NDY1MzIzNDUsImV4cCI6MTc0NjU2MjM0NSwidHlwZSI6ImFjY2VzcyJ9.PQ3ikZhJrIK5GPiKk0u0h43jbYItc0j5AwcjMcyNY44`,
-        },
-    });
+export const getSkillStackApi: QueryFunction<SkillStack[], [_1: string]> = async ({ queryKey }) => {
+    try {
+        const res = await axios.get("http://localhost:8080/api/skillstack");
+
+        if (!res.data.success) {
+            throw new Error("Failed to fetch data");
+        }
+
+        return res.data;
+    } catch (err) {
+        console.error("getSkillStackApi error", err);
+    }
 };

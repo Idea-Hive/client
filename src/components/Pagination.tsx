@@ -1,10 +1,13 @@
 interface PaginationProps {
     page: number;
-    totalPage: number;
+    viewPerPage: number;
+    total: number;
     onChange: (page: number) => void;
 }
 
-export default function Pagination({ page, totalPage, onChange }: PaginationProps) {
+export default function Pagination({ page, viewPerPage, total, onChange }: PaginationProps) {
+    const totalPage = Math.ceil(total / viewPerPage);
+
     const renderPageNumbers = () => {
         const pages = [];
         const showEllipsis = totalPage > 7;

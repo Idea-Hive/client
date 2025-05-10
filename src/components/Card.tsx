@@ -13,7 +13,7 @@ interface ItemType {
 
 const Card = ({ item }: { item: ItemType }) => {
     return (
-        <Link href={`/project/1`}>
+        <Link href={`/project/${item.id}`}>
             <div className="w-full h-[212px] border border-n400 bg-n0 p-6 rounded-lg flex flex-col justify-between cursor-pointer hover:shadow-floatingCard transition-all ease-in-out duration-300">
                 <div>
                     <div className="mb-2 text-n900 text-lg leading-6 font-medium">{item.title}</div>

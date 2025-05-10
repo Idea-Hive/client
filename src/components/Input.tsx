@@ -9,8 +9,9 @@ interface PropsType {
     errMsg?: string;
     isConfirm?: boolean;
     confirmMsg?: string;
-    icon?: React.ReactNode;
+    children?: React.ReactNode;
     disabled?: boolean;
+    maxLength?: number;
     onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
     onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>;
     onFocus?: React.FocusEventHandler<HTMLInputElement>;
@@ -28,8 +29,9 @@ export default function Input({
     isRequired = false,
     isConfirm = false,
     confirmMsg,
-    icon,
+    children,
     disabled = false,
+    maxLength,
     onKeyDown,
     onKeyUp,
     onFocus,
@@ -60,8 +62,9 @@ export default function Input({
                     onKeyUp={onKeyUp}
                     onFocus={onFocus}
                     onBlur={onBlur}
+                    maxLength={maxLength}
                 />
-                <div className="w-5 h-full flex flex-col justify-center">{icon}</div>
+                <div className="h-full flex flex-col justify-center">{children}</div>
             </div>
             {isErr && <div className="text-red text-xs mt-2">{errMsg}</div>}
             {isConfirm && <div className="text-green text-xs mt-2">{confirmMsg}</div>}

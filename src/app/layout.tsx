@@ -45,6 +45,17 @@ const pretendard = localFont({
     variable: "--font-pretendard",
 });
 
+const montserrat = localFont({
+    src: "../assets/fonts/Montserrat-Bold.ttf",
+    weight: "700",
+    style: "normal",
+    variable: "--font-montserrat",
+});
+
+export const metadata = {
+    title: "Taskmate",
+};
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -52,7 +63,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${pretendard.variable} font-pretendard`}>
+            <body className={`${pretendard.variable} ${montserrat.variable} font-pretendard`}>
                 <QueryProviderWrapper>
                     <SpinnerProvider>
                         <Nav />

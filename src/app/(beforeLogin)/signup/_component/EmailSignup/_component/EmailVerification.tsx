@@ -1,4 +1,6 @@
+import { onSendEmailVerificationCodeApi } from "@/apis/user/userApis";
 import Input from "@/components/Input";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { InputHookType, SignupFormData } from "../utils/types";
 import { validateEmail } from "../utils/utils";
@@ -14,9 +16,24 @@ export default function EmailVerification({ email, verificationCode, errors, set
     const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 완료 flag
     const [isClickEmailVerification, setIsClickEmailVerification] = useState(false); // 인증 요청 버튼 클릭 flag
 
+    const handleEmailVerificationMutation = useMutation({
+        mutationFn: onSendEmailVerificationCodeApi,
+        onSuccess: (data) => {
+            console.log(data);
+            // setIsClickEmailVerification(true);
+        },
+        onError: (error) => {
+            console.log(error);
+            window.alert("이메일 인증 요청에 실패했습니다.");
+        },
+        onSettled: () => {
+            // setIsClickEmailVerification(false);
+        },
+    });
+
     // 이메일 인증 요청
     const handleEmailVerification = () => {
-        setIsClickEmailVerification(true);
+        handleEmailVerificationMutation.mutate(email.value);
     };
 
     return (
@@ -36,7 +53,7 @@ export default function EmailVerification({ email, verificationCode, errors, set
                     errMsg={errors.email}
                     isConfirm={isClickEmailVerification || isEmailVerified}
                     confirmMsg={isEmailVerified ? "본인 인증이 완료되었습니다" : isClickEmailVerification ? "인증번호가 전송되었습니다" : undefined}
-                    icon={isEmailVerified ? <CheckIcon /> : undefined}
+                    children={isEmailVerified ? <CheckIcon /> : undefined}
                 />
 
                 {!isEmailVerified && (

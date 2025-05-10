@@ -1,11 +1,16 @@
 "use client";
 
+import { onLoginApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import { useSpinner } from "@/components/Spinner";
 import { useInput } from "@/hooks/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
-export default function EmailLoginForm() {
+export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
+    const spinner = useSpinner();
+
     const email = useInput("");
     const password = useInput("");
 
@@ -36,6 +41,28 @@ export default function EmailLoginForm() {
         return isValid;
     };
 
+    const loginMutation = useMutation({
+        mutationFn: onLoginApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (data) => {
+            if (data.status === 200) {
+                console.log("loginSuccess:::", data.data);
+                localStorage.setItem("token", data.data.accessToken);
+                onClose();
+            } else {
+                console.error("loginError:::", data);
+            }
+        },
+        onError: (error) => {
+            console.error("loginError:::", error);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -43,6 +70,10 @@ export default function EmailLoginForm() {
         if (!isValid) return;
 
         // 로그인 요청
+        loginMutation.mutate({
+            email: email.value,
+            rawPassword: password.value,
+        });
     };
 
     return (

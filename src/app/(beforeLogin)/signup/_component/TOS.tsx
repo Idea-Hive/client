@@ -1,5 +1,5 @@
 import { CheckIcon, NotCheckIcon, SmallCheckIcon, SmallNotCheckIcon } from "@/components/icons/icons";
-import React from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 const dummyContent = `제1조 (목적)<br/>
 본 약관은 테스크메이트(이하 "회사")가 제공하는 협업 플랫폼 관련 서비스(이하 "서비스")의 이용 조건 및 절차, 회원과 회사의 권리·의무 및 책임사항 등을 규정함을 목적으로 합니다.
@@ -68,21 +68,27 @@ const terms = [
     },
 ];
 
-export default function TOS({ setStep }: { setStep: (step: number) => void }) {
-    const [agreements, setAgreements] = React.useState({
-        all: false,
+export default function TOS({
+    agreements,
+    setAgreements,
+}: {
+    agreements: { [key: string]: boolean };
+    setAgreements: Dispatch<
+        SetStateAction<{
+            all: boolean;
+            terms1: boolean;
+            terms2: boolean;
+            terms3: boolean;
+        }>
+    >;
+}) {
+    const [visibleTerms, setVisibleTerms] = useState<{ [key: string]: boolean }>({
         terms1: false,
         terms2: false,
         terms3: false,
     });
 
-    const [visibleTerms, setVisibleTerms] = React.useState<{ [key: string]: boolean }>({
-        terms1: true,
-        terms2: false,
-        terms3: false,
-    });
-
-    const handleAgreementChange = (type: "all" | "terms1" | "terms2") => {
+    const handleAgreementChange = (type: "all" | "terms1" | "terms2" | "terms3") => {
         if (type === "all") {
             setAgreements({
                 all: !agreements.all,
@@ -91,22 +97,16 @@ export default function TOS({ setStep }: { setStep: (step: number) => void }) {
                 terms3: !agreements.all,
             });
         } else {
-            const newAgreements = {
-                ...agreements,
-                [type]: !agreements[type],
-            };
-            setAgreements({
-                ...newAgreements,
-                all: newAgreements.terms1 && newAgreements.terms2 && newAgreements.terms3,
+            setAgreements((prev) => {
+                const newAgreements = {
+                    ...prev,
+                    [type]: !prev[type],
+                };
+                return {
+                    ...newAgreements,
+                    all: newAgreements.terms1 && newAgreements.terms2 && newAgreements.terms3,
+                };
             });
-        }
-    };
-
-    const onClickNextBtn = () => {
-        if (agreements.terms1 && agreements.terms2) {
-            setStep(2);
-        } else {
-            alert("모든 약관에 동의해주세요.");
         }
     };
 
@@ -136,14 +136,17 @@ export default function TOS({ setStep }: { setStep: (step: number) => void }) {
                         <div key={term.id} className="flex flex-col gap-3">
                             <div className="flex items-center gap-2">
                                 <div className="relative">
-                                    <div className={`w-5 h-5 rounded-full cursor-pointer flex items-center justify-center`} onClick={() => handleAgreementChange(term.id as "terms1" | "terms2")}>
+                                    <div
+                                        className={`w-5 h-5 rounded-full cursor-pointer flex items-center justify-center`}
+                                        onClick={() => handleAgreementChange(term.id as "terms1" | "terms2" | "terms3")}
+                                    >
                                         {agreements[term.id as keyof typeof agreements] ? <SmallCheckIcon /> : <SmallNotCheckIcon />}
                                     </div>
                                 </div>
-                                <label className="flex-1 cursor-pointer text-sm font-normal" onClick={() => handleAgreementChange(term.id as "terms1" | "terms2")}>
+                                <label className="flex-1 cursor-pointer text-sm font-normal" onClick={() => handleAgreementChange(term.id as "terms1" | "terms2" | "terms3")}>
                                     {term.label}
                                 </label>
-                                <button onClick={() => toggleTermVisibility(term.id)} className="text-xs font-normal text-[#696f8c] underline">
+                                <button type="button" onClick={() => toggleTermVisibility(term.id)} className="text-xs font-normal text-[#696f8c] underline">
                                     {visibleTerms[term.id] ? "접기" : "보기"}
                                 </button>
                             </div>
@@ -157,10 +160,6 @@ export default function TOS({ setStep }: { setStep: (step: number) => void }) {
                     ))}
                 </div>
             </div>
-
-            <button className="w-full h-12 mt-6 py-2.5 px-4 bg-[#ff6363] text-white rounded-md" onClick={onClickNextBtn}>
-                다음
-            </button>
         </div>
     );
 }

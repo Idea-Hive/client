@@ -12,7 +12,7 @@ export default function GoogleAuthPage() {
             try {
                 await getRefreshToken();
                 // 성공적으로 토큰을 받아왔을 때 메인 페이지로 리다이렉트
-                window.location.href = "/";
+                // window.location.href = "/";
             } catch (error) {
                 setError("인증 처리 중 오류가 발생했습니다.");
                 setIsLoading(false);

@@ -18,7 +18,11 @@ export const getRefreshToken = async () => {
                             Authorization: `Bearer ${refreshToken}`,
                         },
                     });
-                    console.log("authResponse:::", authResponse);
+
+                    // refreshToken 쿠키 제거
+                    document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+                    return authResponse;
                 } catch (error) {
                     console.error("Refresh API Error:", error);
                 }

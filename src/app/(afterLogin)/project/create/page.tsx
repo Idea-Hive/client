@@ -1,15 +1,29 @@
 "use client";
 
+import { onSaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
+import Modal from "@/components/Modal";
+import { useSpinner } from "@/components/Spinner";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { onSaveApi } from "./_api/api";
 import OptionalInformations from "./_component/OptionalInformations";
 import RequiredInformations from "./_component/RequiredInformations";
 import { RequiredValues } from "./_types/type";
+
 export default function CreateProject() {
+    const spinner = useSpinner();
+    const [isOpenSuccessModal, setIsOpenSuccessModal] = useState<boolean>(false);
+    const [projectId, setProjectId] = useState<number | null>(null);
+
+    // const { data: skillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
+
     const router = useRouter();
+
+    // dueDateFrom, dueDateTo format
+    // const now = new Date();
+    // const isoString = now.toISOString();
+
     const [requiredValues, setRequiredValues] = useState<RequiredValues>({
         title: "",
         description: "",
@@ -17,8 +31,11 @@ export default function CreateProject() {
         maxMembers: 0,
         dueDateFrom: "2025-05-06T11:36:42.557Z",
         dueDateTo: "2025-05-06T11:36:42.557Z",
+        // dueDateFrom: "",
+        // dueDateTo: "",
         contact: "",
     });
+
     const [errors, setErrors] = useState<{ title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string }>({
         title: "",
         description: "",
@@ -37,7 +54,7 @@ export default function CreateProject() {
             title: "프로젝트명을 입력해주세요.",
             description: "프로젝트 설명을 입력해주세요.",
             idea: "프로젝트 아이디어를 입력해주세요.",
-            maxMembers: "최대 인원을 입력해주세요.",
+            maxMembers: "모집 인원을 입력해주세요.",
             dueDateFrom: "시작일을 입력해주세요.",
             dueDateTo: "종료일을 입력해주세요.",
             contact: "연락수단을 입력해주세요.",
@@ -59,26 +76,26 @@ export default function CreateProject() {
     };
 
     const onSaveMutation = useMutation({
-        mutationFn: onSaveApi,
+        mutationFn: onSaveProjectApi,
+        onMutate: () => {
+            spinner.open();
+        },
         onSuccess: (response) => {
             console.log("성공");
             console.log(response.data);
-            router.push(`/project/${response.data.projectId}`);
+            setProjectId(response.data);
+            setIsOpenSuccessModal(true);
         },
         onError: (error) => {
             console.log("실패");
-            console.log(error);
+            console.log(error.message);
+        },
+        onSettled: () => {
+            spinner.close();
         },
     });
 
-    const onTemporarySave = () => {
-        console.log("임시저장");
-        console.log(requiredValues);
-        console.log(hashTags);
-        console.log(skills);
-    };
-
-    const onSave = async () => {
+    const getRequestBody = (): SaveProjectRequest => {
         const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = requiredValues;
 
         const requestBody = {
@@ -95,6 +112,16 @@ export default function CreateProject() {
             hashtags: hashTags,
             isSave: true,
         };
+
+        return requestBody;
+    };
+
+    const onTemporarySave = () => {
+        const requestBody = getRequestBody();
+    };
+
+    const onSave = async () => {
+        const requestBody = getRequestBody();
 
         console.log("request:::", requestBody);
 
@@ -116,6 +143,15 @@ export default function CreateProject() {
                 <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>
                 <Button label="등록" type="button" btnType="primary" className="w-[191px]" onClick={onSave}></Button>
             </div>
+
+            <Modal
+                isOpen={isOpenSuccessModal}
+                title="등록 완료"
+                children="프로젝트 등록이 완료되었습니다"
+                onConfirm={() => {
+                    router.push(`/project/${projectId}`);
+                }}
+            />
         </div>
     );
 }

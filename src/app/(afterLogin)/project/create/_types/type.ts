@@ -7,3 +7,9 @@ export interface RequiredValues {
     dueDateTo: string;
     contact: string;
 }
+
+export interface SkillStack {
+    id: number;
+    name: string;
+    category: string;
+}

@@ -6,9 +6,11 @@ interface SelectboxProps {
     placeholder?: string;
     options: { value: string; label: string }[];
     onChange?: (value: string) => void;
+    isErr?: boolean;
+    errMsg?: string;
 }
 
-const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, placeholder, options, onChange }) => {
+const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, placeholder, options, onChange, isErr = false, errMsg }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
     const selectboxRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,11 @@ const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, p
                     {isRequired && <span className="text-taskmateRed">*</span>}
                 </div>
             )}
-            <button type="button" onClick={() => setIsOpen(!isOpen)} className="w-full h-[46px] px-3 bg-white border border-[#d8dae5] rounded flex justify-between items-center cursor-pointer">
+            <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`w-full h-[46px] px-3 bg-white border ${isErr ? "border-red" : "border-[#d8dae5]"} rounded flex justify-between items-center cursor-pointer`}
+            >
                 <span className={`text-sm font-normal ${selectedOption ? "text-[#474d66]" : "text-[#8f95b2]"}`}>{selectedOption || placeholder}</span>
                 <span className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
                     <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,6 +57,7 @@ const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, p
                     </svg>
                 </span>
             </button>
+            {isErr && <div className="text-red text-xs mt-2">{errMsg}</div>}
 
             {isOpen && (
                 <div className="absolute w-full mt-1 bg-white border border-gray-200 rounded-sm shadow-elevation2 z-10">

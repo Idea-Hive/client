@@ -4,21 +4,15 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 import EmailSignup from "./_component/EmailSignup/index";
 import FinishSignup from "./_component/FinishSignup";
-import TOS from "./_component/TOS";
 
 const steps = [
     {
-        step: 11,
-        title: "이용약관동의",
-        component: (setStep: (step: number) => void) => <TOS setStep={setStep} />,
-    },
-    {
-        step: 2,
-        title: "기본 정보 입력",
+        step: 1,
+        title: "회원가입",
         component: (setStep: (step: number) => void) => <EmailSignup setStep={setStep} />,
     },
     {
-        step: 1,
+        step: 2,
         component: () => <FinishSignup />,
     },
 ];

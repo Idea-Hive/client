@@ -4,7 +4,7 @@ import { useInput } from "@/hooks/hooks";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useCallback, useState } from "react";
-import OptionalInfoSection from "./_component/OptionalInfoSection";
+import TOS from "../TOS";
 import RequiredInfoSection from "./_component/RequiredInfoSection";
 import { SignupFormData } from "./utils/types";
 import { validateEmail, validatePassword } from "./utils/utils";
@@ -13,25 +13,22 @@ interface SignupRequest {
     email: string;
     password: string;
     passwordCheck: string;
-    name: string;
-    job: string;
-    career: number;
-    type: string;
-    hashtagIds: number[];
 }
 
 export default function EmailSignup({ setStep }: { setStep: (step: number) => void }) {
+    // 이용 약관 동의
+    const [agreements, setAgreements] = useState({
+        all: false,
+        terms1: false,
+        terms2: false,
+        terms3: false,
+    });
+
     // 필수 정보
     const email = useInput(""); // 이메일
     const password = useInput(""); // 비밀번호
     const passwordConfirm = useInput(""); // 비밀번호 확인
     const verificationCode = useInput(""); // 인증코드
-
-    // 선택 정보
-    const nickname = useInput(""); // 닉네임
-    const occupation = useInput(""); // 직업
-    const [career, setCareer] = useState(""); // 경력
-    const [interests, setInterests] = useState<string[]>([]); // 관심사
 
     const [errors, setErrors] = useState<Partial<SignupFormData>>({});
 
@@ -86,28 +83,21 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
         return Object.keys(newErrors).length === 0;
     };
 
-    const handlePrev = () => {
-        // 기본 정보 client state로 저장 (작업 전)
-
-        // 이용 약관 동의로 이동
-        setStep(1);
-    };
-
     const handleSubmit = useCallback(
         (e: React.FormEvent) => {
             e.preventDefault();
 
             if (validate()) {
+                if (!agreements.terms1 || !agreements.terms2) {
+                    window.alert("필수 이용약관에 동의해주세요.");
+                    return;
+                }
+
                 // 회원가입 API 호출
                 const request: SignupRequest = {
                     email: email.value,
                     password: password.value,
                     passwordCheck: passwordConfirm.value,
-                    name: nickname.value,
-                    job: occupation.value,
-                    career: parseInt(career),
-                    type: "email",
-                    hashtagIds: interests.map((interest) => parseInt(interest)), // 나중에 백에서 데이터 받으면 달라질 내용
                 };
 
                 console.log("signup request:::", request);
@@ -115,20 +105,18 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
                 signupMutation.mutate(request);
             }
         },
-        [validate, email, password, passwordConfirm, verificationCode, nickname, occupation, career, interests]
+        [validate, email, password, passwordConfirm, verificationCode]
     );
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mb-6">
                 <RequiredInfoSection email={email} password={password} passwordConfirm={passwordConfirm} verificationCode={verificationCode} errors={errors} setErrors={setErrors} />
-                <OptionalInfoSection nickname={nickname} occupation={occupation} setCareer={setCareer} setInterests={setInterests} />
             </div>
 
+            <TOS agreements={agreements} setAgreements={setAgreements} />
+
             <div className="w-full flex justify-center gap-2 mt-6">
-                <button type="button" className="flex-1 h-12 bg-white border border-[#c1c4d6] text-base text-[#474d66] rounded-md" onClick={handlePrev}>
-                    이전
-                </button>
                 <button type="submit" className="flex-1 h-12 bg-[#ff6363] text-white rounded-md">
                     가입하기
                 </button>

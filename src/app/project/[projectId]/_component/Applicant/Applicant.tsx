@@ -18,7 +18,7 @@ export default function Applicant() {
             </div>
 
             <div className="mt-10 w-full flex justify-center">
-                <Pagination page={1} totalPage={3} onChange={() => {}} />
+                <Pagination page={1} viewPerPage={10} total={100} onChange={() => {}} />
             </div>
         </div>
     );

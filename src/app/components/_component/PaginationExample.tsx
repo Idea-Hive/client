@@ -18,7 +18,7 @@ const PaginationExample = () => {
             examples={[
                 {
                     description: "기본 사용1",
-                    code: <Pagination page={page} totalPage={10} onChange={setPage} />,
+                    code: <Pagination page={page} viewPerPage={10} total={100} onChange={setPage} />,
                 },
             ]}
         />

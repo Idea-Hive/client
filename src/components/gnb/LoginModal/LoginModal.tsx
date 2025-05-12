@@ -40,7 +40,8 @@ const LinkBtns = ({ onClose, onOpenFindPwModal }: { onClose: () => void; onOpenF
             <Link
                 href="/"
                 className="text-sm text-n900"
-                onClick={() => {
+                onClick={(e) => {
+                    e.preventDefault();
                     onClose();
                     onOpenFindPwModal();
                 }}

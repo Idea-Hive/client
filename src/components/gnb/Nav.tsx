@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FolderIcon, HomeIcon, NotificationIcon, ProfileIcon } from "../icons/icons";
-import FindPwModal from "./FindPwModal";
+import FindPwModal from "./FindPwModal/FindPwModal";
 import LoginModal from "./LoginModal/LoginModal";
 
 export default function Nav() {
@@ -46,7 +46,15 @@ export default function Nav() {
                     </button>
                 </div>
 
-                {isShowLoginModal && <LoginModal onClose={() => setIsShowLoginModal(false)} onOpenFindPwModal={() => setIsShowFindPwModal(true)} />}
+                {isShowLoginModal && (
+                    <LoginModal
+                        onClose={() => {
+                            console.log("onClose");
+                            setIsShowLoginModal(false);
+                        }}
+                        onOpenFindPwModal={() => setIsShowFindPwModal(true)}
+                    />
+                )}
                 {isShowFindPwModal && <FindPwModal onClose={() => setIsShowFindPwModal(false)} />}
             </nav>
         </nav>

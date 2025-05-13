@@ -1,5 +1,11 @@
 import { useState } from "react";
 
+/**
+ * checked: 체크박스 체크 여부
+ * value: 체크박스 값
+ * label: 체크박스 라벨
+ * onClick: 체크박스 클릭 이벤트
+ */
 interface CheckboxProps {
     checked: boolean;
     value: string;

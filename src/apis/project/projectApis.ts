@@ -1,5 +1,5 @@
+import { Apis } from "@/utils/api";
 import { QueryFunction } from "@tanstack/react-query";
-import axios from "axios";
 
 // Project 저장
 export interface SaveProjectRequest {
@@ -18,7 +18,7 @@ export interface SaveProjectRequest {
 }
 
 export const onSaveProjectApi = async (body: SaveProjectRequest) => {
-    return await axios.post("http://localhost:8080/api/project/create", body, {
+    return await Apis.post("/project/create", body, {
         withCredentials: true,
         headers: {
             "Content-Type": "application/json",
@@ -47,5 +47,5 @@ export interface SearchProjectsResponse {
 
 export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: string, keyword: string, recruitType: string, sortType: string]> = async ({ queryKey }) => {
     const [_, keyword, recruitType, sortType] = queryKey;
-    return await axios.get(`http://localhost:8080/api/project/search?keyword=${keyword}&recruitType=${recruitType}&sortType=${sortType}`);
+    return await Apis.get(`/project/search?keyword=${keyword}&recruitType=${recruitType}&sortType=${sortType}`);
 };

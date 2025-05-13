@@ -1,5 +1,5 @@
+import { Apis } from "@/utils/api";
 import { QueryFunction } from "@tanstack/react-query";
-import axios from "axios";
 
 interface GetProjectsApiResponse {
     totalCount: number;
@@ -14,7 +14,7 @@ interface GetProjectsApiResponse {
 export const getProjectsApi: QueryFunction<GetProjectsApiResponse, [_1: string, keyword: string, recruitType: string]> = async ({ queryKey }) => {
     try {
         const [, keyword, recruitType] = queryKey;
-        const res = await axios.get("http://localhost:8080/api/project/search");
+        const res = await Apis.get("/project/search");
 
         if (!res.data.success) {
             throw new Error("Failed to fetch data");

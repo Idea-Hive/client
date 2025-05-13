@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 
+/**
+ * label: 라벨
+ * isRequired: 필수 여부
+ * placeholder: placeholder
+ * options: 옵션 배열
+ * onChange: onChange 이벤트
+ * isErr: 에러 여부
+ * errMsg: 에러 메시지
+ */
 interface SelectboxProps {
     label?: string;
     isRequired?: boolean;

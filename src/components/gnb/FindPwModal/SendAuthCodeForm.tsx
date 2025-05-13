@@ -13,9 +13,7 @@ export default function SendAuthCodeForm({ setIsSendAuthCode }: { setIsSendAuthC
     const [errorMessage, setErrorMessage] = useState<string>("");
 
     const sendAuthCodeMutation = useMutation({
-        mutationFn: (email: string) => {
-            return onSendAuthCodeForFindPwApi(email);
-        },
+        mutationFn: onSendAuthCodeForFindPwApi,
         onSuccess: (data, variables, context) => {
             console.log("인증번호 전송 성공:::", data, variables, context);
             setIsSendAuthCode(true);

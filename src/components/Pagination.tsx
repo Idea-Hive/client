@@ -1,3 +1,9 @@
+/**
+ * page: 현재 페이지
+ * viewPerPage: 페이지당 보여줄 아이템 수
+ * total: 총 아이템 수
+ * onChange: 페이지 변경 이벤트
+ */
 interface PaginationProps {
     page: number;
     viewPerPage: number;

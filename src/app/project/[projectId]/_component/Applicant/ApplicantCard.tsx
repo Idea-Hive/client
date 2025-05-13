@@ -1,16 +1,50 @@
 import Button from "@/components/Button";
 import { BottomArrowIcon, HamburgerIcon, SmallUserImgIcon, UserImgIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
-export default function ApplicantCard({ state }: { state: "default" | "confirm" | "reject" | "locked" }) {
+type CardState = "default" | "confirm" | "reject" | "locked";
+export default function ApplicantCard({ state }: { state: CardState }) {
     if (state === "locked") return <LockedCard />;
     else return <Card state={state} />;
 }
 
-const content = `3년차 프론트엔드 개발자 홍길동입니다.<br/>꼭 참여하고 싶습니다.`;
-
 const Card = ({ state }: { state: "default" | "confirm" | "reject" }) => {
+    const [isEdit, setIsEdit] = useState<boolean>(false); // 수정 모드 변경
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false); // 지원 취소 모달 오픈
+
+    return (
+        <div className="w-full border border-n400 rounded-lg p-6 flex flex-col gap-4">
+            <CardHeader state={state} isEdit={isEdit} setIsEdit={setIsEdit} setIsCancelModalOpen={setIsCancelModalOpen} />
+
+            {isEdit ? <EditCard setIsEdit={setIsEdit} /> : <CardBody />}
+
+            {state === "reject" && <RejectSection />}
+
+            <Modal
+                title="지원 취소"
+                children="지원을 취소하시겠습니까?"
+                isOpen={isCancelModalOpen}
+                onClose={() => setIsCancelModalOpen(false)}
+                onConfirm={() => {
+                    setIsCancelModalOpen(false);
+                }}
+            />
+        </div>
+    );
+};
+
+const CardHeader = ({
+    state,
+    isEdit,
+    setIsEdit,
+    setIsCancelModalOpen,
+}: {
+    state: CardState;
+    isEdit: boolean;
+    setIsEdit: Dispatch<SetStateAction<boolean>>;
+    setIsCancelModalOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
     const [isDotsThreeVerticalOpen, setIsDotsThreeVerticalOpen] = useState(false); // DotsThreeVertical Dropdown 오픈
     const dotsThreeVerticalRef = useRef<HTMLDivElement>(null);
 
@@ -28,120 +62,114 @@ const Card = ({ state }: { state: "default" | "confirm" | "reject" }) => {
         };
     }, []);
 
-    const [isEdit, setIsEdit] = useState<boolean>(false); // 수정 모드 변경
-    const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false); // 지원 취소 모달 오픈
-    const [isSpecOpen, setIsSpecOpen] = useState(true); // 보유 스펙 오픈
-
     return (
-        <div className="w-full border border-n400 rounded-lg p-6 flex flex-col gap-4">
-            <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
-                    <div className="flex gap-2 items-center">
-                        <UserImgIcon />
+        <div className="flex justify-between items-start">
+            <div className="flex items-center gap-2">
+                <div className="flex gap-2 items-center">
+                    <UserImgIcon />
 
-                        <div className="text-lg text-n900 font-medium flex gap-1 items-center">
-                            홍길동{state === "confirm" && <div className="w-fit h-[18px] px-1.5 bg-taskmateRed rounded-[12px] text-[10px] leading-[18px] text-white font-normal">확정</div>}
-                        </div>
-                    </div>
-
-                    <div className="flex gap-2 items-center text-sm text-n900">
-                        <div>백엔드 개발자</div>
-                        <div className="w-[1px] h-[15.5px] bg-n300"></div>
-                        <div>경력 4년</div>
-                        <div className="w-[1px] h-[15.5px] bg-n300"></div>
-                        <div>프로젝트 경험 2회</div>
+                    <div className="text-lg text-n900 font-medium flex gap-1 items-center">
+                        홍길동{state === "confirm" && <div className="w-fit h-[18px] px-1.5 bg-taskmateRed rounded-[12px] text-[10px] leading-[18px] text-white font-normal">확정</div>}
                     </div>
                 </div>
 
-                {!isEdit && (
-                    <div className="relative" ref={dotsThreeVerticalRef}>
-                        <div className=" w-8 h-8 rounded-[4px] border border-n500 flex justify-center items-center cursor-pointer" onClick={() => setIsDotsThreeVerticalOpen(!isDotsThreeVerticalOpen)}>
-                            <HamburgerIcon />
-                        </div>
-
-                        {isDotsThreeVerticalOpen && (
-                            <div className="absolute w-[120px] top-10 right-0 border border-n400 rounded-[4px] shadow-elevation2 bg-white">
-                                <button
-                                    className="w-full h-12 text-sm text-n800 px-3 text-start hover:bg-n75 rounded-t-[4px]"
-                                    onClick={() => {
-                                        setIsDotsThreeVerticalOpen(false);
-                                        setIsCancelModalOpen(true);
-                                    }}
-                                >
-                                    지원취소
-                                </button>
-                                <button
-                                    className="w-full h-12 text-sm text-n800 px-3 text-start hover:bg-n75 rounded-b-[4px]"
-                                    onClick={() => {
-                                        setIsDotsThreeVerticalOpen(false);
-                                        setIsEdit(true);
-                                    }}
-                                >
-                                    수정
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                )}
+                <div className="flex gap-2 items-center text-sm text-n900">
+                    <div>백엔드 개발자</div>
+                    <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                    <div>경력 4년</div>
+                    <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                    <div>프로젝트 경험 2회</div>
+                </div>
             </div>
 
-            {isEdit ? (
-                <div className="w-full h-fit p-4 border border-n300 rounded-[4px] flex gap-2">
-                    <textarea className="w-full h-fit min-h-12 resize-none border-none text-base text-n800 focus:outline-none"></textarea>
-                    <div className="flex flex-col justify-end text-xs text-n800">0/20</div>
-                </div>
-            ) : (
-                <div className="text-n900 text-base" dangerouslySetInnerHTML={{ __html: content }} />
-            )}
-
-            {isEdit && (
-                <div className="w-full flex justify-end gap-2">
-                    <Button btnType="line" label="취소" size="small" className="w-[74px] !rounded-[4px]" onClick={() => setIsEdit(false)} />
-                    <Button btnType="primary" label="저장" size="small" className="w-[74px] !rounded-[4px]" onClick={() => setIsEdit(false)} />
-                </div>
-            )}
-
             {!isEdit && (
-                <div className="flex flex-col gap-3">
-                    <div className="w-fit flex items-center gap-1 text-smEmphasize text-n900 cursor-pointer" onClick={() => setIsSpecOpen(!isSpecOpen)}>
-                        보유스펙
-                        <BottomArrowIcon isOpen={isSpecOpen} />
+                <div className="relative" ref={dotsThreeVerticalRef}>
+                    <div className=" w-8 h-8 rounded-[4px] border border-n500 flex justify-center items-center cursor-pointer" onClick={() => setIsDotsThreeVerticalOpen(!isDotsThreeVerticalOpen)}>
+                        <HamburgerIcon />
                     </div>
 
-                    {isSpecOpen && (
-                        <div className="flex flex-wrap gap-2">
-                            {["React", "Next", "Styled-components", "RxJS", "svelte", "Redux", "Tanstack-Query", "Redux-toolkit", "Redux-saga"].map((item) => {
-                                return (
-                                    <button key={item} className="border border-[#d8dae5] text-xs text-n900 rounded-full px-3 h-8 cursor-default pointer-events-none">
-                                        {item}
-                                    </button>
-                                );
-                            })}
+                    {isDotsThreeVerticalOpen && (
+                        <div className="absolute w-[120px] top-10 right-0 border border-n400 rounded-[4px] shadow-elevation2 bg-white">
+                            <button
+                                className="w-full h-12 text-sm text-n800 px-3 text-start hover:bg-n75 rounded-t-[4px]"
+                                onClick={() => {
+                                    setIsDotsThreeVerticalOpen(false);
+                                    setIsCancelModalOpen(true);
+                                }}
+                            >
+                                지원취소
+                            </button>
+                            <button
+                                className="w-full h-12 text-sm text-n800 px-3 text-start hover:bg-n75 rounded-b-[4px]"
+                                onClick={() => {
+                                    setIsDotsThreeVerticalOpen(false);
+                                    setIsEdit(true);
+                                }}
+                            >
+                                수정
+                            </button>
                         </div>
                     )}
                 </div>
             )}
+        </div>
+    );
+};
 
-            {state === "reject" && (
-                <div className="w-full p-6 mt-5 bg-n75 border-t border-n300">
-                    <div className="flex items-center gap-2 text-baseEmphasize text-n900 mb-2.5">
-                        <SmallUserImgIcon />
-                        홍길동
-                    </div>
+const EditCard = ({ setIsEdit }: { setIsEdit: Dispatch<SetStateAction<boolean>> }) => {
+    return (
+        <>
+            <div className="w-full h-fit p-4 border border-n300 rounded-[4px] flex gap-2">
+                <textarea className="w-full h-fit min-h-12 resize-none border-none text-base text-n800 focus:outline-none"></textarea>
+                <div className="flex flex-col justify-end text-xs text-n800">0/20</div>
+            </div>
+            <div className="w-full flex justify-end gap-2">
+                <Button btnType="line" label="취소" size="small" className="w-[74px] !rounded-[4px]" onClick={() => setIsEdit(false)} />
+                <Button btnType="primary" label="저장" size="small" className="w-[74px] !rounded-[4px]" onClick={() => setIsEdit(false)} />
+            </div>
+        </>
+    );
+};
 
-                    <div className="text-base text-n900">프론트엔드 포지션이 마감되었습니다. 지원해주셔서 감사합니다.</div>
+const CardBody = () => {
+    const [isSpecOpen, setIsSpecOpen] = useState(true); // 보유 스펙 오픈
+
+    const content = `3년차 프론트엔드 개발자 홍길동입니다.<br/>꼭 참여하고 싶습니다.`;
+
+    return (
+        <>
+            <div className="text-n900 text-base" dangerouslySetInnerHTML={{ __html: content }} />
+            <div className="flex flex-col gap-3">
+                <div className="w-fit flex items-center gap-1 text-smEmphasize text-n900 cursor-pointer" onClick={() => setIsSpecOpen(!isSpecOpen)}>
+                    보유스펙
+                    <BottomArrowIcon isOpen={isSpecOpen} />
                 </div>
-            )}
 
-            <Modal
-                title="지원 취소"
-                children="지원을 취소하시겠습니까?"
-                isOpen={isCancelModalOpen}
-                onClose={() => setIsCancelModalOpen(false)}
-                onConfirm={() => {
-                    setIsCancelModalOpen(false);
-                }}
-            />
+                {isSpecOpen && (
+                    <div className="flex flex-wrap gap-2">
+                        {["React", "Next", "Styled-components", "RxJS", "svelte", "Redux", "Tanstack-Query", "Redux-toolkit", "Redux-saga"].map((item) => {
+                            return (
+                                <button key={item} className="border border-[#d8dae5] text-xs text-n900 rounded-full px-3 h-8 cursor-default pointer-events-none">
+                                    {item}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+        </>
+    );
+};
+
+const RejectSection = () => {
+    return (
+        <div className="w-full p-6 mt-5 bg-n75 border-t border-n300">
+            <div className="flex items-center gap-2 text-baseEmphasize text-n900 mb-2.5">
+                <SmallUserImgIcon />
+                홍길동
+            </div>
+
+            <div className="text-base text-n900">프론트엔드 포지션이 마감되었습니다. 지원해주셔서 감사합니다.</div>
         </div>
     );
 };

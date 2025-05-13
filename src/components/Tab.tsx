@@ -1,6 +1,11 @@
 "use client";
 import { useState } from "react";
 
+/**
+ * items: 탭 아이템 배열
+ * defaultTab: 기본 탭
+ * onChange: 탭 변경 이벤트
+ */
 interface TabProps {
     items: {
         value: string;

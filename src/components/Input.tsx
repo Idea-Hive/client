@@ -1,3 +1,22 @@
+/**
+ * label: 라벨
+ * value: 값
+ * onChange: 값 변경 이벤트
+ * placeholder: 플레이스홀더
+ * type: 타입
+ * isRequired: 필수 여부
+ * isErr: 에러 여부
+ * errMsg: 에러 메시지
+ * isConfirm: Confirm 타입 Input 여부(초록색 Input)
+ * confirmMsg: Confirm 타입 Input 메시지(초록색 Input 메시지)
+ * children: Input 오른쪽 자식 요소
+ * disabled: 비활성화 여부
+ * maxLength: 최대 길이
+ * onKeyDown: 키 다운 이벤트
+ * onKeyUp: 키 업 이벤트
+ * onFocus: 포커스 이벤트
+ * onBlur: 블러 이벤트
+ */
 interface PropsType {
     label?: string;
     value: any;

@@ -12,3 +12,7 @@ export const onLoginApi = async (body: LoginRequest) => {
 export const onSendEmailVerificationCodeApi = async (email: string) => {
     return await axios.post(`http://localhost:8080/api/email/send?email=${email}`);
 };
+
+export const onSendAuthCodeForFindPwApi = async (email: string) => {
+    return await axios.post(`http://localhost:8080/api/auth/send-auth-code?email=${email}`);
+};

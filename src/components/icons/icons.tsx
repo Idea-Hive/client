@@ -117,7 +117,7 @@ export const CheckIcon = () => {
 };
 
 export const NotCheckIcon = () => {
-    return <div className="w-5 h-5 rounded-full border border-[#8F95B2]"></div>;
+    return <div className="w-5 h-5 rounded-full border-2 border-[#8F95B2]"></div>;
 };
 
 export const SmallCheckIcon = () => {

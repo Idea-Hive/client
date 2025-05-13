@@ -29,25 +29,24 @@ export default function RightSection() {
                 <Button label="지원하기" className="w-fit px-6" onClick={() => setIsOpenApplicantModal(true)} />
             </div>
 
-            {isOpenApplicantModal && !isOpenApplicantSuccessModal ? (
+            {/* 지원하기 모달 */}
+            {isOpenApplicantModal && (
                 <Modal
                     isOpen={isOpenApplicantModal}
                     title="지원하기"
                     children="지원사유를 작성해주세요. 작성자에게 전달됩니다"
-                    content={
-                        <div className="w-full h-fit mt-4 p-4 bg-n75 border border-n300 rounded-[4px] flex gap-2">
-                            <textarea
-                                className="w-full h-fit min-h-20 resize-none bg-n75 border-none text-sm text-n800 focus:outline-none"
-                                placeholder="지원사유를 작성해주세요. 작성자에게 전달됩니다"
-                            />
-                            <div className="flex flex-col justify-end text-xs text-n800">0/20</div>
-                        </div>
-                    }
+                    content={<ApplicationReasonTextarea />}
                     confirmText="지원하기"
                     onClose={() => setIsOpenApplicantModal(false)}
-                    onConfirm={() => setIsOpenApplicantSuccessModal(true)}
+                    onConfirm={() => {
+                        setIsOpenApplicantModal(false);
+                        setIsOpenApplicantSuccessModal(true);
+                    }}
                 />
-            ) : (
+            )}
+
+            {/* 지원 완료 모달 */}
+            {isOpenApplicantSuccessModal && (
                 <Modal
                     isOpen={isOpenApplicantSuccessModal}
                     title="지원 완료"
@@ -61,3 +60,12 @@ export default function RightSection() {
         </div>
     );
 }
+
+const ApplicationReasonTextarea = () => {
+    return (
+        <div className="w-full h-fit mt-4 p-4 bg-n75 border border-n300 rounded-[4px] flex gap-2">
+            <textarea className="w-full h-fit min-h-20 resize-none bg-n75 border-none text-sm text-n800 focus:outline-none" placeholder="지원사유를 작성해주세요. 작성자에게 전달됩니다" />
+            <div className="flex flex-col justify-end text-xs text-n800">0/20</div>
+        </div>
+    );
+};

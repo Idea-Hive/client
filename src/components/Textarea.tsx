@@ -1,3 +1,16 @@
+/**
+ * label: 라벨
+ * value: 값
+ * onChange: onChange 이벤트
+ * placeholder: placeholder
+ * isRequired: 필수 여부
+ * isErr: 에러 여부
+ * errMsg: 에러 메시지
+ * isConfirm: Confirm 타입 Textarea 여부(초록색 Textarea)
+ * confirmMsg: Confirm 타입 Textarea 메시지(초록색 Textarea 메시지)
+ * disabled: 비활성화 여부
+ * className: 추가 className
+ */
 interface PropsType {
     label?: string;
     value: string;
@@ -9,22 +22,10 @@ interface PropsType {
     isConfirm?: boolean;
     confirmMsg?: string;
     disabled?: boolean;
-    height?: string;
+    className?: string;
 }
 
-export default function Textarea({
-    label = "",
-    value,
-    onChange,
-    placeholder,
-    isErr = false,
-    errMsg,
-    isRequired = false,
-    isConfirm = false,
-    confirmMsg,
-    disabled = false,
-    height = "172px",
-}: PropsType) {
+export default function Textarea({ label = "", value, onChange, placeholder, isErr = false, errMsg, isRequired = false, isConfirm = false, confirmMsg, disabled = false, className }: PropsType) {
     return (
         <div className="flex-1">
             {label !== "" && (
@@ -39,8 +40,7 @@ export default function Textarea({
                     ${disabled ? "bg-n200 border-n400" : isErr ? "border-red" : isConfirm ? "border-green" : value ? "border-n700" : "has-[:focus]:border-n700"}`}
             >
                 <textarea
-                    className="flex-1 border-none text-sm text-n800 focus:outline-none placeholder:text-n600 resize-none"
-                    style={{ height }}
+                    className={`flex-1 border-none text-sm text-n800 focus:outline-none placeholder:text-n600 resize-none h-[172px] ${className}`}
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}

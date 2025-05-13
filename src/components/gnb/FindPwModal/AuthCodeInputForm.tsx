@@ -10,8 +10,8 @@ export default function AuthCodeInputForm({ onClose }: { onClose: () => void }) 
         setAuthCode([...authCode.slice(0, index), value, ...authCode.slice(index + 1)]);
     };
 
+    // 백스페이스 시, 이전 Input 으로 이동
     const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-        // 백스페이스 누르면 이전 input으로 이동
         if (e.key === "Backspace" && !authCode[index] && index > 0) {
             const prevInput = document.querySelector(`input[data-index="${index - 1}"]`) as HTMLInputElement;
             prevInput?.focus();

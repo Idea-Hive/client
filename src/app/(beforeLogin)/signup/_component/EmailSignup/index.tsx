@@ -1,19 +1,13 @@
 "use client";
 
+import { onSignupApi, SignupRequest } from "@/apis/user/userApis";
 import { useInput } from "@/hooks/hooks";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useCallback, useState } from "react";
 import TOS from "../TOS";
 import RequiredInfoSection from "./_component/RequiredInfoSection";
 import { SignupFormData } from "./utils/types";
 import { validateEmail, validatePassword } from "./utils/utils";
-
-interface SignupRequest {
-    email: string;
-    password: string;
-    passwordCheck: string;
-}
 
 export default function EmailSignup({ setStep }: { setStep: (step: number) => void }) {
     // 이용 약관 동의
@@ -32,12 +26,8 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
 
     const [errors, setErrors] = useState<Partial<SignupFormData>>({});
 
-    const signupApi = async (data: SignupRequest) => {
-        return await axios.post("http://localhost:8080/api/member/signup", data);
-    };
-
     const signupMutation = useMutation({
-        mutationFn: signupApi,
+        mutationFn: onSignupApi,
         onMutate: (variable) => {
             console.log("onMutate", variable);
         },

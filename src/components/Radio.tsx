@@ -1,3 +1,11 @@
+/**
+ * label: 라벨
+ * name: name attribute
+ * value: 값
+ * checked: 체크 여부
+ * onChange: 변경 이벤트
+ * disabled: 비활성화 여부
+ */
 interface RadioProps {
     label: string;
     name: string;

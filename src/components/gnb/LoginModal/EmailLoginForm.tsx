@@ -26,7 +26,6 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
     });
 
     const validate = (email: string, password: string) => {
-        let isValid = true;
         setIsErrors({
             common: false,
             email: email === "" || !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email),
@@ -38,6 +37,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             password: password === "" ? "비밀번호를 입력해주세요." : "",
         });
 
+        const isValid = Object.values(isErrors).every((value) => value === false);
         return isValid;
     };
 

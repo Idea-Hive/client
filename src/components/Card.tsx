@@ -1,6 +1,15 @@
 import Link from "next/link";
 import { LikedIcon, SmallUserImgIcon, ViewIcon } from "./icons/icons";
 
+/**
+ * id: 프로젝트 아이디
+ * title: 프로젝트 제목
+ * content: 프로젝트 내용
+ * tags: 프로젝트 태그
+ * creator: 프로젝트 생성자
+ * likeCount: 프로젝트 좋아요 수
+ * viewCount: 프로젝트 조회 수
+ */
 interface ItemType {
     id: number;
     title: string;

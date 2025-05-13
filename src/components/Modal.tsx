@@ -1,5 +1,15 @@
 import Button from "./Button";
 
+/**
+ * isOpen: 모달 열림 여부
+ * onClose: 모달 닫기 이벤트
+ * title: 모달 제목
+ * children: 모달 내용
+ * content: 모달 추가 내용
+ * confirmText: 확인 버튼 라벨
+ * cancelText: 취소 버튼 라벨
+ * onConfirm: 확인 버튼 클릭 이벤트
+ */
 interface ModalProps {
     isOpen: boolean;
     onClose?: () => void;

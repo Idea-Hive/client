@@ -1,4 +1,4 @@
-import axios from "axios";
+import { Apis } from "@/utils/api";
 
 export const getRefreshToken = async () => {
     try {
@@ -11,7 +11,7 @@ export const getRefreshToken = async () => {
 
             if (refreshToken) {
                 try {
-                    const { data: authResponse } = await axios.post("http://localhost:8080/api/auth/refresh", null, {
+                    const { data: authResponse } = await Apis.post("/auth/refresh", null, {
                         withCredentials: true,
                         headers: {
                             "Content-Type": "application/json",

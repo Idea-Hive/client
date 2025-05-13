@@ -233,7 +233,7 @@ export default function Home() {
 const Banner = () => {
     return (
         <div className="w-full mb-[100px]">
-            <Swiper modules={[Pagination, Autoplay]} pagination={false} centeredSlides={true} loop={false} className="h-[370px]" slidesPerView="auto" spaceBetween={24}>
+            <Swiper modules={[Pagination, Autoplay]} initialSlide={1} pagination={false} centeredSlides={true} loop={false} className="h-[370px]" slidesPerView="auto" spaceBetween={24}>
                 <SwiperSlide className="!w-[984px] cursor-pointer">
                     <div className="w-full h-full rounded-2xl overflow-hidden">
                         <Image src={Banner2} alt="2032 BEST PICK" className="w-full h-full object-cover" />

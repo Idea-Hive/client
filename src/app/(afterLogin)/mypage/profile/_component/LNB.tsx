@@ -4,7 +4,7 @@ import Button from "@/components/Button";
 
 export default function LNB() {
     return (
-        <div className="w-[300px] h-[calc(100vh-72px)] bg-white border-r border-n300 py-10 px-6 flex flex-col justify-between">
+        <div className="w-[300px] min-h-[calc(100vh-72px)] bg-white border-r border-n300 py-10 px-6 flex flex-col justify-between">
             <div className="flex flex-col gap-[60px]">
                 <Profile />
                 <ProjectMenus />

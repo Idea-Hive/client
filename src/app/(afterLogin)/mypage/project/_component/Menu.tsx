@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 
 interface SubItem {
@@ -17,7 +16,6 @@ interface MenuProps {
 }
 
 export default function Menu({label, href, subItems, defaultOpen = false, icon}: MenuProps) {
-    const [open, setOpen] = useState(defaultOpen); // 사실 없어도 되는 듯
     const isSelected = false; // TODO
 
     if(!subItems || subItems.length === 0) {
@@ -27,7 +25,7 @@ export default function Menu({label, href, subItems, defaultOpen = false, icon}:
                 className={`w-64 py-2.5 rounded-md inline-flex justify-start items-center hover:bg-n200 
                             ${isSelected ? 'bg-n75' : 'bg-n0'}`}>
                 {icon && <span>{icon}</span>}
-                <span className="text-center justify-start text-indigo-950 text-sm font-medium">{label}</span>
+                <span className="text-center justify-start text-n900 text-sm font-medium">{label}</span>
             </Link>
         );
     }
@@ -35,13 +33,11 @@ export default function Menu({label, href, subItems, defaultOpen = false, icon}:
     return (
         <div>
             <button
-            onClick={() => setOpen(!open)}
+            onClick={() => {}}
             className={`w-64 py-2.5 rounded-md inline-flex justify-start items-center ${isSelected ? 'bg-n75' : 'bg-n0'}`}>
             {label}
             </button>
-
-            {open && (
-                <div>
+            <div>
                     {subItems.map((item) => {
                         return (
                             <Link
@@ -49,12 +45,11 @@ export default function Menu({label, href, subItems, defaultOpen = false, icon}:
                                 href={item.href}
                                 className={`w-64 py-2.5 rounded-md inline-flex justify-start items-center hover:bg-n200 
                                 ${isSelected ? 'bg-n75' : 'bg-n0'}`}>
-                                <span className="text-center justify-start text-indigo-950 text-sm font-medium">{item.label}</span>
+                                <span className="text-center justify-start text-n900 text-sm font-medium">{item.label}</span>
                             </Link>
                         );
                     })}
-                </div>
-            )}
+            </div>
         </div>
     );
 }

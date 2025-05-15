@@ -22,7 +22,7 @@ export default function Menu({ label, href, subItems, defaultOpen = false, icon 
         return (
             <Link
                 href={href || "#"}
-                className={`flex items-center w-64 h-11 ml-2 px-2 py-3 rounded-md hover:bg-n200 
+                className={`flex items-center h-11 ml-2 px-2 py-3 rounded-md hover:bg-n200 
                             ${isSelected ? "bg-n75" : "bg-n0"}`}
             >
                 <span className="mr-3">{icon}</span>
@@ -35,7 +35,7 @@ export default function Menu({ label, href, subItems, defaultOpen = false, icon 
         <div>
             <Link
                 href={href || "#"}
-                className={`flex items-center w-64 h-11 ml-2 px-2 py-3 rounded-md hover:bg-n200 
+                className={`flex items-center h-11 ml-2 px-2 py-3 rounded-md hover:bg-n200 
                             ${isSelected ? "bg-n75" : "bg-n0"}`}
             >
                 <span className="mr-3">{icon}</span>
@@ -47,7 +47,7 @@ export default function Menu({ label, href, subItems, defaultOpen = false, icon 
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`w-64 h-11 ml-2 px-10 py-3 rounded-md hover:bg-n200 
+                            className={`h-11 ml-2 px-10 py-3 rounded-md hover:bg-n200 
                                 ${isSelected ? "bg-n75" : "bg-n0"}`}
                         >
                             <span className="text-n900 text-sm">{item.label}</span>

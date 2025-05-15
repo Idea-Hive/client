@@ -23,8 +23,8 @@ export const HomeIcon = () => (
     </svg>
 );
 
-export const FolderIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="cursor-pointer">
+export const FolderIcon = ({ width = 24, height = 24 }: React.SVGProps<SVGSVGElement>) => (
+    <svg width={width} height={height} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="cursor-pointer">
         <path
             d="M20.25 6.75H12.3103L9.75 4.18969C9.61122 4.04979 9.44601 3.93888 9.26398 3.8634C9.08196 3.78792 8.88674 3.74937 8.68969 3.75H3.75C3.35218 3.75 2.97064 3.90804 2.68934 4.18934C2.40804 4.47064 2.25 4.85218 2.25 5.25V18.8081C2.2505 19.1904 2.40257 19.5568 2.67286 19.8271C2.94316 20.0974 3.30962 20.2495 3.69188 20.25H20.3334C20.709 20.2495 21.069 20.1001 21.3346 19.8346C21.6001 19.569 21.7495 19.209 21.75 18.8334V8.25C21.75 7.85218 21.592 7.47064 21.3107 7.18934C21.0294 6.90804 20.6478 6.75 20.25 6.75ZM3.75 5.25H8.68969L10.1897 6.75H3.75V5.25ZM20.25 18.75H3.75V8.25H20.25V18.75Z"
             fill="#474D66"
@@ -260,7 +260,7 @@ export const InfoIcon = () => {
     );
 };
 
-export const ProjectMenuIcon = () => {
+export const SquaresFourIcon = () => {
     return (
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 interface SubItem {
     label: string;
@@ -12,43 +12,48 @@ interface MenuProps {
     href?: string;
     subItems?: SubItem[];
     defaultOpen?: boolean;
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
 }
 
-export default function Menu({label, href, subItems, defaultOpen = false, icon}: MenuProps) {
+export default function Menu({ label, href, subItems, defaultOpen = false, icon }: MenuProps) {
     const isSelected = false; // TODO
 
-    if(!subItems || subItems.length === 0) {
+    if (!subItems || subItems.length === 0) {
         return (
-            <Link 
-                href={href || '#'} 
-                className={`w-64 py-2.5 rounded-md inline-flex justify-start items-center hover:bg-n200 
-                            ${isSelected ? 'bg-n75' : 'bg-n0'}`}>
-                {icon && <span>{icon}</span>}
-                <span className="text-center justify-start text-n900 text-sm font-medium">{label}</span>
+            <Link
+                href={href || "#"}
+                className={`flex items-center w-64 h-11 ml-2 px-2 py-3 rounded-md hover:bg-n200 
+                            ${isSelected ? "bg-n75" : "bg-n0"}`}
+            >
+                <span className="mr-3">{icon}</span>
+                <span className="text-n900 text-sm">{label}</span>
             </Link>
         );
     }
-    
+
     return (
         <div>
-            <button
-            onClick={() => {}}
-            className={`w-64 py-2.5 rounded-md inline-flex justify-start items-center ${isSelected ? 'bg-n75' : 'bg-n0'}`}>
-            {label}
-            </button>
-            <div>
-                    {subItems.map((item) => {
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`w-64 py-2.5 rounded-md inline-flex justify-start items-center hover:bg-n200 
-                                ${isSelected ? 'bg-n75' : 'bg-n0'}`}>
-                                <span className="text-center justify-start text-n900 text-sm font-medium">{item.label}</span>
-                            </Link>
-                        );
-                    })}
+            <Link
+                href={href || "#"}
+                className={`flex items-center w-64 h-11 ml-2 px-2 py-3 rounded-md hover:bg-n200 
+                            ${isSelected ? "bg-n75" : "bg-n0"}`}
+            >
+                <span className="mr-3">{icon}</span>
+                <span className="text-n900 text-sm">{label}</span>
+            </Link>
+            <div className="flex flex-col">
+                {subItems.map((item) => {
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`w-64 h-11 ml-2 px-10 py-3 rounded-md hover:bg-n200 
+                                ${isSelected ? "bg-n75" : "bg-n0"}`}
+                        >
+                            <span className="text-n900 text-sm">{item.label}</span>
+                        </Link>
+                    );
+                })}
             </div>
         </div>
     );

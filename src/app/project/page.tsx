@@ -65,7 +65,7 @@ export default function ProjectList() {
                 {/* Pagination */}
                 {data?.projects && data.projects.length > 0 && (
                     <div className="w-full flex justify-center">
-                        <Pagination page={1} viewPerPage={12} total={data.totalCount} onChange={() => {}} />
+                        <Pagination page={1} viewPerPage={12} total={data.totalCnt} onChange={() => {}} />
                     </div>
                 )}
             </div>
@@ -113,7 +113,7 @@ const ProjectGrid = ({ projects, isPending }: { projects?: Project[]; isPending:
     return projects.length > 0 ? (
         <div className="w-full grid grid-cols-3 gap-6 mb-8">
             {projects.map((project) => {
-                const { id, title, description, hashtagNames, creator, likedCnt, viewCount } = project;
+                const { id, title, description, hashtagNames, creator, likedCnt, viewCnt } = project;
                 return (
                     <Card
                         key={id}
@@ -124,7 +124,7 @@ const ProjectGrid = ({ projects, isPending }: { projects?: Project[]; isPending:
                             tags: hashtagNames,
                             creator: creator,
                             likeCount: likedCnt,
-                            viewCount: viewCount,
+                            viewCount: viewCnt,
                         }}
                     />
                 );

@@ -40,10 +40,10 @@ export interface Project {
     hashtagNames: string[];
     creator: string;
     likedCnt: number;
-    viewCount: number;
+    viewCnt: number;
 }
 export interface SearchProjectsResponse {
-    totalCount: number;
+    totalCnt: number;
     projects: Project[];
 }
 

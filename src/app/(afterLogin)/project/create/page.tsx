@@ -108,7 +108,7 @@ export default function CreateProject() {
             maxMembers,
             dueDateFrom,
             dueDateTo,
-            skillStackIds: skills,
+            skillStackIds: skills.map(Number),
             hashtags: hashTags,
             isSave: true,
         };

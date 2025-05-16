@@ -5,11 +5,12 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { useSpinner } from "@/components/Spinner";
 import { useInput } from "@/hooks/hooks";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
     const spinner = useSpinner();
+    const queryClient = useQueryClient();
 
     const email = useInput("");
     const password = useInput("");
@@ -47,13 +48,11 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             spinner.open();
         },
         onSuccess: (data) => {
-            if (data.status === 200) {
-                console.log("loginSuccess:::", data.data);
-                localStorage.setItem("token", data.data.accessToken);
-                onClose();
-            } else {
-                console.error("loginError:::", data);
-            }
+            console.log("onLoginSuccess:::", data);
+            localStorage.setItem("token", data.accessToken);
+            // GNB user 영역 변경을 위해 query 무효화
+            queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
+            onClose();
         },
         onError: (error) => {
             console.error("loginError:::", error);

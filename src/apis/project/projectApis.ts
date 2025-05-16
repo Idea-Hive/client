@@ -12,17 +12,17 @@ export interface SaveProjectRequest {
     maxMembers: number;
     dueDateFrom: string;
     dueDateTo: string;
-    skillStackIds: string[];
+    skillStackIds: number[];
     hashtags: string[];
     isSave: boolean;
 }
 
 export const onSaveProjectApi = async (body: SaveProjectRequest) => {
+    const token = localStorage.getItem("token");
     return await Apis.post("/project/create", body, {
         withCredentials: true,
         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYnN3cGd1cjJAbmF2ZXIuY29tIiwiaXNzIjoiVGFza21hdGUiLCJpYXQiOjE3NDY4NjA4OTYsImV4cCI6MTc0Njg5MDg5NiwidHlwZSI6ImFjY2VzcyJ9.nyQxd9wEkOaO8Z8EfRFmVqg0BxSChl4corTwxKdHDxY`,
+            Authorization: `Bearer ${token}`,
         },
     });
 };
@@ -34,18 +34,16 @@ export interface SearchProjectsRequest {
     sortType: string;
 }
 export interface SearchProjectsResponse {
-    data: {
-        totalCount: number;
-        projects: {
-            id: number;
-            title: string;
-            description: string;
-            hashtagNames: string[];
-        }[];
-    };
+    totalCount: number;
+    projects: {
+        id: number;
+        title: string;
+        description: string;
+        hashtagNames: string[];
+    }[];
 }
 
-export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: string, keyword: string, recruitType: string, sortType: string]> = async ({ queryKey }) => {
-    const [_, keyword, recruitType, sortType] = queryKey;
-    return await Apis.get(`/project/search?keyword=${keyword}&recruitType=${recruitType}&sortType=${sortType}`);
+export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: string, keyword: string, recruitType: string, sortType: string, page: number, size: number]> = async ({ queryKey }) => {
+    const [_, keyword, recruitType, sortType, page, size] = queryKey;
+    return await Apis.get(`/project/search?keyword=${keyword}&recruitType=${recruitType}&sortType=${sortType}&page=${page}&size=${size}`);
 };

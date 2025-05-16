@@ -56,7 +56,7 @@ const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, p
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full h-[46px] px-3 bg-white border ${isErr ? "border-red" : "border-[#d8dae5]"} rounded flex justify-between items-center cursor-pointer`}
+                className={`w-full h-[46px] px-3 bg-white border ${isErr ? "border-red" : "border-[#d8dae5]"} rounded flex justify-between items-center cursor-pointer focus:outline-none`}
             >
                 <span className={`text-sm font-normal ${selectedOption ? "text-[#474d66]" : "text-[#8f95b2]"}`}>{selectedOption || placeholder}</span>
                 <span className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>

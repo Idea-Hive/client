@@ -9,8 +9,8 @@ const api = axios.create({
 });
 
 export const Apis = {
-    get: (url: string, params?: any, headers?: any) => api.get(url, { ...params, headers: { ...api.defaults.headers, ...headers } }).then((res: any) => res.data),
-    post: (url: string, payload?: any, headers?: any) => api.post(url, payload, { headers: { ...api.defaults.headers, ...headers } }).then((res: any) => res.data),
-    put: (url: string, payload?: any, headers?: any) => api.put(url, payload, { headers: { ...api.defaults.headers, ...headers } }).then((res: any) => res.data),
-    delete: (url: string, payload?: any, headers?: any) => api.delete(url, { data: payload, headers: { ...api.defaults.headers, ...headers } }).then((res: any) => res.data),
+    get: (url: string, config?: any) => api.get(url, { ...config }).then((res: any) => res.data),
+    post: (url: string, payload?: any, config?: any) => api.post(url, payload, { ...config }).then((res: any) => res.data),
+    put: (url: string, payload?: any, config?: any) => api.put(url, payload, { ...config }).then((res: any) => res.data),
+    delete: (url: string, payload?: any, config?: any) => api.delete(url, { data: payload, ...config }).then((res: any) => res.data),
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { onSearchProjectsApi } from "@/apis/project/projectApis";
+import { onSearchProjectsApi, Project } from "@/apis/project/projectApis";
 import Card from "@/components/Card";
 import Input from "@/components/Input";
 import Pagination from "@/components/Pagination";
@@ -22,6 +22,7 @@ export default function ProjectList() {
         queryFn: onSearchProjectsApi,
     });
 
+    console.log(data);
     if (isError) return <div>Error</div>;
 
     return (
@@ -105,13 +106,6 @@ const SearchAndSort = ({ search, setSearchTerm }: { search: InputHookType; setSe
     );
 };
 
-interface Project {
-    id: number;
-    title: string;
-    description: string;
-    hashtagNames: string[];
-}
-
 const ProjectGrid = ({ projects, isPending }: { projects?: Project[]; isPending: boolean }) => {
     if (isPending) return <Spinner />;
     if (!projects) return null;
@@ -119,7 +113,7 @@ const ProjectGrid = ({ projects, isPending }: { projects?: Project[]; isPending:
     return projects.length > 0 ? (
         <div className="w-full grid grid-cols-3 gap-6 mb-8">
             {projects.map((project) => {
-                const { id, title, description, hashtagNames } = project;
+                const { id, title, description, hashtagNames, creator, likedCnt, viewCount } = project;
                 return (
                     <Card
                         key={id}
@@ -128,9 +122,9 @@ const ProjectGrid = ({ projects, isPending }: { projects?: Project[]; isPending:
                             title,
                             content: description,
                             tags: hashtagNames,
-                            creator: "홍길동",
-                            likeCount: 10,
-                            viewCount: 20,
+                            creator: creator,
+                            likeCount: likedCnt,
+                            viewCount: viewCount,
                         }}
                     />
                 );

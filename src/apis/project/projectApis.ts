@@ -33,14 +33,18 @@ export interface SearchProjectsRequest {
     recruitType: string;
     sortType: string;
 }
+export interface Project {
+    id: number;
+    title: string;
+    description: string;
+    hashtagNames: string[];
+    creator: string;
+    likedCnt: number;
+    viewCount: number;
+}
 export interface SearchProjectsResponse {
     totalCount: number;
-    projects: {
-        id: number;
-        title: string;
-        description: string;
-        hashtagNames: string[];
-    }[];
+    projects: Project[];
 }
 
 export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: string, keyword: string, recruitType: string, sortType: string, page: number, size: number]> = async ({ queryKey }) => {

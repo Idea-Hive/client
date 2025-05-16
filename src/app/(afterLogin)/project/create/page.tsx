@@ -82,8 +82,7 @@ export default function CreateProject() {
         },
         onSuccess: (response) => {
             console.log("성공");
-            console.log(response.data);
-            setProjectId(response.data);
+            setProjectId(response);
             setIsOpenSuccessModal(true);
         },
         onError: (error) => {

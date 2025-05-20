@@ -20,9 +20,8 @@ export default function SendAuthCodeForm({ setIsSendAuthCode }: { setIsSendAuthC
         },
         onError: (error) => {
             console.log("인증번호 전송 실패:::", error);
-            setIsSendAuthCode(true);
-            // setIsError(true);
-            // setErrorMessage("존재하지 않는 이메일입니다");
+            setIsError(true);
+            setErrorMessage("존재하지 않는 이메일입니다");
         },
     });
 

@@ -26,7 +26,7 @@ export const onCheckEmailVerificationCodeApi = async (body: CheckEmailVerificati
 
 // 비밀번호 찾기 이메일 인증코드 전송
 export const onSendAuthCodeForFindPwApi = async (email: string) => {
-    return await Apis.post(`/auth/send-auth-code?email=${email}`);
+    return await Apis.post(`/email/password-reset/send?email=${email}`);
 };
 
 // 회원가입

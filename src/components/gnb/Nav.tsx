@@ -16,7 +16,7 @@ export default function Nav() {
     const { data } = useQuery({
         queryKey: ["isLoggedIn"],
         queryFn: () => {
-            return { id: 2, nickname: "윤제혁" };
+            return { id: null, nickname: "윤제혁" };
         },
     });
     // const { data } = useQuery({

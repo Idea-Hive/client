@@ -6,6 +6,7 @@ import Input from "@/components/Input";
 import { useSpinner } from "@/components/Spinner";
 import { useInput } from "@/hooks/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useState } from "react";
 
 export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
@@ -47,15 +48,21 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
         onMutate: () => {
             spinner.open();
         },
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             console.log("onLoginSuccess:::", data);
-            localStorage.setItem("token", data.accessToken);
-            // GNB user 영역 변경을 위해 query 무효화
+            document.cookie = `token=${data.accessToken}; path=/`;
             queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
             onClose();
         },
         onError: (error) => {
-            console.error("loginError:::", error);
+            setIsErrors({ ...isErrors, common: true });
+            if (error instanceof AxiosError) {
+                console.error("loginError:::", error);
+                setErrorMessages({ ...errorMessages, common: error.response?.data });
+            } else {
+                console.error("login Unknown Error:::", error);
+                setErrorMessages({ ...errorMessages, common: "로그인에 실패했습니다." });
+            }
         },
         onSettled: () => {
             spinner.close();

@@ -18,11 +18,19 @@ export default function ProjectList() {
     const search = useInput("");
 
     const { data, isPending, isError } = useQuery({
-        queryKey: ["getProjects", searchTerm, selectedTab, "RECENT", 1, 12],
+        queryKey: [
+            "getProjects",
+            {
+                keyword: searchTerm,
+                recruitType: selectedTab as "ALL" | "NEW" | "ADDITIONAL",
+                sortType: "RECENT",
+                page: 1,
+                size: 12,
+            },
+        ],
         queryFn: onSearchProjectsApi,
     });
 
-    console.log(data);
     if (isError) return <div>Error</div>;
 
     return (

@@ -1,5 +1,6 @@
-import { onSendEmailVerificationCodeApi } from "@/apis/user/userApis";
+import { onCheckEmailVerificationCodeApi, onSendEmailVerificationCodeApi } from "@/apis/user/userApis";
 import Input from "@/components/Input";
+import { useSpinner } from "@/components/Spinner";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { InputHookType, SignupFormData } from "../utils/types";
@@ -13,27 +14,59 @@ interface EmailVerificationProps {
 }
 
 export default function EmailVerification({ email, verificationCode, errors, setErrors }: EmailVerificationProps) {
+    const spinner = useSpinner();
+
     const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 완료 flag
     const [isClickEmailVerification, setIsClickEmailVerification] = useState(false); // 인증 요청 버튼 클릭 flag
 
     const handleEmailVerificationMutation = useMutation({
         mutationFn: onSendEmailVerificationCodeApi,
+        onMutate: () => {
+            spinner.open();
+        },
         onSuccess: (data) => {
-            console.log(data);
-            // setIsClickEmailVerification(true);
+            console.log("success data:::", data);
+            setIsClickEmailVerification(true);
         },
         onError: (error) => {
             console.log(error);
             window.alert("이메일 인증 요청에 실패했습니다.");
         },
         onSettled: () => {
-            // setIsClickEmailVerification(false);
+            spinner.close();
+        },
+    });
+
+    const handleEmailVerificationCheckMutation = useMutation({
+        mutationFn: onCheckEmailVerificationCodeApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (data) => {
+            console.log("success data:::", data);
+            setIsEmailVerified(true);
+        },
+        onError: (error) => {
+            console.log(error);
+            window.alert("인증번호를 확인해주세요.");
+        },
+        onSettled: () => {
+            spinner.close();
         },
     });
 
     // 이메일 인증 요청
     const handleEmailVerification = () => {
+        console.log("email.value:::", email.value);
         handleEmailVerificationMutation.mutate(email.value);
+    };
+
+    const handleEmailVerificationCheck = () => {
+        console.log("verificationCode.value:::", verificationCode.value);
+        handleEmailVerificationCheckMutation.mutate({
+            email: email.value,
+            code: verificationCode.value,
+        });
     };
 
     return (
@@ -89,7 +122,7 @@ export default function EmailVerification({ email, verificationCode, errors, set
                     <button
                         type="button"
                         className="h-[46px] mt-7 text-sm text-white w-20 rounded bg-[#ff6363] disabled:bg-[#d8dae5] disabled:text-[#8f95b2]"
-                        onClick={() => setIsEmailVerified(true)}
+                        onClick={handleEmailVerificationCheck}
                         disabled={verificationCode.value.length !== 6}
                     >
                         인증 완료

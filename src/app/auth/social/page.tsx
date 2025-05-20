@@ -13,7 +13,7 @@ export default function SocialAuthPage() {
                 const authResponse = await getRefreshToken();
                 console.log("authResponse:::", authResponse);
 
-                localStorage.setItem("token", authResponse.accessToken);
+                document.cookie = `token=${authResponse.accessToken}; path=/`;
 
                 window.location.href = "/";
             } catch (error) {

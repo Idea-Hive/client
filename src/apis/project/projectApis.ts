@@ -18,7 +18,10 @@ export interface SaveProjectRequest {
 }
 
 export const onSaveProjectApi = async (body: SaveProjectRequest) => {
-    const token = localStorage.getItem("token");
+    const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
     return await Apis.post("/project/create", body, {
         withCredentials: true,
         headers: {
@@ -30,8 +33,10 @@ export const onSaveProjectApi = async (body: SaveProjectRequest) => {
 // 프로젝트 검색
 export interface SearchProjectsRequest {
     keyword: string;
-    recruitType: string;
-    sortType: string;
+    recruitType: "NEW" | "ADDITIONAL" | "ALL"; // Available values 추가
+    sortType: "RECENT" | "DEADLINE"; // Available values 추가
+    page: number; // Default: 1
+    size: number; // Default: 12
 }
 export interface Project {
     id: number;
@@ -47,7 +52,65 @@ export interface SearchProjectsResponse {
     projects: Project[];
 }
 
-export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: string, keyword: string, recruitType: string, sortType: string, page: number, size: number]> = async ({ queryKey }) => {
-    const [_, keyword, recruitType, sortType, page, size] = queryKey;
-    return await Apis.get(`/project/search?keyword=${keyword}&recruitType=${recruitType}&sortType=${sortType}&page=${page}&size=${size}`);
+export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: string, SearchProjectsRequest]> = async ({ queryKey }) => {
+    const [_, params] = queryKey;
+    const { keyword = "", recruitType, sortType, page = 1, size = 12 } = params;
+
+    return await Apis.get("/project/search", {
+        params: {
+            keyword,
+            recruitType,
+            sortType,
+            page,
+            size,
+        },
+    });
+};
+
+// 프로젝트 상세 조회
+export interface GetProjectDetailRequest {
+    projectId: number;
+}
+export interface Applicant {
+    memberId: number;
+    name: string;
+    job: string;
+    career: number;
+    applicationMessage: string;
+    skillStacks: string[];
+}
+
+export interface ProjectDetailData {
+    projectId: number;
+    title: string;
+    hashtagNames: string[];
+    creatorId: number;
+    creatorName: string;
+    creatorJob: string;
+    creatorCareer: number;
+    projectSkillStacks: string[];
+    description: string;
+    idea: string;
+    maxMembers: number;
+    dueDateFrom: string;
+    dueDateTo: string;
+    contact: string;
+    applicants: Applicant[];
+}
+export const getProjectDetailApi: QueryFunction<ProjectDetailData, [_1: string, GetProjectDetailRequest]> = async ({ queryKey }) => {
+    const [_, params] = queryKey;
+    const { projectId } = params;
+
+    const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+    return await Apis.get("/project/info", {
+        params: {
+            projectId,
+        },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };

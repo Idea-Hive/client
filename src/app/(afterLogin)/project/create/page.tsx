@@ -16,8 +16,6 @@ export default function CreateProject() {
     const [isOpenSuccessModal, setIsOpenSuccessModal] = useState<boolean>(false);
     const [projectId, setProjectId] = useState<number | null>(null);
 
-    // const { data: skillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
-
     const router = useRouter();
 
     // dueDateFrom, dueDateTo format
@@ -47,7 +45,7 @@ export default function CreateProject() {
     });
 
     const [hashTags, setHashTags] = useState<string[]>([]);
-    const [skills, setSkills] = useState<string[]>([]);
+    const [skills, setSkills] = useState<number[]>([]);
 
     const validate = () => {
         const validations = {
@@ -107,7 +105,7 @@ export default function CreateProject() {
             maxMembers,
             dueDateFrom,
             dueDateTo,
-            skillStackIds: skills.map(Number),
+            skillStackIds: skills,
             hashtags: hashTags,
             isSave: true,
         };

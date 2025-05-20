@@ -38,7 +38,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
         onSuccess: (data, variables, context) => {
             console.log("signupSuccess", data, variables, context);
             // 회원가입 성공 로직 추가
-            setStep(3);
+            setStep(2);
         },
         onSettled: () => {
             console.log("signupEnd");

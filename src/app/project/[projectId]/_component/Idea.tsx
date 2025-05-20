@@ -1,11 +1,13 @@
 "use client";
 
 import Button from "@/components/Button";
+import Modal from "@/components/Modal";
 import { Tooltip } from "radix-ui";
 import { useState } from "react";
 
-export default function Idea() {
+export default function Idea({ idea }: { idea: string }) {
     const [isBlur, setIsBlur] = useState<boolean>(true);
+    const [ideaOpenModal, setIdeaOpenModal] = useState<boolean>(false);
 
     return (
         <div>
@@ -31,13 +33,8 @@ export default function Idea() {
                     </Tooltip.Root>
                 </Tooltip.Provider>
             </div>
-
             <div className="relative w-[718px] h-fit bg-n0 border border-n400 rounded-lg p-6">
-                <div className={`w-full h-full ${isBlur ? "blur-[4px] text-n500 select-none pointer-events-none" : "text-n900"} text-base`}>
-                    사용자는 기획자, 디자이너, 개발자 등의 역할 기반으로 공고를 등록하거나, 관심 있는 프로젝트에 포지션을 지정해 지원할 수 있다. 각 공고는 기본적으로 공개 혹은 제한된 공개(초대형)를
-                    설정할 수 있으며, 프로젝트 설명 외에 예상 작업 기간, 필요 인력, 기술 스택, 커뮤니케이션 툴 등의 세부 정보가 포함된다.기간, 필요 인력, 기술 스택, 커뮤니케이션 툴 등의 세부 정보가
-                    포함된다.
-                </div>
+                <div className={`w-full h-full ${isBlur ? "blur-[4px] text-n500 select-none pointer-events-none" : "text-n900"} text-base`}>{idea}</div>
                 {isBlur && (
                     <Button
                         btnType="line_red"
@@ -53,11 +50,24 @@ export default function Idea() {
                                 잠금 해제하기
                             </div>
                         }
-                        onClick={() => setIsBlur(!isBlur)}
+                        onClick={() => setIdeaOpenModal(true)}
                         className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"
                     />
                 )}
             </div>
+
+            <Modal
+                isOpen={ideaOpenModal}
+                title="아이디어 열람 확인"
+                children={<div>해당 아이디어는 보호를 위해 열람 시 지원자의 프로필 정보가 작성자에게 자동 전달됩니다. 아이디어 도용 방지를 위한 조치이니, 열람 전 신중히 확인해주세요.</div>}
+                cancelText="닫기"
+                confirmText="열람하기"
+                onClose={() => setIdeaOpenModal(false)}
+                onConfirm={() => {
+                    setIsBlur(false);
+                    setIdeaOpenModal(false);
+                }}
+            />
         </div>
     );
 }

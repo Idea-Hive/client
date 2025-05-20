@@ -1,15 +1,39 @@
+"use client";
+
 import Input from "@/components/Input";
 import { useInput } from "@/hooks/hooks";
+import { useQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
+import { getSkillStackApi } from "../_api/api";
 import { skillCategories } from "../_data/skills";
 
 interface OptionalInformationsProps {
     setHashTags: Dispatch<SetStateAction<string[]>>;
-    setSkills: Dispatch<SetStateAction<string[]>>;
+    setSkills: Dispatch<SetStateAction<number[]>>;
 }
 
 const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: OptionalInformationsProps) => {
-    const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+    const { data: rawSkillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
+
+    // 스킬스택 데이터를 카테고리별로 그룹화
+    const skillStacks = rawSkillStacks?.reduce((acc: { [key: string]: any[] }, curr: any) => {
+        const category = curr.category;
+        if (!acc[category]) {
+            acc[category] = [];
+        }
+        acc[category].push(curr);
+        return acc;
+    }, {});
+
+    // 그룹화된 데이터를 배열로 변환
+    const groupedSkillStacks = skillStacks
+        ? Object.entries(skillStacks).map(([category, skills]) => ({
+              category,
+              skills,
+          }))
+        : [];
+
+    const [selectedSkills, setSelectedSkills] = useState<{ id: number; name: string }[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<keyof typeof skillCategories>("frontend");
 
     const hashTag = useInput("");
@@ -31,14 +55,14 @@ const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: Opti
         setHashTagsProps(hashTags.filter((tag) => tag !== tagToRemove));
     };
 
-    const handleSkillSelect = (skill: string) => {
-        if (selectedSkills.includes(skill)) {
-            setSelectedSkills(selectedSkills.filter((s) => s !== skill));
-            setSkills(selectedSkills.filter((s) => s !== skill));
+    const handleSkillSelect = (skillId: number, skillName: string) => {
+        if (selectedSkills.filter((s) => s.id === skillId).length > 0) {
+            setSelectedSkills(selectedSkills.filter((s) => s.id !== skillId));
+            setSkills((prev) => prev.filter((id) => id !== skillId));
         } else {
             if (selectedSkills.length < 20) {
-                setSelectedSkills([...selectedSkills, skill]);
-                setSkills([...selectedSkills, skill]);
+                setSelectedSkills([...selectedSkills, { id: skillId, name: skillName }]);
+                setSkills((prev) => [...prev, skillId]);
             }
         }
     };
@@ -82,43 +106,45 @@ const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: Opti
                 <div className="flex border rounded-[4px] border-n400 h-fit max-h-[252px]">
                     {/* 1depth - 카테고리 열 */}
                     <div className="flex-1 border-r border-n400 rounded-l-[4px] overflow-auto">
-                        {Object.entries(skillCategories).map(([value, category], index, array) => (
+                        {groupedSkillStacks.map((skillStack, idx) => (
                             <div
-                                key={value}
-                                onClick={() => setSelectedCategory(value as keyof typeof skillCategories)}
-                                className={`h-9 text-sm leading-9 text-n800 px-3 cursor-pointer hover:bg-n75 ${selectedCategory === value ? "bg-n75" : ""} ${
-                                    index !== array.length - 1 ? "border-b border-n300" : ""
+                                key={skillStack.category}
+                                onClick={() => setSelectedCategory(skillStack.category as keyof typeof skillCategories)}
+                                className={`h-9 text-sm leading-9 text-n800 px-3 cursor-pointer hover:bg-n75 ${selectedCategory === skillStack.category ? "bg-n75" : ""} ${
+                                    idx !== groupedSkillStacks.length - 1 ? "border-b border-n300" : ""
                                 }`}
                             >
-                                {category.label}
+                                {skillStack.category}
                             </div>
                         ))}
                     </div>
 
                     {/* 2depth - 기술 목록 열 */}
                     <div className="flex-1 border-r border-n400 overflow-y-auto max-h-[400px]">
-                        {skillCategories[selectedCategory].skills.map((skill) => (
-                            <div key={skill} className={`h-9 px-2.5 py-0.5`}>
-                                <button
-                                    type="button"
-                                    title={skill}
-                                    className={`h-8 px-3 rounded-full text-sm text-n800 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px] ${
-                                        selectedSkills.includes(skill) ? "bg-taskmateRed bg-opacity-10 border border-taskmateRed text-taskmateRed" : "border-none bg-white text-n800"
-                                    }`}
-                                    onClick={() => handleSkillSelect(skill)}
-                                >
-                                    {skill}
-                                </button>
-                            </div>
-                        ))}
+                        {groupedSkillStacks
+                            .filter((skillStack) => skillStack.category === selectedCategory)[0]
+                            ?.skills.map((skill) => (
+                                <div key={skill.id} className={`h-9 px-2.5 py-0.5`}>
+                                    <button
+                                        type="button"
+                                        title={skill}
+                                        className={`h-8 px-3 rounded-full text-sm text-n800 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px] ${
+                                            selectedSkills.includes(skill.name) ? "bg-taskmateRed bg-opacity-10 border border-taskmateRed text-taskmateRed" : "border-none bg-white text-n800"
+                                        }`}
+                                        onClick={() => handleSkillSelect(skill.id, skill.name)}
+                                    >
+                                        {skill.name}
+                                    </button>
+                                </div>
+                            )) || <div className=""></div>}
                     </div>
 
                     {/* 3depth - 선택된 기술 열 */}
                     <div className="flex-1 rounded-r-[4px] p-3 flex flex-wrap content-start gap-3">
                         {selectedSkills.map((skill) => (
-                            <div key={skill} className="flex items-center gap-1">
-                                <span className="text-taskmateRed text-sm">{skill}</span>
-                                <button onClick={() => handleSkillSelect(skill)} className="text-gray-500 hover:text-gray-700">
+                            <div key={skill.id} className="flex items-center gap-1">
+                                <span className="text-taskmateRed text-sm">{skill.name}</span>
+                                <button onClick={() => handleSkillSelect(skill.id, skill.name)} className="text-gray-500 hover:text-gray-700">
                                     <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
                                             d="M11.9137 10.628C11.9544 10.6686 11.9866 10.7169 12.0086 10.77C12.0306 10.8231 12.0419 10.88 12.0419 10.9375C12.0419 10.995 12.0306 11.0519 12.0086 11.105C11.9866 11.1581 11.9544 11.2064 11.9137 11.247C11.8731 11.2877 11.8248 11.3199 11.7717 11.3419C11.7186 11.3639 11.6617 11.3752 11.6042 11.3752C11.5467 11.3752 11.4898 11.3639 11.4367 11.3419C11.3836 11.3199 11.3353 11.2877 11.2947 11.247L7.66669 7.61851L4.03872 11.247C3.95662 11.3291 3.84528 11.3752 3.72919 11.3752C3.61309 11.3752 3.50175 11.3291 3.41965 11.247C3.33756 11.1649 3.29144 11.0536 3.29144 10.9375C3.29144 10.8214 3.33756 10.7101 3.41965 10.628L7.04817 7L3.41965 3.37203C3.33756 3.28994 3.29144 3.1786 3.29144 3.0625C3.29144 2.9464 3.33756 2.83506 3.41965 2.75297C3.50175 2.67088 3.61309 2.62476 3.72919 2.62476C3.84528 2.62476 3.95662 2.67088 4.03872 2.75297L7.66669 6.38148L11.2947 2.75297C11.3767 2.67088 11.4881 2.62476 11.6042 2.62476C11.7203 2.62476 11.8316 2.67088 11.9137 2.75297C11.9958 2.83506 12.0419 2.9464 12.0419 3.0625C12.0419 3.1786 11.9958 3.28994 11.9137 3.37203L8.2852 7L11.9137 10.628Z"

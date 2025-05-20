@@ -1,5 +1,6 @@
 "use client";
 
+// import { getUserInfoApi } from "@/apis/user/userApis";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,35 +13,19 @@ export default function Nav() {
     const [isShowLoginModal, setIsShowLoginModal] = useState(false);
     const [isShowFindPwModal, setIsShowFindPwModal] = useState(false);
 
-    const user = { nickname: "윤제혁" };
-    const { data: isLoggedIn } = useQuery({
+    const { data } = useQuery({
         queryKey: ["isLoggedIn"],
         queryFn: () => {
-            const token = localStorage.getItem("token");
-            return !!token; // token이 있으면 true, 없으면 false 반환
+            return { id: 2, nickname: "윤제혁" };
         },
-        refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
     });
-
-    // const { data: user, isSuccess: isLoggedIn } = useQuery<User>({
-    //     queryKey: ["user"],
-    //     queryFn: async () => {
-    //         const token = localStorage.getItem("token");
-    //         if (!token) throw new Error("No token found");
-
-    //         const response = await fetch("/api/user", {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-    //         if (!response.ok) throw new Error("Failed to fetch user");
-    //         return response.json();
-    //     },
+    // const { data } = useQuery({
+    //     queryKey: ["isLoggedIn"],
+    //     queryFn: getUserInfoApi,
     //     refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
-    //     retry: false,
-    //     gcTime: 0,
-    //     staleTime: 0,
     // });
+
+    // console.log("data:::", data);
 
     return (
         <nav className="w-full h-[72px] flex justify-center border-b border-[#d8dae5]">
@@ -58,8 +43,8 @@ export default function Nav() {
 
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-5">
-                        {isLoggedIn ? (
-                            <NavRightSectionForLoggedInUser user={user} />
+                        {data?.id ? (
+                            <NavRightSectionForLoggedInUser user={data} />
                         ) : (
                             <button className="h-8 px-3 rounded-[4px] text-sm font-semibold bg-[#FF6363] text-white" onClick={() => setIsShowLoginModal(true)}>
                                 로그인/회원가입
@@ -112,7 +97,7 @@ const NavRightSectionForLoggedInUser = ({
                         </button>
                         <button
                             onClick={() => {
-                                localStorage.removeItem("token");
+                                document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                                 window.location.reload(); // 페이지 리로드하여 쿼리 초기화
                                 setShowDropdown(false);
                             }}

@@ -4,13 +4,17 @@ import { SkillStack } from "../_types/type";
 
 export const getSkillStackApi: QueryFunction<SkillStack[], [_1: string]> = async ({ queryKey }) => {
     try {
-        const res = await Apis.get("/skillstack");
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        const res = await Apis.get("/skillstack", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-        if (!res.data.success) {
-            throw new Error("Failed to fetch data");
-        }
-
-        return res.data;
+        return res;
     } catch (err) {
         console.error("getSkillStackApi error", err);
     }

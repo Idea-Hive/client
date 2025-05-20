@@ -1,11 +1,12 @@
 "use client";
 
+import { ProjectDetailData } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
 import { LikedIcon, ShareIcon, ViewIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
 import { useState } from "react";
 
-export default function RightSection() {
+export default function RightSection({ data }: { data: ProjectDetailData }) {
     const [isOpenApplicantModal, setIsOpenApplicantModal] = useState<boolean>(false);
     const [isOpenApplicantSuccessModal, setIsOpenApplicantSuccessModal] = useState<boolean>(false);
 

@@ -1,13 +1,43 @@
 "use client";
 
+import { onResetPwApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import { useSpinner } from "@/components/Spinner";
 import { useInput } from "@/hooks/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 
 export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetStateAction<boolean>> }) {
+    const spinner = useSpinner();
+
     const password = useInput("");
     const passwordCheck = useInput("");
+
+    const searchParams = useSearchParams();
+    const email = searchParams.get("email");
+
+    const resetPwMutation = useMutation({
+        mutationFn: onResetPwApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (data) => {
+            console.log("success:::", data);
+            setIsReset(true);
+        },
+        onError: (error) => {
+            console.log("error:::", error);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
+    const handleResetPw = () => {
+        resetPwMutation.mutate({ email: email!, newPassword: password.value });
+    };
 
     return (
         <div className="w-[420px] mx-auto mt-[92px]">
@@ -45,16 +75,7 @@ export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetSt
                     }
                 />
             </div>
-            <Button
-                btnType="primary"
-                label="확인"
-                size="large"
-                className="w-full"
-                disabled={password.value === "" || passwordCheck.value === ""}
-                onClick={() => {
-                    setIsReset(true);
-                }}
-            />
+            <Button btnType="primary" label="확인" size="large" className="w-full" disabled={password.value === "" || passwordCheck.value === ""} onClick={handleResetPw} />
         </div>
     );
 }

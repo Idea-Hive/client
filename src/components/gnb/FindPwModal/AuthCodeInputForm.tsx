@@ -1,9 +1,31 @@
+import { onCheckAuthCodeForFindPwApi } from "@/apis/user/userApis";
+import { useSpinner } from "@/components/Spinner";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Button from "../../Button";
 
-export default function AuthCodeInputForm({ onClose }: { onClose: () => void }) {
+export default function AuthCodeInputForm({ onClose, email }: { onClose: () => void; email: string }) {
     const router = useRouter();
+    const spinner = useSpinner();
+
+    const onCheckAuthCodeMutation = useMutation({
+        mutationFn: onCheckAuthCodeForFindPwApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (data) => {
+            console.log("success:::", data);
+            router.push(`/resetpw?email=${encodeURIComponent(email)}`);
+            onClose();
+        },
+        onError: (error) => {
+            console.log("error:::", error);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
 
     const [authCode, setAuthCode] = useState<string[]>(["", "", "", "", ""]);
     const onChange = (index: number, value: string) => {
@@ -20,8 +42,9 @@ export default function AuthCodeInputForm({ onClose }: { onClose: () => void }) 
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
-        router.push("/resetpw");
-        onClose();
+
+        const code = authCode.join("");
+        onCheckAuthCodeMutation.mutate({ email, code });
     };
 
     return (
@@ -35,12 +58,9 @@ export default function AuthCodeInputForm({ onClose }: { onClose: () => void }) 
                         data-filled={code !== ""}
                         value={code}
                         maxLength={1}
-                        pattern="[0-9]"
-                        inputMode="numeric"
                         onChange={(e) => {
-                            const value = e.target.value.replace(/[^0-9]/g, "");
-                            onChange(index, value);
-                            if (value && index < 4) {
+                            onChange(index, e.target.value);
+                            if (e.target.value && index < 4) {
                                 const nextInput = document.querySelector(`input[data-index="${index + 1}"]`) as HTMLInputElement;
                                 nextInput?.focus();
                             }

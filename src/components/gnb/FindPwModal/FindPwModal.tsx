@@ -16,6 +16,7 @@ const MODAL_TEXT = {
 
 export default function FindPwModal({ onClose }: { onClose: () => void }) {
     const [isSendAuthCode, setIsSendAuthCode] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>("");
 
     return (
         <div className="flex justify-center items-center w-screen h-screen fixed top-0 left-0 bg-gray-500 bg-opacity-40 overflow-hidden z-50">
@@ -27,7 +28,7 @@ export default function FindPwModal({ onClose }: { onClose: () => void }) {
                     <div className="text-h2 text-n900 mb-3 text-center">{!isSendAuthCode ? MODAL_TEXT.RESET_PASSWORD.title : MODAL_TEXT.AUTH_CODE.title}</div>
                     <div className="text-sm text-n800 mb-6 text-center">{!isSendAuthCode ? MODAL_TEXT.RESET_PASSWORD.description : MODAL_TEXT.AUTH_CODE.description}</div>
 
-                    {!isSendAuthCode ? <SendAuthCodeForm setIsSendAuthCode={setIsSendAuthCode} /> : <AuthCodeInputForm onClose={onClose} />}
+                    {!isSendAuthCode ? <SendAuthCodeForm setIsSendAuthCode={setIsSendAuthCode} setEmail={setEmail} /> : <AuthCodeInputForm onClose={onClose} email={email} />}
                 </div>
             </div>
         </div>

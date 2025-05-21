@@ -9,13 +9,15 @@ import Tab from "@/components/Tab";
 import { useInput } from "@/hooks/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputHookType } from "../(beforeLogin)/signup/_component/EmailSignup/utils/types";
 
 export default function ProjectList() {
     const [selectedTab, setSelectedTab] = useState<string>("ALL");
     const [searchTerm, setSearchTerm] = useState("");
     const search = useInput("");
+    const [page, setPage] = useState(1);
+    const [sortType, setSortType] = useState<"RECENT" | "DEADLINE">("RECENT");
 
     const { data, isPending, isError } = useQuery({
         queryKey: [
@@ -23,13 +25,18 @@ export default function ProjectList() {
             {
                 keyword: searchTerm,
                 recruitType: selectedTab as "ALL" | "NEW" | "ADDITIONAL",
-                sortType: "RECENT",
-                page: 1,
+                sortType,
+                page,
                 size: 12,
             },
         ],
         queryFn: onSearchProjectsApi,
     });
+
+    // 검색어, 탭, 정렬 변경 시 페이지 초기화
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm, selectedTab, sortType]);
 
     if (isError) return <div>Error</div>;
 
@@ -65,7 +72,7 @@ export default function ProjectList() {
                 />
 
                 {/* 검색 및 정렬 */}
-                <SearchAndSort search={search} setSearchTerm={setSearchTerm} />
+                <SearchAndSort search={search} setSearchTerm={setSearchTerm} sortType={sortType} setSortType={setSortType} />
 
                 {/* 프로젝트 리스트 */}
                 <ProjectGrid projects={data?.projects} isPending={isPending} />
@@ -73,7 +80,7 @@ export default function ProjectList() {
                 {/* Pagination */}
                 {data?.projects && data.projects.length > 0 && (
                     <div className="w-full flex justify-center">
-                        <Pagination page={1} viewPerPage={12} total={data.totalCnt} onChange={() => {}} />
+                        <Pagination page={page} viewPerPage={12} total={data.totalCnt} onChange={(page) => setPage(page)} />
                     </div>
                 )}
             </div>
@@ -83,7 +90,17 @@ export default function ProjectList() {
     );
 }
 
-const SearchAndSort = ({ search, setSearchTerm }: { search: InputHookType; setSearchTerm: (value: string) => void }) => {
+const SearchAndSort = ({
+    search,
+    setSearchTerm,
+    sortType,
+    setSortType,
+}: {
+    search: InputHookType;
+    setSearchTerm: (value: string) => void;
+    sortType: "RECENT" | "DEADLINE";
+    setSortType: (value: "RECENT" | "DEADLINE") => void;
+}) => {
     return (
         <div className="mb-4 mt-[26px] flex justify-between items-center">
             <div className="w-[384px]">
@@ -107,8 +124,12 @@ const SearchAndSort = ({ search, setSearchTerm }: { search: InputHookType; setSe
                 />
             </div>
             <div className="flex gap-4 items-center text-sm">
-                <div className="text-taskmateRed cursor-pointer">최신순</div>
-                <div className="text-n700 cursor-pointer">마감임박순</div>
+                <div className={`cursor-pointer ${sortType === "RECENT" ? "text-taskmateRed" : "text-n700"}`} onClick={() => setSortType("RECENT")}>
+                    최신순
+                </div>
+                <div className={`cursor-pointer ${sortType === "DEADLINE" ? "text-taskmateRed" : "text-n700"}`} onClick={() => setSortType("DEADLINE")}>
+                    마감임박순
+                </div>
             </div>
         </div>
     );

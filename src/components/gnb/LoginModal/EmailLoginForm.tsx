@@ -4,6 +4,7 @@ import { onLoginApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { useSpinner } from "@/components/Spinner";
+import Toast from "@/components/Toast";
 import { useInput } from "@/hooks/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -43,6 +44,8 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
         return isValid;
     };
 
+    const [showToast, setShowToast] = useState(false);
+
     const loginMutation = useMutation({
         mutationFn: onLoginApi,
         onMutate: () => {
@@ -56,6 +59,8 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
         },
         onError: (error) => {
             setIsErrors({ ...isErrors, common: true });
+            setShowToast(true);
+
             if (error instanceof AxiosError) {
                 console.error("loginError:::", error);
                 setErrorMessages({ ...errorMessages, common: error.response?.data });
@@ -116,6 +121,8 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             </div>
 
             <Button label="이메일로 로그인" type="submit" onClick={() => {}}></Button>
+
+            {showToast && <Toast message="아이디 / 비밀번호를 다시 확인해주세요" onClose={() => setShowToast(false)} />}
         </form>
     );
 }

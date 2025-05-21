@@ -2,7 +2,7 @@ import { onCheckEmailVerificationCodeApi, onSendEmailVerificationCodeApi } from 
 import Input from "@/components/Input";
 import { useSpinner } from "@/components/Spinner";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { InputHookType, SignupFormData } from "../utils/types";
 import { validateEmail } from "../utils/utils";
 
@@ -11,12 +11,13 @@ interface EmailVerificationProps {
     verificationCode: InputHookType;
     errors: Partial<SignupFormData>;
     setErrors: (errors: Partial<SignupFormData>) => void;
+    isEmailVerified: boolean;
+    setIsEmailVerified: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function EmailVerification({ email, verificationCode, errors, setErrors }: EmailVerificationProps) {
+export default function EmailVerification({ email, verificationCode, errors, setErrors, isEmailVerified, setIsEmailVerified }: EmailVerificationProps) {
     const spinner = useSpinner();
 
-    const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 완료 flag
     const [isClickEmailVerification, setIsClickEmailVerification] = useState(false); // 인증 요청 버튼 클릭 flag
 
     const handleEmailVerificationMutation = useMutation({

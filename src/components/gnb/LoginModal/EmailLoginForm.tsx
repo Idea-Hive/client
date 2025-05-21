@@ -7,7 +7,6 @@ import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useInput } from "@/hooks/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import { useState } from "react";
 
 export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
@@ -29,18 +28,23 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
     });
 
     const validate = (email: string, password: string) => {
-        setIsErrors({
+        const newIsErrors = {
             common: false,
             email: email === "" || !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email),
             password: password === "",
-        });
-        setErrorMessages({
+        };
+
+        const newErrorMessages = {
             common: "",
             email: email === "" ? "이메일을 입력해주세요." : !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email) ? "이메일 형식이 올바르지 않습니다." : "",
             password: password === "" ? "비밀번호를 입력해주세요." : "",
-        });
+        };
 
-        const isValid = Object.values(isErrors).every((value) => value === false);
+        setIsErrors(newIsErrors);
+        setErrorMessages(newErrorMessages);
+
+        const isValid = Object.values(newIsErrors).filter((value) => value === true).length === 0;
+
         return isValid;
     };
 
@@ -58,16 +62,8 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             onClose();
         },
         onError: (error) => {
-            setIsErrors({ ...isErrors, common: true });
+            console.error("loginError:::", error);
             setShowToast(true);
-
-            if (error instanceof AxiosError) {
-                console.error("loginError:::", error);
-                setErrorMessages({ ...errorMessages, common: error.response?.data });
-            } else {
-                console.error("login Unknown Error:::", error);
-                setErrorMessages({ ...errorMessages, common: "로그인에 실패했습니다." });
-            }
         },
         onSettled: () => {
             spinner.close();

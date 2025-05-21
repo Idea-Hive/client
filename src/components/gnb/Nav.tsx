@@ -1,6 +1,6 @@
 "use client";
 
-// import { getUserInfoApi } from "@/apis/user/userApis";
+import { getUserInfoApi } from "@/apis/user/userApis";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,17 +15,11 @@ export default function Nav() {
 
     const { data } = useQuery({
         queryKey: ["isLoggedIn"],
-        queryFn: () => {
-            return { id: null, nickname: "윤제혁" };
-        },
+        queryFn: getUserInfoApi,
+        refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
     });
-    // const { data } = useQuery({
-    //     queryKey: ["isLoggedIn"],
-    //     queryFn: getUserInfoApi,
-    //     refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
-    // });
 
-    // console.log("data:::", data);
+    console.log("data:::", data);
 
     return (
         <nav className="w-full h-[72px] flex justify-center border-b border-[#d8dae5]">

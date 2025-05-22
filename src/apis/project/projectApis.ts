@@ -30,6 +30,19 @@ export const onSaveProjectApi = async (body: SaveProjectRequest) => {
     });
 };
 
+export const onTemporarySaveProjectApi = async (body: SaveProjectRequest) => {
+    const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+    return await Apis.post("/project/create", body, {
+        withCredentials: true,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 // 프로젝트 검색
 export interface SearchProjectsRequest {
     keyword: string;

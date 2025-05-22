@@ -11,7 +11,6 @@ export default function SocialAuthPage() {
         const fetchToken = async () => {
             try {
                 const authResponse = await getRefreshToken();
-                console.log("authResponse:::", authResponse);
 
                 document.cookie = `token=${authResponse.accessToken}; path=/`;
 

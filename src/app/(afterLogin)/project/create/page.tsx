@@ -1,9 +1,10 @@
 "use client";
 
-import { onSaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
+import { onSaveProjectApi, onTemporarySaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
+import Toast from "@/components/Toast";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -73,6 +74,27 @@ export default function CreateProject() {
         return isValid;
     };
 
+    const [isShowToast, setIsShowToast] = useState<boolean>(false);
+
+    const onTemporarySaveMutation = useMutation({
+        mutationFn: onTemporarySaveProjectApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (response) => {
+            console.log("성공");
+            setProjectId(response);
+            setIsShowToast(true);
+        },
+        onError: (error) => {
+            console.log("실패");
+            console.log(error.message);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
     const onSaveMutation = useMutation({
         mutationFn: onSaveProjectApi,
         onMutate: () => {
@@ -96,7 +118,7 @@ export default function CreateProject() {
         const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = requiredValues;
 
         const requestBody = {
-            projectId: null,
+            projectId,
             userId: 1,
             title,
             description,
@@ -115,12 +137,11 @@ export default function CreateProject() {
 
     const onTemporarySave = () => {
         const requestBody = getRequestBody();
+        onTemporarySaveMutation.mutate({ ...requestBody, isSave: false });
     };
 
     const onSave = async () => {
         const requestBody = getRequestBody();
-
-        console.log("request:::", requestBody);
 
         if (!validate()) {
             console.log("유효성 검사 실패");
@@ -149,6 +170,7 @@ export default function CreateProject() {
                     router.push(`/project/${projectId}`);
                 }}
             />
+            {isShowToast && <Toast type="info" message="임시저장 되었습니다." onClose={() => setIsShowToast(false)} />}
         </div>
     );
 }

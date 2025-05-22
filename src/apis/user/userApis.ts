@@ -29,6 +29,20 @@ export const onSendAuthCodeForFindPwApi = async (email: string) => {
     return await Apis.post(`/email/password-reset/send?email=${email}`);
 };
 
+// 비밀번호 찾기 이메일 인증코드 확인
+export const onCheckAuthCodeForFindPwApi = async (body: CheckEmailVerificationCodeRequest) => {
+    return await Apis.post(`/email/password-reset/verify?email=${body.email}&code=${body.code}`);
+};
+
+// 비밀번호 찾기 비밀번호 재설정
+interface ResetPwRequest {
+    email: string;
+    newPassword: string;
+}
+export const onResetPwApi = async (body: ResetPwRequest) => {
+    return await Apis.post(`/member/password-reset`, body);
+};
+
 // 회원가입
 export interface SignupRequest {
     email: string;
@@ -39,9 +53,6 @@ export interface SignupRequest {
 export const onSignupApi = async (body: SignupRequest) => {
     const requestBody = {
         ...body,
-        email: "dbswpgur3@naver.com",
-        name: "윤제혁",
-        job: "프론트엔드",
         career: 3,
         type: "email",
         skillstackIds: [0, 1, 2],

@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import Button from "../../Button";
 import Spinner from "../../Spinner";
 
-export default function SendAuthCodeForm({ setIsSendAuthCode }: { setIsSendAuthCode: Dispatch<SetStateAction<boolean>> }) {
+export default function SendAuthCodeForm({ setIsSendAuthCode, setEmail }: { setIsSendAuthCode: Dispatch<SetStateAction<boolean>>; setEmail: Dispatch<SetStateAction<string>> }) {
     const email = useInput("");
     const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -16,6 +16,7 @@ export default function SendAuthCodeForm({ setIsSendAuthCode }: { setIsSendAuthC
         mutationFn: onSendAuthCodeForFindPwApi,
         onSuccess: (data, variables, context) => {
             console.log("인증번호 전송 성공:::", data, variables, context);
+            setEmail(email.value);
             setIsSendAuthCode(true);
         },
         onError: (error) => {

@@ -3,9 +3,16 @@
 import Checkbox from "@/components/Checkbox";
 import Input from "@/components/Input";
 import Selectbox from "@/components/Selectbox";
+import Spinner from "@/components/Spinner";
 import Textarea from "@/components/Textarea";
-import { Dispatch, SetStateAction, useState } from "react";
+import dynamic from "next/dynamic";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { RequiredValues } from "../_types/type";
+
+const ToastEditor = dynamic(() => import("@/components/editor/ToastEditorWrapper"), {
+    ssr: false,
+    loading: () => <Spinner />,
+});
 
 const RequiredInformations = ({
     requiredValues,
@@ -18,6 +25,8 @@ const RequiredInformations = ({
     errors: { title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string };
     setErrors: Dispatch<SetStateAction<{ title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string }>>;
 }) => {
+    const editorRef = useRef<any>(null);
+
     const [date, setDate] = useState<{ start: string; end: string }>({
         start: "",
         end: "",
@@ -48,15 +57,15 @@ const RequiredInformations = ({
                     errMsg={errors.title}
                 />
 
-                <Textarea
+                <ToastEditor
+                    editorRef={editorRef}
                     label="프로젝트 설명"
-                    value={requiredValues.description}
-                    onChange={(e) => {
-                        setRequiredValues((prev) => ({ ...prev, description: e.target.value }));
+                    isRequired={true}
+                    placeholder="프로젝트 설명을 입력해주세요"
+                    onChange={(value) => {
+                        setRequiredValues((prev) => ({ ...prev, description: value }));
                         setErrors((prev) => ({ ...prev, description: "" }));
                     }}
-                    placeholder="💡테스크메이트(Taskmate) 플랫폼에 등록된 미완성 프로젝트"
-                    isRequired={true}
                     isErr={errors.description !== ""}
                     errMsg={errors.description}
                 />
@@ -68,7 +77,7 @@ const RequiredInformations = ({
                         setRequiredValues((prev) => ({ ...prev, idea: e.target.value }));
                         setErrors((prev) => ({ ...prev, idea: "" }));
                     }}
-                    placeholder="💡테스크메이트(Taskmate) 플랫폼에 등록된 미완성 프로젝트"
+                    placeholder="아이디어는 프로필을 제공하지 않은 유저에겐 비공개 처리됩니다."
                     isRequired={true}
                     isErr={errors.idea !== ""}
                     errMsg={errors.idea}

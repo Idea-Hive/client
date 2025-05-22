@@ -1,6 +1,6 @@
 "use client";
 
-// import { getUserInfoApi } from "@/apis/user/userApis";
+import { getUserInfoApi } from "@/apis/user/userApis";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,17 +15,11 @@ export default function Nav() {
 
     const { data } = useQuery({
         queryKey: ["isLoggedIn"],
-        queryFn: () => {
-            return { id: null, nickname: "윤제혁" };
-        },
+        queryFn: getUserInfoApi,
+        refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
     });
-    // const { data } = useQuery({
-    //     queryKey: ["isLoggedIn"],
-    //     queryFn: getUserInfoApi,
-    //     refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
-    // });
 
-    // console.log("data:::", data);
+    console.log("data:::", data);
 
     return (
         <nav className="w-full h-[72px] flex justify-center border-b border-[#d8dae5]">
@@ -96,10 +90,17 @@ const NavRightSectionForLoggedInUser = ({
                             마이페이지
                         </button>
                         <button
-                            onClick={() => {
-                                document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                                window.location.reload(); // 페이지 리로드하여 쿼리 초기화
-                                setShowDropdown(false);
+                            onClick={async () => {
+                                try {
+                                    await fetch("/api/auth/logout", {
+                                        method: "POST",
+                                        credentials: "include", // 쿠키를 포함하여 요청
+                                    });
+                                    window.location.reload(); // 페이지 리로드하여 쿼리 초기화
+                                    setShowDropdown(false);
+                                } catch (error) {
+                                    console.error("로그아웃 실패:", error);
+                                }
                             }}
                             className="w-full h-9 text-left px-3 text-sm text-n800 rounded-b hover:bg-n75"
                         >

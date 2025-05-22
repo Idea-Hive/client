@@ -129,7 +129,9 @@ const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: Opti
                                         type="button"
                                         title={skill}
                                         className={`h-8 px-3 rounded-full text-sm text-n800 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px] ${
-                                            selectedSkills.includes(skill.name) ? "bg-taskmateRed bg-opacity-10 border border-taskmateRed text-taskmateRed" : "border-none bg-white text-n800"
+                                            selectedSkills.some((selected) => selected.name === skill.name)
+                                                ? "bg-taskmateRed bg-opacity-10 border border-taskmateRed text-taskmateRed"
+                                                : "border-none bg-white text-n800"
                                         }`}
                                         onClick={() => handleSkillSelect(skill.id, skill.name)}
                                     >

@@ -1,8 +1,10 @@
 "use client";
 
 import { onSignupApi, SignupRequest } from "@/apis/user/userApis";
+import Toast from "@/components/Toast";
 import { useInput } from "@/hooks/hooks";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useCallback, useState } from "react";
 import TOS from "../TOS";
 import RequiredInfoSection from "./_component/RequiredInfoSection";
@@ -10,6 +12,8 @@ import { SignupFormData } from "./utils/types";
 import { validateEmail, validatePassword } from "./utils/utils";
 
 export default function EmailSignup({ setStep }: { setStep: (step: number) => void }) {
+    const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 완료 flag
+
     // 이용 약관 동의
     const [agreements, setAgreements] = useState({
         all: false,
@@ -25,15 +29,18 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
     const verificationCode = useInput(""); // 인증코드
 
     const [errors, setErrors] = useState<Partial<SignupFormData>>({});
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
 
     const signupMutation = useMutation({
         mutationFn: onSignupApi,
         onMutate: (variable) => {
             console.log("onMutate", variable);
         },
-        onError: (error) => {
-            console.log("signupError", error);
-            window.alert("회원가입에 실패했습니다.");
+        onError: (error: AxiosError) => {
+            console.log("signupError", error.response?.data);
+            setShowToast(true);
+            setToastMessage(error.response?.data as string);
         },
         onSuccess: (data, variables, context) => {
             console.log("signupSuccess", data, variables, context);
@@ -59,18 +66,21 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
         } else if (!validatePassword(password.value)) {
             newErrors.password = "비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.";
         }
-        if (passwordConfirm.value === "") {
+        if (password.value && passwordConfirm.value === "") {
             newErrors.passwordConfirm = "비밀번호 확인을 입력해주세요.";
         } else if (password.value !== passwordConfirm.value) {
-            newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
+            newErrors.passwordConfirm = "입력한 비밀번호와 동일하게 입력해주세요.";
         }
-        if (verificationCode.value === "") {
-            newErrors.verificationCode = "인증코드를 입력해주세요.";
+        if (!isEmailVerified) {
+            setShowToast(true);
+            setToastMessage("이메일 인증을 완료해주세요.");
+        } else if (verificationCode.value === "") {
+            newErrors.verificationCode = "인증 코드를 입력해주세요.";
         }
 
         setErrors(newErrors);
 
-        return Object.keys(newErrors).length === 0;
+        return Object.keys(newErrors).length === 0 && isEmailVerified;
     };
 
     const handleSubmit = useCallback(
@@ -79,7 +89,8 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
 
             if (validate()) {
                 if (!agreements.terms1 || !agreements.terms2) {
-                    window.alert("필수 이용약관에 동의해주세요.");
+                    setShowToast(true);
+                    setToastMessage("필수 이용약관에 동의해주세요.");
                     return;
                 }
 
@@ -101,7 +112,16 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
     return (
         <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4 mb-6">
-                <RequiredInfoSection email={email} password={password} passwordConfirm={passwordConfirm} verificationCode={verificationCode} errors={errors} setErrors={setErrors} />
+                <RequiredInfoSection
+                    email={email}
+                    password={password}
+                    passwordConfirm={passwordConfirm}
+                    verificationCode={verificationCode}
+                    errors={errors}
+                    setErrors={setErrors}
+                    isEmailVerified={isEmailVerified}
+                    setIsEmailVerified={setIsEmailVerified}
+                />
             </div>
 
             <TOS agreements={agreements} setAgreements={setAgreements} />
@@ -111,6 +131,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
                     가입하기
                 </button>
             </div>
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
         </form>
     );
 }

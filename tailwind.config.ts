@@ -124,6 +124,26 @@ export default {
             animation: {
                 "spin-slow": "spin 2s linear infinite",
             },
+            keyframes: {
+                slideUp: {
+                    "0%": {
+                        transform: "translate(-50%, 100%)",
+                        opacity: "0",
+                    },
+                    "10%": {
+                        transform: "translate(-50%, 0)",
+                        opacity: "1",
+                    },
+                    "90%": {
+                        transform: "translate(-50%, 0)",
+                        opacity: "1",
+                    },
+                    "100%": {
+                        transform: "translate(-50%, 100%)",
+                        opacity: "0",
+                    },
+                },
+            },
         },
     },
     plugins: [],

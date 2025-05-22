@@ -53,9 +53,6 @@ export interface SignupRequest {
 export const onSignupApi = async (body: SignupRequest) => {
     const requestBody = {
         ...body,
-        email: "dbswpgur3@naver.com",
-        name: "윤제혁",
-        job: "프론트엔드",
         career: 3,
         type: "email",
         skillstackIds: [0, 1, 2],

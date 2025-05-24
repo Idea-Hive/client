@@ -69,7 +69,7 @@ export default function SideMenu() {
                     </span>
                     {isOpen && (
                         <div className="absolute right-0 bottom-full mb-[9px]">
-                            <ul className="w-[120px] bg-white border rounded shadow z-10">
+                            <ul className="w-[120px] bg-white border rounded shadow z-10 text-xs">
                                 <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200">프로젝트 탈퇴</li>
                                 <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200">프로젝트 삭제</li>
                             </ul>

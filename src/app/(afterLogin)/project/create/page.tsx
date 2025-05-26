@@ -1,11 +1,12 @@
 "use client";
 
 import { onSaveProjectApi, onTemporarySaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
+import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import OptionalInformations from "./_component/OptionalInformations";
@@ -18,6 +19,11 @@ export default function CreateProject() {
     const [projectId, setProjectId] = useState<number | null>(null);
 
     const router = useRouter();
+
+    const { data: user } = useQuery({
+        queryKey: ["isLoggedIn"],
+        queryFn: getUserInfoApi,
+    });
 
     // dueDateFrom, dueDateTo format
     // const now = new Date();
@@ -119,7 +125,7 @@ export default function CreateProject() {
 
         const requestBody = {
             projectId,
-            userId: 1,
+            userId: user?.id,
             title,
             description,
             idea,

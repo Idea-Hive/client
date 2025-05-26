@@ -91,6 +91,8 @@ export interface Applicant {
     career: number;
     applicationMessage: string;
     skillStacks: string[];
+    isAccepted: "CONFIRMED" | "UNDECIDED" | "REJECTED";
+    completedProjectCnt: number;
 }
 
 export interface ProjectDetailData {
@@ -108,22 +110,42 @@ export interface ProjectDetailData {
     dueDateFrom: string;
     dueDateTo: string;
     contact: string;
-    applicants: Applicant[];
+    viewCnt: number;
+    likedCnt: number;
 }
 export const getProjectDetailApi: QueryFunction<ProjectDetailData, [_1: string, GetProjectDetailRequest]> = async ({ queryKey }) => {
     const [_, params] = queryKey;
     const { projectId } = params;
 
-    const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
     return await Apis.get("/project/info", {
         params: {
             projectId,
         },
-        headers: {
-            Authorization: `Bearer ${token}`,
+    });
+};
+
+// 지원자 정보 가져오기
+export interface GetApplicantInfoRequest {
+    projectId: number;
+    page: number;
+    size: number;
+}
+export interface ApplicantInfo {
+    applicants: Applicant[];
+    totalCnt: number;
+    totalPages: number;
+    currentPage: number;
+    pageSize: number;
+}
+export const getApplicantInfoApi: QueryFunction<ApplicantInfo, [_1: string, GetApplicantInfoRequest]> = async ({ queryKey }) => {
+    const [_, params] = queryKey;
+    const { projectId, page = 1, size = 4 } = params;
+
+    return await Apis.get("/project/applicants", {
+        params: {
+            projectId,
+            page,
+            size,
         },
     });
 };

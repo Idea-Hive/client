@@ -2,7 +2,6 @@ import { ProjectDetailData } from "@/apis/project/projectApis";
 import { SmallUserImgIcon } from "@/components/icons/icons";
 
 export default function LeftSection({ data }: { data: ProjectDetailData }) {
-    console.log(data);
     return (
         <div>
             <div className="text-taskmateRed text-smEmphasize mb-2">모집중</div>

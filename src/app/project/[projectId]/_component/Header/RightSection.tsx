@@ -1,12 +1,13 @@
 "use client";
 
 import { ProjectDetailData } from "@/apis/project/projectApis";
+import { User } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import { LikedIcon, ShareIcon, ViewIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
 import { useState } from "react";
 
-export default function RightSection({ data }: { data: ProjectDetailData }) {
+export default function RightSection({ data, user }: { data: ProjectDetailData; user: User | undefined }) {
     const [isOpenApplicantModal, setIsOpenApplicantModal] = useState<boolean>(false);
     const [isOpenApplicantSuccessModal, setIsOpenApplicantSuccessModal] = useState<boolean>(false);
 
@@ -19,11 +20,11 @@ export default function RightSection({ data }: { data: ProjectDetailData }) {
                 </div>
                 <div className="flex gap-1.5 items-center">
                     <LikedIcon />
-                    29
+                    {data.likedCnt}
                 </div>
                 <div className="flex gap-1.5 items-center">
                     <ViewIcon />
-                    290
+                    {data.viewCnt}
                 </div>
             </div>
             <div className="flex justify-end">

@@ -1,6 +1,7 @@
 "use client";
 
-import { getProjectDetailApi } from "@/apis/project/projectApis";
+import { getApplicantInfoApi, getProjectDetailApi } from "@/apis/project/projectApis";
+import { getUserInfoApi } from "@/apis/user/userApis";
 import Spinner from "@/components/Spinner";
 import Tab from "@/components/Tab";
 import { useQuery } from "@tanstack/react-query";
@@ -14,9 +15,23 @@ import Recruitment from "./_component/Recruitment";
 export default function ProjectDetail() {
     const { projectId } = useParams();
 
-    const { data, isPending } = useQuery({
+    const { data: user } = useQuery({
+        queryKey: ["isLoggedIn"],
+        queryFn: getUserInfoApi,
+    });
+
+    console.log("user:::", user);
+
+    const { data: project, isPending: projectIsPending } = useQuery({
         queryKey: ["getProjectDetail", { projectId: Number(projectId) }],
         queryFn: getProjectDetailApi,
+    });
+
+    console.log("project:::", project);
+
+    const { data: applicantData, isPending: applicantIsPending } = useQuery({
+        queryKey: ["getApplicantInfo", { projectId: Number(projectId), page: 1, size: 4 }],
+        queryFn: getApplicantInfoApi,
     });
 
     const tabItems = [
@@ -28,7 +43,7 @@ export default function ProjectDetail() {
             label: (
                 <div className="flex items-center gap-1">
                     지원자
-                    <div className="h-[18px] w-fit rounded-full bg-taskmateRed text-white px-1.5 text-sm leading-[18px]">{data?.applicants.length}</div>
+                    <div className="h-[18px] w-fit rounded-full bg-taskmateRed text-white px-1.5 text-sm leading-[18px]">{applicantData?.totalCnt}</div>
                 </div>
             ),
         },
@@ -49,12 +64,12 @@ export default function ProjectDetail() {
 
     return (
         <div className="w-full">
-            {isPending && <Spinner />}
+            {(projectIsPending || applicantIsPending) && <Spinner />}
 
-            {data && (
+            {project && applicantData && (
                 <>
                     {/* 헤더 */}
-                    <Header data={data} />
+                    <Header data={project} user={user} />
 
                     <section className="w-[1200px] mx-auto my-10">
                         <Tab items={tabItems} onChange={handleTab} defaultTab="baseInfo" />
@@ -62,17 +77,17 @@ export default function ProjectDetail() {
                         <div className="flex flex-col gap-[50px] mt-[50px]">
                             {/* 기본정보 */}
                             <div id="baseInfo">
-                                <BaseInfo description={data.description} />
+                                <BaseInfo description={project.description} />
                             </div>
 
                             {/* 아이디어 */}
                             <div id="idea">
-                                <Idea idea={data.idea} />
+                                <Idea idea={project.idea} />
                             </div>
 
                             {/* 모집정보 */}
                             <div id="recruitment">
-                                <Recruitment data={data} />
+                                <Recruitment data={project} />
                             </div>
                         </div>
 
@@ -80,7 +95,7 @@ export default function ProjectDetail() {
 
                         {/* 지원자 */}
                         <div id="applicant">
-                            <Applicant data={data.applicants} />
+                            <Applicant data={applicantData.applicants} />
                         </div>
                         <div className="mt-[70px] w-full h-[1px] bg-n300"></div>
                     </section>

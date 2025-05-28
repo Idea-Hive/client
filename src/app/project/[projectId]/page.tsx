@@ -20,14 +20,10 @@ export default function ProjectDetail() {
         queryFn: getUserInfoApi,
     });
 
-    console.log("user:::", user);
-
     const { data: project, isPending: projectIsPending } = useQuery({
         queryKey: ["getProjectDetail", { projectId: Number(projectId) }],
         queryFn: getProjectDetailApi,
     });
-
-    console.log("project:::", project);
 
     const { data: applicantData, isPending: applicantIsPending } = useQuery({
         queryKey: ["getApplicantInfo", { projectId: Number(projectId), page: 1, size: 4 }],

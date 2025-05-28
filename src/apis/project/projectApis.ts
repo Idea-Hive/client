@@ -18,29 +18,39 @@ export interface SaveProjectRequest {
 }
 
 export const onSaveProjectApi = async (body: SaveProjectRequest) => {
-    const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-    return await Apis.post("/project/create", body, {
-        withCredentials: true,
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/project/create", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 저장 중 오류 발생:", error);
+        throw error;
+    }
 };
 
 export const onTemporarySaveProjectApi = async (body: SaveProjectRequest) => {
-    const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-    return await Apis.post("/project/create", body, {
-        withCredentials: true,
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/project/create", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 임시저장 중 오류 발생:", error);
+        throw error;
+    }
 };
 
 // 프로젝트 검색
@@ -66,18 +76,23 @@ export interface SearchProjectsResponse {
 }
 
 export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: string, SearchProjectsRequest]> = async ({ queryKey }) => {
-    const [_, params] = queryKey;
-    const { keyword = "", recruitType, sortType, page = 1, size = 12 } = params;
+    try {
+        const [_, params] = queryKey;
+        const { keyword = "", recruitType, sortType, page = 1, size = 12 } = params;
 
-    return await Apis.get("/project/search", {
-        params: {
-            keyword,
-            recruitType,
-            sortType,
-            page,
-            size,
-        },
-    });
+        return await Apis.get("/project/search", {
+            params: {
+                keyword,
+                recruitType,
+                sortType,
+                page,
+                size,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 검색 중 오류 발생:", error);
+        throw error;
+    }
 };
 
 // 프로젝트 상세 조회
@@ -112,16 +127,23 @@ export interface ProjectDetailData {
     contact: string;
     viewCnt: number;
     likedCnt: number;
+    projectStatus: "RECRUITING" | "IN_PROGRESS" | "COMPLETED";
+    creatorCompletedProjectCnt: number;
 }
 export const getProjectDetailApi: QueryFunction<ProjectDetailData, [_1: string, GetProjectDetailRequest]> = async ({ queryKey }) => {
-    const [_, params] = queryKey;
-    const { projectId } = params;
+    try {
+        const [_, params] = queryKey;
+        const { projectId } = params;
 
-    return await Apis.get("/project/info", {
-        params: {
-            projectId,
-        },
-    });
+        return await Apis.get("/project/info", {
+            params: {
+                projectId,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 상세 정보 조회 중 오류 발생:", error);
+        throw error;
+    }
 };
 
 // 지원자 정보 가져오기
@@ -138,14 +160,90 @@ export interface ApplicantInfo {
     pageSize: number;
 }
 export const getApplicantInfoApi: QueryFunction<ApplicantInfo, [_1: string, GetApplicantInfoRequest]> = async ({ queryKey }) => {
-    const [_, params] = queryKey;
-    const { projectId, page = 1, size = 4 } = params;
+    try {
+        const [_, params] = queryKey;
+        const { projectId, page = 1, size = 4 } = params;
 
-    return await Apis.get("/project/applicants", {
-        params: {
-            projectId,
-            page,
-            size,
-        },
-    });
+        return await Apis.get("/project/applicants", {
+            params: {
+                projectId,
+                page,
+                size,
+            },
+        });
+    } catch (error) {
+        console.error("지원자 정보 조회 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// Project 시작
+export interface StartProjectRequest {
+    projectId: number;
+}
+
+export const onStartProjectApi = async (body: StartProjectRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/project/start", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 시작 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// Project 추가모집
+export interface RecruitAdditionalMemberRequest {
+    projectId: number;
+}
+
+export const onRecruitAdditionalMemberApi = async (body: RecruitAdditionalMemberRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/project/recruit", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("추가 멤버 모집 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// Project 좋아요
+export interface LikeProjectRequest {
+    projectId: number;
+    memberId: number;
+    like: boolean;
+}
+
+export const onLikeProjectApi = async (body: LikeProjectRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/project/like", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 좋아요 처리 중 오류 발생:", error);
+        throw error;
+    }
 };

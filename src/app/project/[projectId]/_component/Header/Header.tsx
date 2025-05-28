@@ -1,7 +1,7 @@
 import { ProjectDetailData } from "@/apis/project/projectApis";
 import { User } from "@/apis/user/userApis";
 import LeftSection from "./LeftSection";
-import RightSection from "./RightSection";
+import RightSection from "./RightSection/RightSection";
 
 export default function Header({ data, user }: { data: ProjectDetailData; user: User | undefined }) {
     return (

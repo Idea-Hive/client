@@ -1,35 +1,16 @@
 "use client";
 
-import { ProjectDetailData } from "@/apis/project/projectApis";
-import { User } from "@/apis/user/userApis";
 import Button from "@/components/Button";
-import { LikedIcon, ShareIcon, ViewIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
 import { useState } from "react";
 
-export default function RightSection({ data, user }: { data: ProjectDetailData; user: User | undefined }) {
+const ApplicantButton = () => {
     const [isOpenApplicantModal, setIsOpenApplicantModal] = useState<boolean>(false);
     const [isOpenApplicantSuccessModal, setIsOpenApplicantSuccessModal] = useState<boolean>(false);
 
     return (
-        <div className="flex flex-col justify-between">
-            <div className="flex gap-3 items-center text-sm text-black">
-                <div className="flex gap-1.5 items-center">
-                    <ShareIcon />
-                    공유하기
-                </div>
-                <div className="flex gap-1.5 items-center">
-                    <LikedIcon />
-                    {data.likedCnt}
-                </div>
-                <div className="flex gap-1.5 items-center">
-                    <ViewIcon />
-                    {data.viewCnt}
-                </div>
-            </div>
-            <div className="flex justify-end">
-                <Button label="지원하기" className="w-fit px-6" onClick={() => setIsOpenApplicantModal(true)} />
-            </div>
+        <>
+            <Button label="지원하기" className="w-fit px-6" onClick={() => setIsOpenApplicantModal(true)} />
 
             {/* 지원하기 모달 */}
             {isOpenApplicantModal && (
@@ -59,9 +40,9 @@ export default function RightSection({ data, user }: { data: ProjectDetailData; 
                     }}
                 />
             )}
-        </div>
+        </>
     );
-}
+};
 
 const ApplicationReasonTextarea = () => {
     return (
@@ -71,3 +52,5 @@ const ApplicationReasonTextarea = () => {
         </div>
     );
 };
+
+export default ApplicantButton;

@@ -1,24 +1,59 @@
 "use client";
 
-import { onSaveProjectApi, onTemporarySaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
+import { getTemporarySavedProjectInfoApi, onSaveProjectApi, onTemporarySaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
 import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import OptionalInformations from "./_component/OptionalInformations";
 import RequiredInformations from "./_component/RequiredInformations";
 import { RequiredValues } from "./_types/type";
 
 export default function CreateProject() {
     const spinner = useSpinner();
+    const searchParams = useSearchParams();
+    const id = searchParams.get("id");
+
     const [isOpenSuccessModal, setIsOpenSuccessModal] = useState<boolean>(false);
     const [projectId, setProjectId] = useState<number | null>(null);
 
     const router = useRouter();
+
+    const getProjectMutation = useMutation({
+        mutationFn: getTemporarySavedProjectInfoApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (response) => {
+            const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = response;
+            setRequiredValues({
+                title,
+                description,
+                idea,
+                maxMembers,
+                dueDateFrom,
+                dueDateTo,
+                contact,
+            });
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
+    useEffect(() => {
+        if (id) {
+            setProjectId(Number(id));
+            getProjectMutation.mutate(Number(id));
+        }
+    }, [id]);
 
     const { data: user } = useQuery({
         queryKey: ["isLoggedIn"],
@@ -123,9 +158,9 @@ export default function CreateProject() {
     const getRequestBody = (): SaveProjectRequest => {
         const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = requiredValues;
 
-        const requestBody = {
+        const requestBody: SaveProjectRequest = {
             projectId,
-            userId: user?.id,
+            userId: user!.id,
             title,
             description,
             idea,

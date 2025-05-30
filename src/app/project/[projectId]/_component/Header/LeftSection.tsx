@@ -30,7 +30,7 @@ export default function LeftSection({ data }: { data: ProjectDetailData }) {
                 <div className="flex gap-2 items-center text-sm text-n800">
                     <div>{data.creatorJob}</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
-                    <div>경력 {data.creatorCareer}년</div>
+                    <div>경력 {data.creatorCareer || 0}년</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
                     <div>프로젝트 경험 {data.creatorCompletedProjectCnt}회</div>
                     <div>·</div>

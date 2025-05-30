@@ -4,7 +4,8 @@ import { Applicant as ApplicantType } from "@/apis/project/projectApis";
 import Pagination from "@/components/Pagination";
 import ApplicantCard from "./ApplicantCard";
 
-export default function Applicant({ data }: { data: ApplicantType[] }) {
+export default function Applicant({ data, projectId }: { data: ApplicantType[]; projectId: number }) {
+    console.log("Applicant data:::", data);
     return (
         <div className="w-[718px]">
             <div className="text-h3 text-n900 mb-4 flex items-center gap-2">
@@ -14,7 +15,7 @@ export default function Applicant({ data }: { data: ApplicantType[] }) {
             <div className="flex flex-col gap-6">
                 {data.length > 0 ? (
                     data.map((applicant) => {
-                        return <ApplicantCard key={applicant.memberId} state="default" />;
+                        return <ApplicantCard key={applicant.memberId} state="default" applicant={applicant} projectId={projectId} />;
                     })
                 ) : (
                     <div className="flex flex-col items-center gap-3 mt-5">

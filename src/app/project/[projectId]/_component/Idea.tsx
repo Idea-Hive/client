@@ -3,11 +3,17 @@
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import { Tooltip } from "radix-ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Idea({ idea }: { idea: string }) {
+export default function Idea({ idea, userId, creatorId }: { idea: string; userId: number | undefined; creatorId: number }) {
     const [isBlur, setIsBlur] = useState<boolean>(true);
     const [ideaOpenModal, setIdeaOpenModal] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (userId === creatorId) {
+            setIsBlur(false);
+        }
+    }, [userId, creatorId]);
 
     return (
         <div>

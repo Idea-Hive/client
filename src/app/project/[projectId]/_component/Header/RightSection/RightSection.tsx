@@ -36,7 +36,7 @@ export default function RightSection({ data, user }: { data: ProjectDetailData; 
                 {/* 프로젝트 작성자 && 프로젝트 진행중 */}
                 {data.creatorId === user.id && data.projectStatus === "IN_PROGRESS" && <RecruitAdditionalMemberButton projectId={data.projectId} />}
                 {/* 지원자 && 아직 지원 안함 */}
-                {data.creatorId !== user.id && data.projectStatus === "RECRUITING" && <ApplicantButton />}
+                {data.creatorId !== user.id && data.projectStatus === "RECRUITING" && <ApplicantButton projectId={data.projectId} memberId={user.id} />}
                 {/* 지원자 && 지원 했음 */}
                 {data.creatorId !== user.id && data.projectStatus === "IN_PROGRESS" && <Button label="지원완료" disabled={true} className="w-fit px-6" onClick={() => {}} />}
             </div>

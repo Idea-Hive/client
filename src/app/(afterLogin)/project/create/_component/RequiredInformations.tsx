@@ -62,6 +62,7 @@ const RequiredInformations = ({
                     label="프로젝트 설명"
                     isRequired={true}
                     placeholder="프로젝트 설명을 입력해주세요"
+                    initialValue={requiredValues.description}
                     onChange={(value) => {
                         setRequiredValues((prev) => ({ ...prev, description: value }));
                         setErrors((prev) => ({ ...prev, description: "" }));
@@ -114,6 +115,7 @@ const RequiredInformations = ({
                                 setRequiredValues((prev) => ({ ...prev, maxMembers: parseInt(value) }));
                                 setErrors((prev) => ({ ...prev, maxMembers: "" }));
                             }}
+                            initialValue={requiredValues.maxMembers.toString()}
                             isErr={errors.maxMembers !== ""}
                             errMsg={errors.maxMembers}
                         />

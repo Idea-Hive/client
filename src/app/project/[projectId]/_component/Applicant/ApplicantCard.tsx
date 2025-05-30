@@ -1,35 +1,27 @@
+import { Applicant, onCancelApplicantApi } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
 import { BottomArrowIcon, HamburgerIcon, SmallUserImgIcon, UserImgIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
+import { useSpinner } from "@/components/Spinner";
+import { useMutation } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 type CardState = "default" | "confirm" | "reject" | "locked";
-export default function ApplicantCard({ state }: { state: CardState }) {
+export default function ApplicantCard({ state, applicant, projectId }: { state: CardState; applicant: Applicant; projectId: number }) {
     if (state === "locked") return <LockedCard />;
-    else return <Card state={state} />;
+    else return <Card state={state} applicant={applicant} projectId={projectId} />;
 }
 
-const Card = ({ state }: { state: "default" | "confirm" | "reject" }) => {
+const Card = ({ state, applicant, projectId }: { state: "default" | "confirm" | "reject"; applicant: Applicant; projectId: number }) => {
     const [isEdit, setIsEdit] = useState<boolean>(false); // 수정 모드 변경
-    const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false); // 지원 취소 모달 오픈
 
     return (
         <div className="w-full border border-n400 rounded-lg p-6 flex flex-col gap-4">
-            <CardHeader state={state} isEdit={isEdit} setIsEdit={setIsEdit} setIsCancelModalOpen={setIsCancelModalOpen} />
+            <CardHeader state={state} isEdit={isEdit} setIsEdit={setIsEdit} applicant={applicant} projectId={projectId} />
 
-            {isEdit ? <EditCard setIsEdit={setIsEdit} /> : <CardBody />}
+            {isEdit ? <EditCard setIsEdit={setIsEdit} applicant={applicant} /> : <CardBody applicant={applicant} />}
 
             {state === "reject" && <RejectSection />}
-
-            <Modal
-                title="지원 취소"
-                children="지원을 취소하시겠습니까?"
-                isOpen={isCancelModalOpen}
-                onClose={() => setIsCancelModalOpen(false)}
-                onConfirm={() => {
-                    setIsCancelModalOpen(false);
-                }}
-            />
         </div>
     );
 };
@@ -38,13 +30,19 @@ const CardHeader = ({
     state,
     isEdit,
     setIsEdit,
-    setIsCancelModalOpen,
+    applicant,
+    projectId,
 }: {
     state: CardState;
     isEdit: boolean;
     setIsEdit: Dispatch<SetStateAction<boolean>>;
-    setIsCancelModalOpen: Dispatch<SetStateAction<boolean>>;
+    applicant: Applicant;
+    projectId: number;
 }) => {
+    const spinner = useSpinner();
+
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false); // 지원 취소 모달 오픈
+
     const [isDotsThreeVerticalOpen, setIsDotsThreeVerticalOpen] = useState(false); // DotsThreeVertical Dropdown 오픈
     const dotsThreeVerticalRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +60,30 @@ const CardHeader = ({
         };
     }, []);
 
+    const onCancelApplicantMutation = useMutation({
+        mutationFn: onCancelApplicantApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (response) => {
+            console.log("onCancelApplicantMutation Success:::", response);
+            setIsCancelModalOpen(false);
+        },
+        onError: (error) => {
+            console.error("onCancelApplicantMutation Error:::", error);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
+    const onCancelApplicant = () => {
+        onCancelApplicantMutation.mutate({
+            projectId,
+            memberId: applicant.memberId,
+        });
+    };
+
     return (
         <div className="flex justify-between items-start">
             <div className="flex items-center gap-2">
@@ -69,16 +91,17 @@ const CardHeader = ({
                     <UserImgIcon />
 
                     <div className="text-lg text-n900 font-medium flex gap-1 items-center">
-                        홍길동{state === "confirm" && <div className="w-fit h-[18px] px-1.5 bg-taskmateRed rounded-[12px] text-[10px] leading-[18px] text-white font-normal">확정</div>}
+                        {applicant.name}
+                        {state === "confirm" && <div className="w-fit h-[18px] px-1.5 bg-taskmateRed rounded-[12px] text-[10px] leading-[18px] text-white font-normal">확정</div>}
                     </div>
                 </div>
 
                 <div className="flex gap-2 items-center text-sm text-n900">
-                    <div>백엔드 개발자</div>
+                    <div>{applicant.job || "프론트엔드 개발자"}</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
-                    <div>경력 4년</div>
+                    <div>경력 {applicant.career || 0}년</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
-                    <div>프로젝트 경험 2회</div>
+                    <div>프로젝트 경험 {applicant.completedProjectCnt}회</div>
                 </div>
             </div>
 
@@ -112,11 +135,13 @@ const CardHeader = ({
                     )}
                 </div>
             )}
+
+            <Modal title="지원 취소" children="지원을 취소하시겠습니까?" isOpen={isCancelModalOpen} onClose={() => setIsCancelModalOpen(false)} onConfirm={onCancelApplicant} />
         </div>
     );
 };
 
-const EditCard = ({ setIsEdit }: { setIsEdit: Dispatch<SetStateAction<boolean>> }) => {
+const EditCard = ({ setIsEdit, applicant }: { setIsEdit: Dispatch<SetStateAction<boolean>>; applicant: Applicant }) => {
     return (
         <>
             <div className="w-full h-fit p-4 border border-n300 rounded-[4px] flex gap-2">
@@ -131,14 +156,12 @@ const EditCard = ({ setIsEdit }: { setIsEdit: Dispatch<SetStateAction<boolean>> 
     );
 };
 
-const CardBody = () => {
-    const [isSpecOpen, setIsSpecOpen] = useState(true); // 보유 스펙 오픈
-
-    const content = `3년차 프론트엔드 개발자 홍길동입니다.<br/>꼭 참여하고 싶습니다.`;
+const CardBody = ({ applicant }: { applicant: Applicant }) => {
+    const [isSpecOpen, setIsSpecOpen] = useState(applicant.skillStacks.length > 0); // 보유 스펙 오픈
 
     return (
         <>
-            <div className="text-n900 text-base" dangerouslySetInnerHTML={{ __html: content }} />
+            <div className="text-n900 text-base" dangerouslySetInnerHTML={{ __html: applicant.applicationMessage }} />
             <div className="flex flex-col gap-3">
                 <div className="w-fit flex items-center gap-1 text-smEmphasize text-n900 cursor-pointer" onClick={() => setIsSpecOpen(!isSpecOpen)}>
                     보유스펙
@@ -147,7 +170,7 @@ const CardBody = () => {
 
                 {isSpecOpen && (
                     <div className="flex flex-wrap gap-2">
-                        {["React", "Next", "Styled-components", "RxJS", "svelte", "Redux", "Tanstack-Query", "Redux-toolkit", "Redux-saga"].map((item) => {
+                        {applicant.skillStacks.map((item) => {
                             return (
                                 <button key={item} className="border border-[#d8dae5] text-xs text-n900 rounded-full px-3 h-8 cursor-default pointer-events-none">
                                     {item}

@@ -78,7 +78,7 @@ export default function ProjectDetail() {
 
                             {/* 아이디어 */}
                             <div id="idea">
-                                <Idea idea={project.idea} />
+                                <Idea idea={project.idea} userId={user?.id} creatorId={project.creatorId} />
                             </div>
 
                             {/* 모집정보 */}
@@ -91,7 +91,7 @@ export default function ProjectDetail() {
 
                         {/* 지원자 */}
                         <div id="applicant">
-                            <Applicant data={applicantData.applicants} />
+                            <Applicant data={applicantData.applicants} projectId={Number(projectId)} />
                         </div>
                         <div className="mt-[70px] w-full h-[1px] bg-n300"></div>
                     </section>

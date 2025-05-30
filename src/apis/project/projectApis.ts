@@ -247,3 +247,111 @@ export const onLikeProjectApi = async (body: LikeProjectRequest) => {
         throw error;
     }
 };
+
+// 임시저장 프로젝트 목록 조회
+export interface TemporarySavedProject {
+    projectId: number;
+    title: string;
+    tempSavedDate: string;
+}
+export const getTemporarySavedProjectApi = async (userId: number): Promise<TemporarySavedProject[]> => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.get("/project/tempsaved", {
+            params: {
+                userId,
+            },
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("임시저장 프로젝트 조회 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// 임시저장 프로젝트 상세 정보 조회
+export interface TemporarySavedProjectInfo {
+    title: string;
+    description: string;
+    idea: string;
+    contact: string;
+    maxMembers: number;
+    dueDateFrom: string;
+    dueDateTo: string;
+    hashtagNames: string[];
+    projectSkillStacks: string[];
+}
+export const getTemporarySavedProjectInfoApi = async (projectId: number): Promise<TemporarySavedProjectInfo> => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        return await Apis.get("/project/tempsaved/info", {
+            params: { projectId },
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("임시저장 프로젝트 상세 정보 조회 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// Project 지원하기
+export interface ApplyProjectRequest {
+    projectId: number;
+    memberId: number;
+    message: string;
+}
+
+export const onApplyProjectApi = async (body: ApplyProjectRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/project/apply", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 지원하기 처리 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// Project 지원 취소
+export interface CancelApplicantRequest {
+    projectId: number;
+    memberId: number;
+}
+
+export const onCancelApplicantApi = async (body: CancelApplicantRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.delete("/project/apply", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 지원 취소 처리 중 오류 발생:", error);
+        throw error;
+    }
+};

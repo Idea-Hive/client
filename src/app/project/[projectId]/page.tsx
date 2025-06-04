@@ -1,34 +1,33 @@
 "use client";
 
-import { getApplicantInfoApi, getProjectDetailApi } from "@/apis/project/projectApis";
-import { getUserInfoApi } from "@/apis/user/userApis";
 import Spinner from "@/components/Spinner";
 import Tab from "@/components/Tab";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import Applicant from "./_component/Applicant/Applicant";
 import BaseInfo from "./_component/BaseInfo";
 import Header from "./_component/Header/Header";
 import Idea from "./_component/Idea";
 import Recruitment from "./_component/Recruitment";
+import { useApplicantInfo, useProjectDetail, useUserInfo } from "./hooks/Hooks";
+import { useIdsForApplicant } from "./store/store";
 
 export default function ProjectDetail() {
     const { projectId } = useParams();
 
-    const { data: user } = useQuery({
-        queryKey: ["isLoggedIn"],
-        queryFn: getUserInfoApi,
-    });
+    const { user, userIsPending } = useUserInfo();
+    const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
+    const { applicantData, applicantIsPending } = useApplicantInfo(Number(projectId));
 
-    const { data: project, isPending: projectIsPending } = useQuery({
-        queryKey: ["getProjectDetail", { projectId: Number(projectId) }],
-        queryFn: getProjectDetailApi,
-    });
+    const { setProjectId, setLoginUserId, setProjectCreatorId } = useIdsForApplicant();
 
-    const { data: applicantData, isPending: applicantIsPending } = useQuery({
-        queryKey: ["getApplicantInfo", { projectId: Number(projectId), page: 1, size: 4 }],
-        queryFn: getApplicantInfoApi,
-    });
+    useEffect(() => {
+        if (project) {
+            setProjectId(Number(projectId));
+            setLoginUserId(user?.id);
+            setProjectCreatorId(project.creatorId);
+        }
+    }, [project, setProjectId, setLoginUserId, setProjectCreatorId, projectId, user]);
 
     const tabItems = [
         { value: "baseInfo", label: "기본정보" },
@@ -65,7 +64,7 @@ export default function ProjectDetail() {
             {project && applicantData && (
                 <>
                     {/* 헤더 */}
-                    <Header data={project} user={user} />
+                    <Header />
 
                     <section className="w-[1200px] mx-auto my-10">
                         <Tab items={tabItems} onChange={handleTab} defaultTab="baseInfo" />
@@ -91,7 +90,7 @@ export default function ProjectDetail() {
 
                         {/* 지원자 */}
                         <div id="applicant">
-                            <Applicant data={applicantData.applicants} projectId={Number(projectId)} />
+                            <Applicant />
                         </div>
                         <div className="mt-[70px] w-full h-[1px] bg-n300"></div>
                     </section>

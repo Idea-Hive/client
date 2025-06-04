@@ -3,17 +3,32 @@
 import Input from "@/components/Input";
 import { useInput } from "@/hooks/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getSkillStackApi } from "../_api/api";
 import { skillCategories } from "../_data/skills";
 
 interface OptionalInformationsProps {
+    hashTags: string[];
     setHashTags: Dispatch<SetStateAction<string[]>>;
+    skills: string[];
     setSkills: Dispatch<SetStateAction<number[]>>;
 }
 
-const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: OptionalInformationsProps) => {
+const OptionalInformations = ({ hashTags, setHashTags, skills, setSkills }: OptionalInformationsProps) => {
     const { data: rawSkillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
+    const [selectedSkills, setSelectedSkills] = useState<{ id: number; name: string }[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<keyof typeof skillCategories>("frontend");
+
+    useEffect(() => {
+        if (skills.length > 0 && rawSkillStacks) {
+            const firstSkill = rawSkillStacks.find((s) => s.name === skills[0]);
+            if (firstSkill) {
+                setSelectedCategory(firstSkill.category as keyof typeof skillCategories);
+            }
+            setSelectedSkills(skills.map((skill) => ({ id: rawSkillStacks?.find((s) => s.name === skill)?.id || 0, name: skill })));
+            setSkills(skills.map((skill) => rawSkillStacks?.find((s) => s.name === skill)?.id || 0));
+        }
+    }, [rawSkillStacks, skills]);
 
     // 스킬스택 데이터를 카테고리별로 그룹화
     const skillStacks = rawSkillStacks?.reduce((acc: { [key: string]: any[] }, curr: any) => {
@@ -33,18 +48,13 @@ const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: Opti
           }))
         : [];
 
-    const [selectedSkills, setSelectedSkills] = useState<{ id: number; name: string }[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<keyof typeof skillCategories>("frontend");
-
     const hashTag = useInput("");
-    const [hashTags, setHashTags] = useState<string[]>([]);
 
     const handleHashTagSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && hashTag.value.trim()) {
             e.preventDefault();
             if (!hashTags.includes(hashTag.value.trim())) {
                 setHashTags([...hashTags, hashTag.value.trim()]);
-                setHashTagsProps([...hashTags, hashTag.value.trim()]);
                 hashTag.reset();
             }
         }
@@ -52,7 +62,6 @@ const OptionalInformations = ({ setHashTags: setHashTagsProps, setSkills }: Opti
 
     const removeHashTag = (tagToRemove: string) => {
         setHashTags(hashTags.filter((tag) => tag !== tagToRemove));
-        setHashTagsProps(hashTags.filter((tag) => tag !== tagToRemove));
     };
 
     const handleSkillSelect = (skillId: number, skillName: string) => {

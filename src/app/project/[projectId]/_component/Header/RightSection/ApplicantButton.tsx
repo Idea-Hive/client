@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 const ApplicantButton = ({ projectId, memberId }: { projectId: number; memberId: number }) => {
@@ -17,6 +17,7 @@ const ApplicantButton = ({ projectId, memberId }: { projectId: number; memberId:
     const [isToastOpen, setIsToastOpen] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<string>("");
     const [toastType, setToastType] = useState<"success" | "warning" | "error" | "info">("success");
+    const queryClient = useQueryClient();
 
     const onApplicantMutation = useMutation({
         mutationFn: onApplyProjectApi,
@@ -30,6 +31,8 @@ const ApplicantButton = ({ projectId, memberId }: { projectId: number; memberId:
             setToastMessage("지원이 완료되었습니다");
             setToastType("success");
             setIsToastOpen(true);
+            queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId, userId: memberId }] });
+            queryClient.invalidateQueries({ queryKey: ["getApplicantInfo", { projectId, page: 1, size: 4 }] });
         },
         onError: (error) => {
             console.log("onApplicantMutation onError:::", error);
@@ -92,9 +95,10 @@ const ApplicationReasonTextarea = ({ message, setMessage }: { message: string; s
                 className="w-full h-fit min-h-20 resize-none bg-n75 border-none text-sm text-n800 focus:outline-none"
                 placeholder="지원사유를 작성해주세요. 작성자에게 전달됩니다"
                 value={message}
+                maxLength={100}
                 onChange={(e) => setMessage(e.target.value)}
             />
-            <div className="flex flex-col justify-end text-xs text-n800">0/20</div>
+            <div className="flex flex-col justify-end text-xs text-n800">{message.length}/100</div>
         </div>
     );
 };

@@ -5,16 +5,20 @@ import { LikedIcon, ShareIcon, ViewIcon } from "@/components/icons/icons";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useProjectDetail, useUserInfo } from "../../../hooks/Hooks";
 import ApplicantButton from "./ApplicantButton";
 import RecruitAdditionalMemberButton from "./RecruitAdditionalMemberButton";
 import StartProjectButton from "./StartProjectButton";
 
-export default function RightSection({ data, user }: { data: ProjectDetailData; user: User | undefined }) {
-    console.log(data);
-    console.log("user:::", user);
+export default function RightSection() {
+    const { projectId } = useParams();
+    const { user } = useUserInfo();
+    const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
 
     if (!user) return null;
+    if (!project) return null;
     return (
         <div className="flex flex-col justify-between">
             <div className="flex gap-3 items-center text-sm text-black">
@@ -23,28 +27,28 @@ export default function RightSection({ data, user }: { data: ProjectDetailData; 
                     공유하기
                 </div>
                 <div className="flex gap-1.5 items-center">
-                    <Like data={data} user={user} />
+                    <Like project={project} user={user} />
                 </div>
                 <div className="flex gap-1.5 items-center">
                     <ViewIcon />
-                    {data.viewCnt}
+                    {project.viewCnt}
                 </div>
             </div>
             <div className="flex justify-end">
                 {/* 프로젝트 작성자 && 프로젝트 시작 전 */}
-                {data.creatorId === user.id && data.projectStatus === "RECRUITING" && <StartProjectButton projectId={data.projectId} />}
+                {project.creatorId === user.id && project.projectStatus === "RECRUITING" && <StartProjectButton projectId={project.projectId} />}
                 {/* 프로젝트 작성자 && 프로젝트 진행중 */}
-                {data.creatorId === user.id && data.projectStatus === "IN_PROGRESS" && <RecruitAdditionalMemberButton projectId={data.projectId} />}
+                {project.creatorId === user.id && project.projectStatus === "IN_PROGRESS" && <RecruitAdditionalMemberButton projectId={project.projectId} />}
                 {/* 지원자 && 아직 지원 안함 */}
-                {data.creatorId !== user.id && data.projectStatus === "RECRUITING" && <ApplicantButton projectId={data.projectId} memberId={user.id} />}
+                {project.creatorId !== user.id && project.projectStatus === "RECRUITING" && !project.isApply && <ApplicantButton projectId={project.projectId} memberId={user.id} />}
                 {/* 지원자 && 지원 했음 */}
-                {data.creatorId !== user.id && data.projectStatus === "IN_PROGRESS" && <Button label="지원완료" disabled={true} className="w-fit px-6" onClick={() => {}} />}
+                {project.creatorId !== user.id && project.isApply && <Button label="지원완료" disabled={true} className="w-fit px-6" onClick={() => {}} />}
             </div>
         </div>
     );
 }
 
-const Like = ({ data, user }: { data: ProjectDetailData; user: User | undefined }) => {
+const Like = ({ project, user }: { project: ProjectDetailData; user: User | undefined }) => {
     const spinner = useSpinner();
     const queryClient = useQueryClient();
 
@@ -59,7 +63,7 @@ const Like = ({ data, user }: { data: ProjectDetailData; user: User | undefined 
         },
         onSuccess: () => {
             setIsSuccess(true);
-            queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId: Number(data.projectId) }] });
+            queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId: Number(project.projectId), userId: user?.id }] });
         },
         onError: () => {
             setLikedErr(true);
@@ -77,26 +81,26 @@ const Like = ({ data, user }: { data: ProjectDetailData; user: User | undefined 
             return;
         }
 
-        if (data.creatorId === user.id) {
+        if (project.creatorId === user.id) {
             setLikedErr(true);
             setLikedErrMsg("작성자는 좋아요를 누를 수 없습니다.");
             return;
         }
 
         onLikeMutation.mutate({
-            projectId: data.projectId,
+            projectId: project.projectId,
             memberId: user.id,
-            like: false,
+            isLike: !project.isLike,
         });
     };
 
     return (
         <>
-            <LikedIcon onClick={onClickLikedIcon} />
-            {data.likedCnt}
+            <LikedIcon isLike={project.isLike} onClick={onClickLikedIcon} />
+            {project.likedCnt}
 
             {likedErr && <Toast message={likedErrMsg} type="error" onClose={() => setLikedErr(false)} />}
-            {isSuccess && <Toast message="좋아요 처리가 완료되었습니다." type="success" onClose={() => setIsSuccess(false)} />}
+            {isSuccess && <Toast message={`${project.isLike ? "좋아요" : "좋아요 취소"} 처리가 완료되었습니다.`} type="success" onClose={() => setIsSuccess(false)} />}
         </>
     );
 };

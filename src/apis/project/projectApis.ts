@@ -98,6 +98,7 @@ export const onSearchProjectsApi: QueryFunction<SearchProjectsResponse, [_1: str
 // 프로젝트 상세 조회
 export interface GetProjectDetailRequest {
     projectId: number;
+    userId: number | undefined;
 }
 export interface Applicant {
     memberId: number;
@@ -108,6 +109,7 @@ export interface Applicant {
     skillStacks: string[];
     isAccepted: "CONFIRMED" | "UNDECIDED" | "REJECTED";
     completedProjectCnt: number;
+    rejectionMessage: string;
 }
 
 export interface ProjectDetailData {
@@ -129,16 +131,18 @@ export interface ProjectDetailData {
     likedCnt: number;
     projectStatus: "RECRUITING" | "IN_PROGRESS" | "COMPLETED";
     creatorCompletedProjectCnt: number;
+    isApply: boolean;
+    isLike: boolean;
+    isNew: boolean;
 }
 export const getProjectDetailApi: QueryFunction<ProjectDetailData, [_1: string, GetProjectDetailRequest]> = async ({ queryKey }) => {
     try {
         const [_, params] = queryKey;
-        const { projectId } = params;
+        const { projectId, userId } = params;
 
+        const parameters = userId ? { projectId, userId } : { projectId };
         return await Apis.get("/project/info", {
-            params: {
-                projectId,
-            },
+            params: parameters,
         });
     } catch (error) {
         console.error("프로젝트 상세 정보 조회 중 오류 발생:", error);
@@ -227,7 +231,7 @@ export const onRecruitAdditionalMemberApi = async (body: RecruitAdditionalMember
 export interface LikeProjectRequest {
     projectId: number;
     memberId: number;
-    like: boolean;
+    isLike: boolean;
 }
 
 export const onLikeProjectApi = async (body: LikeProjectRequest) => {

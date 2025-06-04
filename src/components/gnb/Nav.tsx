@@ -1,6 +1,6 @@
 "use client";
 
-import { getUserInfoApi } from "@/apis/user/userApis";
+import { getUserInfoApi, User } from "@/apis/user/userApis";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,8 +18,6 @@ export default function Nav() {
         queryFn: getUserInfoApi,
         refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
     });
-
-    console.log("data:::", data);
 
     return (
         <nav className="w-full h-[72px] flex justify-center border-b border-[#d8dae5]">
@@ -56,13 +54,7 @@ export default function Nav() {
     );
 }
 
-const NavRightSectionForLoggedInUser = ({
-    user,
-}: {
-    user: {
-        nickname: string;
-    };
-}) => {
+const NavRightSectionForLoggedInUser = ({ user }: { user: User }) => {
     const router = useRouter();
     const [showDropdown, setShowDropdown] = useState(false);
 

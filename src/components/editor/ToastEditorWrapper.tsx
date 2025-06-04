@@ -6,6 +6,7 @@ import "./ToastEditorStyle.css";
 type Props = {
     editorRef: RefObject<Editor>;
     label?: string;
+    initialValue?: string;
     onChange: (value: string) => void;
     isRequired?: boolean;
     placeholder?: string;
@@ -13,7 +14,7 @@ type Props = {
     errMsg?: string;
 };
 
-export default function ToastEditorWrapper({ editorRef, label, placeholder, onChange, isRequired = false, isErr = false, errMsg = "" }: Props) {
+export default function ToastEditorWrapper({ editorRef, label, placeholder, onChange, isRequired = false, isErr = false, errMsg = "", initialValue }: Props) {
     useEffect(() => {
         if (isErr) {
             document.documentElement.querySelector(".toastui-editor-defaultUI")?.classList.add("border-taskmateRed");
@@ -42,7 +43,7 @@ export default function ToastEditorWrapper({ editorRef, label, placeholder, onCh
                     ["ul", "ol"],
                     ["table", "link"],
                 ]}
-                initialValue=" "
+                initialValue={initialValue || " "}
                 onChange={() => {
                     const instance = editorRef.current?.getInstance();
                     const markdown = instance?.getMarkdown();

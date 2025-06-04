@@ -25,7 +25,7 @@ export default function Toast({ type = "error", message, duration = 3000, onClos
     return (
         <div
             className={`
-                fixed bottom-5 left-1/2 -translate-x-1/2
+                fixed bottom-5 left-1/2 -translate-x-1/2 z-[100]
                 p-4 rounded-lg border text-sm
                 animate-[slideUp_3s_ease-in-out_forwards]
                 flex items-center justify-between

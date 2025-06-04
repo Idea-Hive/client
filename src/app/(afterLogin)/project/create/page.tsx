@@ -1,23 +1,68 @@
 "use client";
 
-import { onSaveProjectApi, onTemporarySaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
+import { getTemporarySavedProjectInfoApi, onSaveProjectApi, onTemporarySaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
+import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import OptionalInformations from "./_component/OptionalInformations";
 import RequiredInformations from "./_component/RequiredInformations";
 import { RequiredValues } from "./_types/type";
 
 export default function CreateProject() {
     const spinner = useSpinner();
+    const searchParams = useSearchParams();
+    const id = searchParams.get("id");
+
     const [isOpenSuccessModal, setIsOpenSuccessModal] = useState<boolean>(false);
     const [projectId, setProjectId] = useState<number | null>(null);
 
     const router = useRouter();
+
+    const [tempSavedSkills, setTempSavedSkills] = useState<string[]>([]);
+    const getProjectMutation = useMutation({
+        mutationFn: getTemporarySavedProjectInfoApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (response) => {
+            const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact, hashtagNames, projectSkillStacks } = response;
+            console.log("project info:::", response);
+            setRequiredValues({
+                title,
+                description,
+                idea,
+                maxMembers,
+                dueDateFrom,
+                dueDateTo,
+                contact,
+            });
+            setHashTags(hashtagNames);
+            setTempSavedSkills(projectSkillStacks);
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
+    useEffect(() => {
+        if (id) {
+            setProjectId(Number(id));
+            getProjectMutation.mutate(Number(id));
+        }
+    }, [id]);
+
+    const { data: user } = useQuery({
+        queryKey: ["isLoggedIn"],
+        queryFn: getUserInfoApi,
+    });
 
     // dueDateFrom, dueDateTo format
     // const now = new Date();
@@ -117,9 +162,9 @@ export default function CreateProject() {
     const getRequestBody = (): SaveProjectRequest => {
         const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = requiredValues;
 
-        const requestBody = {
+        const requestBody: SaveProjectRequest = {
             projectId,
-            userId: 1,
+            userId: user!.id,
             title,
             description,
             idea,
@@ -155,7 +200,7 @@ export default function CreateProject() {
         <div className="w-[780px] mx-auto mb-[60px]">
             <div className="mt-[50px] mb-8 text-h1 text-n900 w-full">프로젝트 등록</div>
             <RequiredInformations requiredValues={requiredValues} setRequiredValues={setRequiredValues} errors={errors} setErrors={setErrors} />
-            <OptionalInformations setHashTags={setHashTags} setSkills={setSkills} />
+            <OptionalInformations hashTags={hashTags} setHashTags={setHashTags} skills={tempSavedSkills} setSkills={setSkills} />
 
             <div className="flex justify-center gap-3 mt-6">
                 <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>

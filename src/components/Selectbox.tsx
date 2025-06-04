@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
  * isRequired: 필수 여부
  * placeholder: placeholder
  * options: 옵션 배열
+ * initialValue: 초기 값
  * onChange: onChange 이벤트
  * isErr: 에러 여부
  * errMsg: 에러 메시지
@@ -16,15 +17,23 @@ interface SelectboxProps {
     isRequired?: boolean;
     placeholder?: string;
     options: { value: string; label: string }[];
+    initialValue?: string;
     onChange?: (value: string) => void;
     isErr?: boolean;
     errMsg?: string;
 }
 
-const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, placeholder, options, onChange, isErr = false, errMsg }) => {
+const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, placeholder, options, initialValue, onChange, isErr = false, errMsg }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
     const selectboxRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (initialValue) {
+            const option = options.filter((v) => v.value === initialValue)[0];
+            if (option) setSelectedOption(option.label);
+        }
+    }, [initialValue]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

@@ -1,5 +1,6 @@
 "use client";
 
+import Spinner from "@/components/Spinner";
 import { useEffect, useState } from "react";
 import { getRefreshToken } from "../_api/getRefreshToken";
 
@@ -10,6 +11,7 @@ export default function SocialAuthPage() {
     useEffect(() => {
         const fetchToken = async () => {
             try {
+                setIsLoading(true);
                 const authResponse = await getRefreshToken();
 
                 document.cookie = `token=${authResponse.accessToken}; path=/`;
@@ -28,5 +30,5 @@ export default function SocialAuthPage() {
         return <div className="text-red-500">{error}</div>;
     }
 
-    return <div>화면 이동 중입니다. 잠시만 기다려주세요~</div>;
+    return <div>{isLoading && <Spinner />}</div>;
 }

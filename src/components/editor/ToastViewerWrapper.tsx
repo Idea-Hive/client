@@ -6,5 +6,9 @@ type Props = {
 };
 
 export default function ToastViewerWrapper({ content }: Props) {
-    return <Viewer initialValue={content} />;
+    return (
+        <div className="[&_.toastui-editor-contents]:font-pretendard [&_.toastui-editor-contents]:text-base">
+            <Viewer initialValue={content} />
+        </div>
+    );
 }

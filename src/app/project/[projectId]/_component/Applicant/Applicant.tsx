@@ -1,20 +1,28 @@
 "use client";
 
-import { Applicant as ApplicantType } from "@/apis/project/projectApis";
 import Pagination from "@/components/Pagination";
+import { useParams } from "next/navigation";
+import { useApplicantInfo, useProjectDetail, useUserInfo } from "../../hooks/Hooks";
 import ApplicantCard from "./ApplicantCard";
 
-export default function Applicant({ data }: { data: ApplicantType[] }) {
+export default function Applicant() {
+    const { projectId } = useParams();
+
+    const { user, userIsPending } = useUserInfo();
+    const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
+    const { applicantData, applicantIsPending } = useApplicantInfo(Number(projectId));
+
+    if (!applicantData || !project) return null;
     return (
         <div className="w-[718px]">
             <div className="text-h3 text-n900 mb-4 flex items-center gap-2">
-                지원자<div className="rounded-full px-1.5 h-[18px] bg-taskmateRed text-xs text-n0">{data.length}</div>
+                지원자<div className="rounded-full px-1.5 h-[18px] bg-taskmateRed text-xs text-n0">{applicantData.applicants.length}</div>
             </div>
 
             <div className="flex flex-col gap-6">
-                {data.length > 0 ? (
-                    data.map((applicant) => {
-                        return <ApplicantCard key={applicant.memberId} state="default" />;
+                {applicantData.applicants.length > 0 ? (
+                    applicantData.applicants.map((applicant) => {
+                        return <ApplicantCard key={applicant.memberId} state="default" applicant={applicant} projectCreatorName={project.creatorName} />;
                     })
                 ) : (
                     <div className="flex flex-col items-center gap-3 mt-5">
@@ -29,7 +37,9 @@ export default function Applicant({ data }: { data: ApplicantType[] }) {
                 )}
             </div>
 
-            <div className="mt-10 w-full flex justify-center">{data.length > 0 && <Pagination page={1} viewPerPage={10} total={data.length} onChange={() => {}} />}</div>
+            <div className="mt-10 w-full flex justify-center">
+                {applicantData.applicants.length > 0 && <Pagination page={1} viewPerPage={10} total={applicantData.applicants.length} onChange={() => {}} />}
+            </div>
         </div>
     );
 }

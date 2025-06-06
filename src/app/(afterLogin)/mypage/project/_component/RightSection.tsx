@@ -4,6 +4,7 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "./Table";
+import FileModal from "./FileModal";
 
 export default function RightSection() {
     //담당자 드롭박스
@@ -11,6 +12,13 @@ export default function RightSection() {
     const toggleDropdown = (index: number) => {
         setOpenDropdownIndex((prev) => (prev === index ? null : index));
     };
+
+    //파일 모달
+    const [openFileModalIndex, setOpenFileModalIndex] = useState<number | null>(null);
+    const openFileModal = (index: number) => {
+        setOpenFileModalIndex(index);
+    };
+
     //탬플릿 다운로드
     const onDownloadTemplate = () => {
         //TODO
@@ -43,27 +51,27 @@ export default function RightSection() {
                         <div className="flex gap-2">
                             <Button
                                 label="선택 탬플릿"
-                                onClick={() => {onDownloadTemplate}}
-                                icLeft={<DownloadSimpleIcon />}
+                                onClick={() => onDownloadTemplate}
+                                icLeft={
+                                    <div className="w-3 h-3">
+                                        <DownloadSimpleIcon />
+                                    </div>
+                                }
                                 size="small"
                                 btnType="line"
                             />
-                            <Button
-                                label="전체 탬플릿"
-                                onClick={() => {onDownloadTemplate}}
-                                icLeft={<DownloadSimpleIconWhite />}
-                                size="small"
-                                btnType="primary"
-                            />
+                            <Button label="전체 탬플릿" onClick={() => onDownloadTemplate} icLeft={<DownloadSimpleIconWhite />} size="small" btnType="primary" />
                         </div>
                     </div>
-                    <Table tasks={tasks} onToggleAssignee={toggleDropdown} openDropdownIndex={openDropdownIndex}></Table>
+                    <Table tasks={tasks} onToggleAssignee={toggleDropdown} openDropdownIndex={openDropdownIndex} onOpenFileModal={openFileModal}></Table>
                 </div>
                 <div className="mt-[40px] flex flex-col">
                     <div className="text-h3 text-n900">선택 과제</div>
                     {/* 테이블 */}
                 </div>
             </div>
+            {/* 모달 렌더링 부분 */}
+            {openFileModalIndex !== null && <FileModal isOpen={true} onClose={() => setOpenFileModalIndex(null)} />}
         </div>
     );
 }

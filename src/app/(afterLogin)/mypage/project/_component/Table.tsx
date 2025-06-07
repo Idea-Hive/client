@@ -10,13 +10,14 @@ interface Task {
 interface TaskTableProps {
     tasks: Task[];
     onToggleAssignee?: (index: number) => void; //드롭박스 event handler
-    openDropdownIndex?: number | null;          //드롭박스 테이블 idx
+    openDropdownIndex?: number | null;          //드롭박스 행 idx
+    onOpenFileModal?: (index: number) => void;  //파일모달 event handler
 }
 
 import { FolderIcon, SmallUserImgIcon, CaretDownIcon, CalendaBlankIcon, UploadSimpleIcon
 } from "@/components/icons/icons";
 
-const Table: React.FC<TaskTableProps> = ({ tasks, onToggleAssignee, openDropdownIndex }) => {
+const Table: React.FC<TaskTableProps> = ({ tasks, onToggleAssignee, openDropdownIndex, onOpenFileModal}) => {
     return (
         <div className="mt-4 rounded border border-n400">
             <table className="w-full text-xs border-separate border-spacing-0">
@@ -71,7 +72,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onToggleAssignee, openDropdown
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "rounded-br-xl" : "border-b"}`}>
                                 {task.isEditable ? (
-                                    <div className="flex justify-center items-center gap-1 text-n600 cursor-pointer">
+                                    <div className="flex justify-center items-center gap-1 text-n600 cursor-pointer" onClick={() => onOpenFileModal?.(index)}>
                                         <UploadSimpleIcon />
                                         <span>제출하기</span>
                                     </div>

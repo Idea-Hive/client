@@ -4,7 +4,6 @@ import Checkbox from "@/components/Checkbox";
 import Input from "@/components/Input";
 import Selectbox from "@/components/Selectbox";
 import Spinner from "@/components/Spinner";
-import Textarea from "@/components/Textarea";
 import dynamic from "next/dynamic";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { RequiredValues } from "../_types/type";
@@ -71,7 +70,7 @@ const RequiredInformations = ({
                     errMsg={errors.description}
                 />
 
-                <Textarea
+                {/* <Textarea
                     label="아이디어"
                     value={requiredValues.idea}
                     onChange={(e) => {
@@ -82,7 +81,7 @@ const RequiredInformations = ({
                     isRequired={true}
                     isErr={errors.idea !== ""}
                     errMsg={errors.idea}
-                />
+                /> */}
 
                 <Input
                     label="연락수단"

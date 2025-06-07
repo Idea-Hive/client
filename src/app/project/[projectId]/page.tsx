@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import Applicant from "./_component/Applicant/Applicant";
 import BaseInfo from "./_component/BaseInfo";
 import Header from "./_component/Header/Header";
-import Idea from "./_component/Idea";
 import Recruitment from "./_component/Recruitment";
 import { useApplicantInfo, useProjectDetail, useUserInfo } from "./hooks/Hooks";
 import { useIdsForApplicant } from "./store/store";
@@ -31,7 +30,7 @@ export default function ProjectDetail() {
 
     const tabItems = [
         { value: "baseInfo", label: "기본정보" },
-        { value: "idea", label: "아이디어" },
+        // { value: "idea", label: "아이디어" },
         { value: "recruitment", label: "모집정보" },
         {
             value: "applicant",
@@ -76,9 +75,9 @@ export default function ProjectDetail() {
                             </div>
 
                             {/* 아이디어 */}
-                            <div id="idea">
+                            {/* <div id="idea">
                                 <Idea idea={project.idea} userId={user?.id} creatorId={project.creatorId} />
-                            </div>
+                            </div> */}
 
                             {/* 모집정보 */}
                             <div id="recruitment">

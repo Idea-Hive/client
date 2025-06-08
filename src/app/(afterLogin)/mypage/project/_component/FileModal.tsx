@@ -20,6 +20,33 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose }) => {
     const toggleLinkButton = () => setIsLinkType((prev) => !prev);
     const toggleFileButton = () => setIsFileType((prev) => !prev);
 
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 bg-black bg-opacity-50" />
+            <div className="relative w-[420px] shadow-elavation1 bg-white rounded-xl p-6">
+                <div className="flex gap-6">
+                    <h2 className="text-lg leading-6 font-medium mb-2 min-w-80">파일/링크 제출</h2>
+                    <button onClick={onClose}>
+                        <CloseIcon />
+                    </button>
+                </div>
+                <div className={`${isLinkType || isFileType ? "mt-6" : ""} flex flex-col gap-6`}>
+                    <div className="flex flex-col gap-4">
+                        {isLinkType && <LinkInput/> }
+                        {isFileType && <FileInput/> }
+                    </div>
+                    <div className="flex gap-2">
+                        <Button className="flex-1" label="링크 업로드" icLeft={<LinkSimpleIcon />} size="medium" btnType="line" onClick={() => toggleLinkButton()} />
+                        <Button className="flex-1" label="파일 업로드" icLeft={<PlusCircleIcon />} size="medium" btnType="line" onClick={() => toggleFileButton()} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const LinkInput = () => {
     /** 링크 */
     const linkInputRef = useRef<HTMLInputElement | null>(null);
     const [linkName, setLinkName] = useState("");
@@ -38,6 +65,22 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose }) => {
             linkInputRef.current.value = "";
         }
     }
+    return(
+        <div className="w-full border border-n300 bg-n75 rounded pt-3 pb-3 pl-4 pr-4 flex items-center justify-between">
+            <input ref={linkInputRef} className="w-[273px] bg-transparent outline-none" type="text" placeholder="링크 입력"/>
+            <div className="flex items-center gap-2">
+                <button onClick={handleCopy}>
+                    <LinkSimpleIcon />
+                </button>
+                <button onClick={handleLinkDelete}>
+                    <p className="text-sm text-n600">삭제</p>
+                </button>
+            </div>
+        </div>
+    );
+}
+
+const FileInput = () => {
     /** 파일 */
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [fileName, setFileName] = useState("");
@@ -57,60 +100,24 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose }) => {
         setFile(null);
         setFileName("");
         if (fileInputRef.current) {
-            //이거 안 하면 삭제했다가 같은 파일을 다시 올릴 수 없음 (같은 파일이 다시 선택돼도 값이 변경되지 않았다고 간주)
             fileInputRef.current.value = "";
         }
     };
 
-    if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="fixed inset-0 bg-black bg-opacity-50" />
-            <div className="relative w-[420px] shadow-elavation1 bg-white rounded-xl p-6">
-                <div className="flex gap-6">
-                    <h2 className="text-lg leading-6 font-medium mb-2 min-w-80">파일/링크 제출</h2>
-                    <button onClick={onClose}>
-                        <CloseIcon />
-                    </button>
-                </div>
-                <div className={`${isLinkType || isFileType ? "mt-6" : ""} flex flex-col gap-6`}>
-                    <div className="flex flex-col gap-4">
-                        {isLinkType && (
-                            <div className="w-full border border-n300 bg-n75 rounded pt-3 pb-3 pl-4 pr-4 flex items-center justify-between">
-                                <input ref={linkInputRef} className="w-[273px] bg-transparent outline-none" type="text" placeholder="링크 입력"/>
-                                <div className="flex items-center gap-2">
-                                    <button onClick={handleCopy}>
-                                        <LinkSimpleIcon />
-                                    </button>
-                                    <button onClick={handleLinkDelete}>
-                                        <p className="text-sm text-n600">삭제</p>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                        {isFileType && (
-                            <div className="w-full border border-n300 bg-n75 rounded pt-3 pb-3 pl-4 pr-4 flex items-center justify-between">
-                                <input className="w-[273px] bg-transparent outline-none" type="text" value={fileName} placeholder="파일을 선택하세요" readOnly />
-                                <div className="flex items-center gap-2">
-                                    <button className="w-5 h-5 p-[1px]" onClick={handleFileIconClick}>
-                                        <DownloadSimpleIcon />
-                                    </button>
-                                    <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
-                                    <button onClick={handleFileDelete}>
-                                        <p className="text-sm text-n600">삭제</p>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    <div className="flex gap-2">
-                        <Button className="flex-1" label="링크 업로드" icLeft={<LinkSimpleIcon />} size="medium" btnType="line" onClick={() => toggleLinkButton()} />
-                        <Button className="flex-1" label="파일 업로드" icLeft={<PlusCircleIcon />} size="medium" btnType="line" onClick={() => toggleFileButton()} />
-                    </div>
-                </div>
+        <div className="w-full border border-n300 bg-n75 rounded pt-3 pb-3 pl-4 pr-4 flex items-center justify-between">
+            <input className="w-[273px] bg-transparent outline-none" type="text" value={fileName} placeholder="파일을 선택하세요" readOnly />
+            <div className="flex items-center gap-2">
+                <button className="w-5 h-5 p-[1px]" onClick={handleFileIconClick}>
+                    <DownloadSimpleIcon />
+                </button>
+                <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+                <button onClick={handleFileDelete}>
+                    <p className="text-sm text-n600">삭제</p>
+                </button>
             </div>
         </div>
     );
-};
+}
 
 export default FileModal;

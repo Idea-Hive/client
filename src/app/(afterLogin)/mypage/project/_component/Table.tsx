@@ -1,23 +1,15 @@
-interface Task {
-    key: string;
-    title: string;
-    assignee?: string;
-    dueDate?: string;
-    submitted?: boolean;  //제출 완료 여부
-    isEditable?: boolean; //담당자, 마감기한, 제출 수정 시
-}
+import { useState } from "react";
+import { TaskTableProps } from "../_types/Task";
+import { FolderIcon, CalendaBlankIcon, UploadSimpleIcon } from "@/components/icons/icons";
+import Dropbox from "./Dropbox";
+import FileModal from "./FileModal";
 
-interface TaskTableProps {
-    tasks: Task[];
-    onToggleAssignee?: (index: number) => void; //드롭박스 event handler
-    openDropdownIndex?: number | null;          //드롭박스 행 idx
-    onOpenFileModal?: (index: number) => void;  //파일모달 event handler
-}
-
-import { FolderIcon, SmallUserImgIcon, CaretDownIcon, CalendaBlankIcon, UploadSimpleIcon
-} from "@/components/icons/icons";
-
-const Table: React.FC<TaskTableProps> = ({ tasks, onToggleAssignee, openDropdownIndex, onOpenFileModal}) => {
+const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee }) => {
+    //파일 모달
+    const [openFileModalIndex, setOpenFileModalIndex] = useState<number | null>(null);
+    const openFileModal = (index: number) => {
+        setOpenFileModalIndex(index);
+    };
     return (
         <div className="mt-4 rounded border border-n400">
             <table className="w-full text-xs border-separate border-spacing-0">
@@ -35,51 +27,33 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onToggleAssignee, openDropdown
                     {tasks.map((task, index) => (
                         <tr key={task.key} className={`border-t h-[42px] ${index === tasks.length - 1 ? "last-row" : ""}`}>
                             <td className={`p-3 text-center ${index === tasks.length - 1 ? "rounded-bl-xl" : "border-b"}`}>
-                                <input type="checkbox" className="w-4 h-4 border-n400"/>
+                                <input type="checkbox" className="w-4 h-4 border-n400 cursor-pointer" />
                             </td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.key}</td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.title}</td>
-                            <td className={`relative p-3 border-l text-center ${index === tasks.length - 1 ? "" : "border-b"}`}>
-                                {task.isEditable ? (
-                                    <div className="flex justify-center items-center gap-1 text-n600 cursor-pointer" onClick={() => onToggleAssignee?.(index)}>
-                                        <span>담당자 선택</span>
-                                        <CaretDownIcon />
-                                    </div>
-                                ) : (
-                                    <div className="flex justify-center items-center gap-1">
-                                        <SmallUserImgIcon />
-                                        <span>{task.assignee}</span>
-                                    </div>
-                                )}
-                                {openDropdownIndex === index && (
-                                    <div className="absolute right-0 z-10">
-                                        <ul className="w-[120px] bg-white border rounded shadow text-left">
-                                            <li className="h-[36px] px-3 py-2 hover:bg-n200">이서연</li>
-                                            <li className="h-[36px] px-3 py-2 hover:bg-n200">홍길동</li>
-                                        </ul>
-                                    </div>
-                                )}
+                            <td className={`relative p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>
+                                <Dropbox task={task} index={index} onSelectAssignee={onSelectAssignee} />
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>
-                                {task.isEditable ? (
+                                {task.isSelectedDate ? (
+                                    task.dueDate
+                                ) : (
                                     <div className="flex justify-center items-center gap-1 text-n600 cursor-pointer">
                                         <CalendaBlankIcon />
                                         <span>기한 설정</span>
                                     </div>
-                                ) : (
-                                    task.dueDate
                                 )}
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "rounded-br-xl" : "border-b"}`}>
-                                {task.isEditable ? (
-                                    <div className="flex justify-center items-center gap-1 text-n600 cursor-pointer" onClick={() => onOpenFileModal?.(index)}>
-                                        <UploadSimpleIcon />
-                                        <span>제출하기</span>
+                                {task.isSubmittedFile ? (
+                                    <div className="flex justify-center items-center gap-1" onClick={() => openFileModal(index)}>
+                                        <FolderIcon />
+                                        <span>제출완료</span>
                                     </div>
                                 ) : (
-                                    <div className="flex justify-center items-center gap-1">
-                                        <FolderIcon />
-                                        <span>{task.submitted ? "제출완료" : "미제출???"}</span>
+                                    <div className="flex justify-center items-center gap-1 text-n600 cursor-pointer" onClick={() => openFileModal(index)}>
+                                        <UploadSimpleIcon />
+                                        <span>제출하기</span>
                                     </div>
                                 )}
                             </td>
@@ -87,6 +61,8 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onToggleAssignee, openDropdown
                     ))}
                 </tbody>
             </table>
+            {/* 모달 렌더링 부분 */}
+            {openFileModalIndex !== null && <FileModal isOpen={true} onClose={() => setOpenFileModalIndex(null)} />}
         </div>
     );
 };

@@ -4,42 +4,38 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "./Table";
-import FileModal from "./FileModal";
+import { Task } from "../_types/Task";
 
 export default function RightSection() {
-    //담당자 드롭박스
-    const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
-    const toggleDropdown = (index: number) => {
-        setOpenDropdownIndex((prev) => (prev === index ? null : index));
-    };
-
-    //파일 모달
-    const [openFileModalIndex, setOpenFileModalIndex] = useState<number | null>(null);
-    const openFileModal = (index: number) => {
-        setOpenFileModalIndex(index);
-    };
-
-    //탬플릿 다운로드
-    const onDownloadTemplate = () => {
-        //TODO
-    };
-
-    //일단 하드코딩
-    const tasks = [
+    const [tasks, setTasks] = useState<Task[]>([ //일단 하드코딩
         {
             key: "D_1",
             title: "[디자인] 와이어프레임",
             assignee: "홍길동",
             dueDate: "2025-02-20",
-            submitted: true,
-            isEditable: false,
+            isSelectedAssignee: true,
+            isSelectedDate: true, 
+            isSubmittedFile: true
         },
         {
             key: "D_2",
-            title: "[기획] 회의록 작성",
-            isEditable: true,
+            title: "[기획] 회의록 작성"
         },
-    ];
+    ]);
+    //탬플릿 다운로드
+    const onDownloadTemplate = () => {
+        //TODO
+    };
+
+    const handleSelectAssignee = (index: number, assignee: { label: string; value: string }) => {
+        const updatedTasks = [...tasks];
+        updatedTasks[index] = {
+            ...updatedTasks[index],
+            assignee: assignee.label, 
+            isSelectedAssignee: !(assignee.value === "")
+        };
+        setTasks(updatedTasks);
+    }
 
     return (
         <div className="width-[900px] m-10">
@@ -63,15 +59,13 @@ export default function RightSection() {
                             <Button label="전체 탬플릿" onClick={() => onDownloadTemplate} icLeft={<DownloadSimpleIconWhite />} size="small" btnType="primary" />
                         </div>
                     </div>
-                    <Table tasks={tasks} onToggleAssignee={toggleDropdown} openDropdownIndex={openDropdownIndex} onOpenFileModal={openFileModal}></Table>
+                    <Table tasks={tasks} onSelectAssignee={handleSelectAssignee}></Table>
                 </div>
                 <div className="mt-[40px] flex flex-col">
                     <div className="text-h3 text-n900">선택 과제</div>
                     {/* 테이블 */}
                 </div>
-            </div>
-            {/* 모달 렌더링 부분 */}
-            {openFileModalIndex !== null && <FileModal isOpen={true} onClose={() => setOpenFileModalIndex(null)} />}
+            </div>            
         </div>
     );
 }

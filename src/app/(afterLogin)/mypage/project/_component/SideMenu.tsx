@@ -20,7 +20,7 @@ export default function SideMenu() {
             <div>
                 <div className="flex flex-col gap-4">
                     <Selectbox
-                        placeholder="Selectbox"
+                        placeholder="프로젝트 선택"
                         options={[
                             { value: "1", label: "테스크메이트" },
                             { value: "2", label: "음하하프로젝트" },
@@ -69,9 +69,9 @@ export default function SideMenu() {
                     </span>
                     {isOpen && (
                         <div className="absolute right-0 bottom-full mb-[9px]">
-                            <ul className="w-[120px] bg-white border rounded shadow z-10 text-xs">
-                                <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200">프로젝트 탈퇴</li>
-                                <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200">프로젝트 삭제</li>
+                            <ul className="w-[120px] bg-white border rounded shadow z-10 text-sm text-n800">
+                                <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200 cursor-pointer">프로젝트 탈퇴</li>
+                                <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200 cursor-pointer">프로젝트 삭제</li>
                             </ul>
                         </div>
                     )}

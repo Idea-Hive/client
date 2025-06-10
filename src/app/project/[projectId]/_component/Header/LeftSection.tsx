@@ -1,22 +1,44 @@
 import { SmallUserImgIcon } from "@/components/icons/icons";
 import Spinner from "@/components/Spinner";
+import moment from "moment";
 import { useParams } from "next/navigation";
 import { useProjectDetail, useUserInfo } from "../../hooks/Hooks";
+
+const labels = [
+    { status: "RECRUITING", label: "모집중" },
+    { status: "RECRUITING_END", label: "모집완료" },
+    { status: "IN_PROGRESS", label: "진행중" },
+    { status: "COMPLETED", label: "완료" },
+];
 
 export default function LeftSection() {
     const { projectId } = useParams();
     const { user } = useUserInfo();
     const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
 
+    const calculateDday = (expirationDate: string): string => {
+        const today = moment().startOf("day");
+        const expiration = moment(expirationDate).startOf("day");
+        const diffDays = expiration.diff(today, "days");
+
+        if (diffDays < 0) {
+            return "만료됨";
+        } else if (diffDays === 0) {
+            return "D-Day";
+        } else {
+            return `D-${diffDays}`;
+        }
+    };
+
     if (projectIsPending) return <Spinner />;
     if (!project) return <div>존재하지 않는 프로젝트입니다.</div>;
     return (
         <div>
-            <div className="text-taskmateRed text-smEmphasize mb-2">모집중</div>
+            <div className="text-taskmateRed text-smEmphasize mb-2">{labels.find((item) => item.status === project.projectStatus)?.label}</div>
 
             <div className="text-h2 text-n900 mb-3 flex items-center">
                 {project.title}
-                <span className="ml-2 text-h3 text-taskmateRed">D-12</span>
+                <span className="ml-2 text-h3 text-taskmateRed">{calculateDday(project.expirationDate)}</span>
             </div>
 
             <div className="flex gap-2 items-center mb-6">
@@ -36,7 +58,7 @@ export default function LeftSection() {
                 </div>
 
                 <div className="flex gap-2 items-center text-sm text-n800">
-                    <div>{project.creatorJob}</div>
+                    <div>{project.creatorJob || "직업 미정"}</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
                     <div>경력 {project.creatorCareer || 0}년</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>

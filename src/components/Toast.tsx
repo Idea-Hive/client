@@ -25,9 +25,9 @@ export default function Toast({ type = "error", message, duration = 3000, onClos
     return (
         <div
             className={`
-                fixed bottom-5 left-1/2 -translate-x-1/2 z-[100]
+                fixed bottom-5 left-1/2 -translate-x-1/2 z-[10000]
                 p-4 rounded-lg border text-sm
-                animate-[slideUp_3s_ease-in-out_forwards]
+                animate-fade-in-up
                 flex items-center justify-between
                 w-[488px]
                 ${type === "success" && "bg-[#f5fbf8] border-green shadow-[0px_4px_8px_0px_rgba(49,113,89,0.16)]"}

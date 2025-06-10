@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useIdsForApplicant } from "../../store/store";
 
-export default function RejectCard({ applicantMemberId, setIsReject }: { applicantMemberId: number; setIsReject: Dispatch<SetStateAction<boolean>> }) {
+export default function RejectCard({ applicantMemberId, applicantId, setIsReject }: { applicantMemberId: number; applicantId: number; setIsReject: Dispatch<SetStateAction<boolean>> }) {
     const spinner = useSpinner();
     const queryClient = useQueryClient();
     const { projectId } = useIdsForApplicant();
@@ -43,7 +43,8 @@ export default function RejectCard({ applicantMemberId, setIsReject }: { applica
     const onRejectApplicant = () => {
         handleApplicantDecisionMutation.mutate({
             projectId,
-            memberId: applicantMemberId,
+            userId: applicantMemberId,
+            applyId: applicantId,
             decision: "REJECTED",
             rejectionMessage,
         });

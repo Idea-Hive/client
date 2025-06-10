@@ -43,6 +43,7 @@ export default function EditCard({ setIsEdit, applicant }: { setIsEdit: Dispatch
         onUpdateApplicationMessageMutation.mutate({
             projectId,
             memberId: applicant.memberId,
+            applyId: applicant.applyId,
             message: value,
         });
     };

@@ -57,12 +57,13 @@ export default function Nav() {
 const NavRightSectionForLoggedInUser = ({ user }: { user: User }) => {
     const router = useRouter();
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showFindPwModal, setShowFindPwModal] = useState(false);
 
     return (
         <>
-            <HomeIcon />
-            <FolderIcon />
-            <NotificationIcon />
+            <HomeIcon onClick={() => router.push("/")} />
+            <FolderIcon onClick={() => router.push("/mypage/profile")} />
+            <NotificationIcon onClick={() => {}} />
             <div className="relative">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={() => setShowDropdown(!showDropdown)}>
                     <path
@@ -80,6 +81,15 @@ const NavRightSectionForLoggedInUser = ({ user }: { user: User }) => {
                             className="w-full h-9 text-left px-3 text-sm text-n800 rounded-t hover:bg-n75"
                         >
                             마이페이지
+                        </button>
+                        <button
+                            onClick={() => {
+                                setShowFindPwModal(true);
+                                setShowDropdown(false);
+                            }}
+                            className="w-full h-9 text-left px-3 text-sm text-n800 rounded-t hover:bg-n75"
+                        >
+                            비밀번호
                         </button>
                         <button
                             onClick={async () => {
@@ -101,6 +111,7 @@ const NavRightSectionForLoggedInUser = ({ user }: { user: User }) => {
                     </div>
                 )}
             </div>
+            {showFindPwModal && <FindPwModal onClose={() => setShowFindPwModal(false)} />}
         </>
     );
 };

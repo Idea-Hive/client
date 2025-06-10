@@ -17,12 +17,19 @@ export default function RightSection() {
     const { user } = useUserInfo();
     const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
 
-    if (!user) return null;
+    const [isCopied, setIsCopied] = useState<boolean>(false);
+
     if (!project) return null;
     return (
         <div className="flex flex-col justify-between">
             <div className="flex gap-3 items-center text-sm text-black">
-                <div className="flex gap-1.5 items-center">
+                <div
+                    className="flex gap-1.5 items-center cursor-pointer"
+                    onClick={() => {
+                        navigator.clipboard.writeText(window.location.href);
+                        setIsCopied(true);
+                    }}
+                >
                     <ShareIcon />
                     공유하기
                 </div>
@@ -34,16 +41,19 @@ export default function RightSection() {
                     {project.viewCnt}
                 </div>
             </div>
-            <div className="flex justify-end">
-                {/* 프로젝트 작성자 && 프로젝트 시작 전 */}
-                {project.creatorId === user.id && project.projectStatus === "RECRUITING" && <StartProjectButton projectId={project.projectId} />}
-                {/* 프로젝트 작성자 && 프로젝트 진행중 */}
-                {project.creatorId === user.id && project.projectStatus === "IN_PROGRESS" && <RecruitAdditionalMemberButton projectId={project.projectId} />}
-                {/* 지원자 && 아직 지원 안함 */}
-                {project.creatorId !== user.id && project.projectStatus === "RECRUITING" && !project.isApply && <ApplicantButton projectId={project.projectId} memberId={user.id} />}
-                {/* 지원자 && 지원 했음 */}
-                {project.creatorId !== user.id && project.isApply && <Button label="지원완료" disabled={true} className="w-fit px-6" onClick={() => {}} />}
-            </div>
+            {user && (
+                <div className="flex justify-end">
+                    {/* 프로젝트 작성자 && 프로젝트 시작 전 */}
+                    {project.creatorId === user.id && project.projectStatus === "RECRUITING" && <StartProjectButton projectId={project.projectId} />}
+                    {/* 프로젝트 작성자 && 프로젝트 진행중 */}
+                    {project.creatorId === user.id && project.projectStatus === "IN_PROGRESS" && <RecruitAdditionalMemberButton projectId={project.projectId} />}
+                    {/* 지원자 && 아직 지원 안함 */}
+                    {project.creatorId !== user.id && project.projectStatus === "RECRUITING" && !project.isApply && <ApplicantButton projectId={project.projectId} memberId={user.id} />}
+                    {/* 지원자 && 지원 했음 */}
+                    {project.creatorId !== user.id && project.isApply && <Button label="지원완료" disabled={true} className="w-fit px-6" onClick={() => {}} />}
+                </div>
+            )}
+            {isCopied && <Toast message="링크가 복사되었습니다." type="success" onClose={() => setIsCopied(false)} />}
         </div>
     );
 }

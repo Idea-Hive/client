@@ -73,10 +73,8 @@ export default function CreateProject() {
         description: "",
         idea: "",
         maxMembers: 0,
-        dueDateFrom: "2025-05-06T11:36:42.557Z",
-        dueDateTo: "2025-05-06T11:36:42.557Z",
-        // dueDateFrom: "",
-        // dueDateTo: "",
+        dueDateFrom: "",
+        dueDateTo: "",
         contact: "",
     });
 
@@ -97,7 +95,7 @@ export default function CreateProject() {
         const validations = {
             title: "프로젝트명을 입력해주세요.",
             description: "프로젝트 설명을 입력해주세요.",
-            idea: "프로젝트 아이디어를 입력해주세요.",
+            // idea: "프로젝트 아이디어를 입력해주세요.",
             maxMembers: "모집 인원을 입력해주세요.",
             dueDateFrom: "시작일을 입력해주세요.",
             dueDateTo: "종료일을 입력해주세요.",
@@ -177,6 +175,7 @@ export default function CreateProject() {
             isSave: true,
         };
 
+        console.log("requestBody:::", requestBody);
         return requestBody;
     };
 

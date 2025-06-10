@@ -51,10 +51,10 @@ export default function ProjectList() {
     return (
         <div className="w-full pb-[60px]">
             <div className="bg-n200 h-[90px] flex items-center">
-                <div className="w-[1200px] mx-auto text-h3 text-n900">나에게 딱 맞는 프로젝트를 탐색해보세요</div>
+                <div className="w-full max-w-[1232px] px-4 mx-auto text-h3 text-n900">나에게 딱 맞는 프로젝트를 탐색해보세요</div>
             </div>
 
-            <div className="w-[1200px] mx-auto relative">
+            <div className="w-full max-w-[1232px] px-4 mx-auto relative">
                 <h2 className="text-h2 text-n900 mt-6 mb-[34px]">프로젝트 탐색</h2>
 
                 {/* 탭 */}
@@ -150,21 +150,7 @@ const ProjectGrid = ({ projects, isPending }: { projects?: Project[]; isPending:
     return projects.length > 0 ? (
         <div className="w-full grid grid-cols-3 gap-6 mb-8">
             {projects.map((project) => {
-                const { id, title, description, hashtagNames, creator, likedCnt, viewCnt } = project;
-                return (
-                    <Card
-                        key={id}
-                        item={{
-                            id,
-                            title,
-                            content: description,
-                            tags: hashtagNames,
-                            creator: creator,
-                            likeCount: likedCnt,
-                            viewCount: viewCnt,
-                        }}
-                    />
-                );
+                return <Card key={project.id} item={project} />;
             })}
         </div>
     ) : (

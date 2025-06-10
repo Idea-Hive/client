@@ -28,11 +28,6 @@ const ApplicantButton = ({ projectId, memberId }: { projectId: number; memberId:
             console.log("onApplicantMutation onSuccess:::", response);
             setIsOpenApplicantModal(false);
             setIsOpenApplicantSuccessModal(true);
-            setToastMessage("지원이 완료되었습니다");
-            setToastType("success");
-            setIsToastOpen(true);
-            queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId, userId: memberId }] });
-            queryClient.invalidateQueries({ queryKey: ["getApplicantInfo", { projectId, page: 1, size: 4 }] });
         },
         onError: (error) => {
             console.log("onApplicantMutation onError:::", error);
@@ -71,17 +66,17 @@ const ApplicantButton = ({ projectId, memberId }: { projectId: number; memberId:
             )}
 
             {/* 지원 완료 모달 */}
-            {isOpenApplicantSuccessModal && (
-                <Modal
-                    isOpen={isOpenApplicantSuccessModal}
-                    title="지원 완료"
-                    children="지원이 완료되었습니다"
-                    onConfirm={() => {
-                        setIsOpenApplicantSuccessModal(false);
-                        setIsOpenApplicantModal(false);
-                    }}
-                />
-            )}
+            <Modal
+                isOpen={isOpenApplicantSuccessModal}
+                title="지원 완료"
+                children="지원이 완료되었습니다"
+                onConfirm={() => {
+                    queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId, userId: memberId }] });
+                    queryClient.invalidateQueries({ queryKey: ["getApplicantInfo", { projectId, page: 1, size: 4 }] });
+                    setIsOpenApplicantSuccessModal(false);
+                    setIsOpenApplicantModal(false);
+                }}
+            />
 
             {isToastOpen && <Toast message={toastMessage} type={toastType} onClose={() => setIsToastOpen(false)} />}
         </>

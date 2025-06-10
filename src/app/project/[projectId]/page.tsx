@@ -8,17 +8,22 @@ import Applicant from "./_component/Applicant/Applicant";
 import BaseInfo from "./_component/BaseInfo";
 import Header from "./_component/Header/Header";
 import Recruitment from "./_component/Recruitment";
-import { useApplicantInfo, useProjectDetail, useUserInfo } from "./hooks/Hooks";
+import { useApplicantInfo, useProjectDetail, useProjectViewCnt, useUserInfo } from "./hooks/Hooks";
 import { useIdsForApplicant } from "./store/store";
 
 export default function ProjectDetail() {
     const { projectId } = useParams();
 
     const { user, userIsPending } = useUserInfo();
+    const { viewCntMutate, viewCntIsPending } = useProjectViewCnt(Number(projectId));
     const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
     const { applicantData, applicantIsPending } = useApplicantInfo(Number(projectId));
 
     const { setProjectId, setLoginUserId, setProjectCreatorId } = useIdsForApplicant();
+
+    useEffect(() => {
+        viewCntMutate();
+    }, [viewCntMutate]);
 
     useEffect(() => {
         if (project) {
@@ -65,7 +70,7 @@ export default function ProjectDetail() {
                     {/* 헤더 */}
                     <Header />
 
-                    <section className="w-[1200px] mx-auto my-10">
+                    <section className="w-full max-w-[1232px] px-4 mx-auto my-10">
                         <Tab items={tabItems} onChange={handleTab} defaultTab="baseInfo" />
 
                         <div className="flex flex-col gap-[50px] mt-[50px]">

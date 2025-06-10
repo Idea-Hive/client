@@ -73,10 +73,8 @@ export default function CreateProject() {
         description: "",
         idea: "",
         maxMembers: 0,
-        dueDateFrom: "2025-05-06T11:36:42.557Z",
-        dueDateTo: "2025-05-06T11:36:42.557Z",
-        // dueDateFrom: "",
-        // dueDateTo: "",
+        dueDateFrom: "",
+        dueDateTo: "",
         contact: "",
     });
 
@@ -177,6 +175,7 @@ export default function CreateProject() {
             isSave: true,
         };
 
+        console.log("requestBody:::", requestBody);
         return requestBody;
     };
 

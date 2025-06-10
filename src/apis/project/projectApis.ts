@@ -101,6 +101,7 @@ export interface GetProjectDetailRequest {
     userId: number | undefined;
 }
 export interface Applicant {
+    applyId: number;
     memberId: number;
     name: string;
     job: string;
@@ -126,6 +127,7 @@ export interface ProjectDetailData {
     maxMembers: number;
     dueDateFrom: string;
     dueDateTo: string;
+    expirationDate: string;
     contact: string;
     viewCnt: number;
     likedCnt: number;
@@ -146,6 +148,16 @@ export const getProjectDetailApi: QueryFunction<ProjectDetailData, [_1: string, 
         });
     } catch (error) {
         console.error("프로젝트 상세 정보 조회 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// 프로젝트 조회수 증가
+export const getProjectViewCntApi = async (projectId: number) => {
+    try {
+        return await Apis.post("/project/viewCnt", { projectId });
+    } catch (error) {
+        console.error("프로젝트 조회수 증가 중 오류 발생:", error);
         throw error;
     }
 };
@@ -338,8 +350,7 @@ export const onApplyProjectApi = async (body: ApplyProjectRequest) => {
 
 // Project 지원 취소
 export interface CancelApplicantRequest {
-    projectId: number;
-    memberId: number;
+    applyId: number;
 }
 
 export const onCancelApplicantApi = async (body: CancelApplicantRequest) => {

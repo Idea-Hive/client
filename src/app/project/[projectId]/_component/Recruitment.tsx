@@ -1,6 +1,10 @@
 import { ProjectDetailData } from "@/apis/project/projectApis";
+import Toast from "@/components/Toast";
+import { useState } from "react";
 
 export default function Recruitment({ data }: { data: ProjectDetailData }) {
+    const [isCopied, setIsCopied] = useState<boolean>(false);
+
     return (
         <div>
             <div className="text-h3 text-n900 mb-[15px]">모집정보</div>
@@ -15,7 +19,15 @@ export default function Recruitment({ data }: { data: ProjectDetailData }) {
                     <div>
                         {data.dueDateFrom.slice(0, 10).replaceAll("-", ".")}~{data.dueDateTo.slice(0, 10).replaceAll("-", ".")}
                     </div>
-                    <div className="underline cursor-pointer">{data.contact}</div>
+                    <div
+                        className="underline cursor-pointer"
+                        onClick={() => {
+                            navigator.clipboard.writeText(data.contact);
+                            setIsCopied(true);
+                        }}
+                    >
+                        {data.contact}
+                    </div>
                 </div>
             </div>
 
@@ -41,6 +53,8 @@ export default function Recruitment({ data }: { data: ProjectDetailData }) {
                     </div>
                 )}
             </div>
+
+            {isCopied && <Toast message="연락 수단이 복사되었습니다." type="success" onClose={() => setIsCopied(false)} />}
         </div>
     );
 }

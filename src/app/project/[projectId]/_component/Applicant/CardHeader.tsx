@@ -38,7 +38,7 @@ export default function CardHeader({
                     applicant.isAccepted === "CONFIRMED" ? (
                         <ProjectOwnerCardControlConfirmed applicantMemberId={applicant.memberId} />
                     ) : applicant.isAccepted === "UNDECIDED" ? (
-                        <ProjectOwnerCardControlUnconfirmed applicantMemberId={applicant.memberId} setIsReject={setIsReject} isReject={isReject} />
+                        <ProjectOwnerCardControlUnconfirmed applicantMemberId={applicant.memberId} applicantId={applicant.applyId} setIsReject={setIsReject} isReject={isReject} />
                     ) : null
                 ) : (
                     <ApplicantCardControl applicant={applicant} setIsEdit={setIsEdit} />
@@ -109,8 +109,6 @@ const ApplicantCardControl = ({ setIsEdit, applicant }: { setIsEdit: Dispatch<Se
             console.log("onCancelApplicantMutation Success:::", response);
             setIsCancelModalOpen(false);
             setIsSuccessModalOpen(true);
-            queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId, userId: loginUserId }] });
-            queryClient.invalidateQueries({ queryKey: ["getApplicantInfo", { projectId: Number(projectId), page: 1, size: 4 }] });
         },
         onError: (error) => {
             console.error("onCancelApplicantMutation Error:::", error);
@@ -124,8 +122,7 @@ const ApplicantCardControl = ({ setIsEdit, applicant }: { setIsEdit: Dispatch<Se
 
     const onCancelApplicant = () => {
         onCancelApplicantMutation.mutate({
-            projectId,
-            memberId: applicant.memberId,
+            applyId: applicant.applyId,
         });
     };
 
@@ -147,6 +144,8 @@ const ApplicantCardControl = ({ setIsEdit, applicant }: { setIsEdit: Dispatch<Se
                 children="지원이 취소되었습니다."
                 isOpen={isSuccessModalOpen}
                 onConfirm={() => {
+                    queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId, userId: loginUserId }] });
+                    queryClient.invalidateQueries({ queryKey: ["getApplicantInfo", { projectId: Number(projectId), page: 1, size: 4 }] });
                     setIsSuccessModalOpen(false);
                 }}
             />
@@ -187,7 +186,17 @@ const ProjectOwnerCardControlConfirmed = ({ applicantMemberId }: { applicantMemb
 };
 
 // 프로젝트 생성자 카드 컨트롤 (For 미정 지원자)
-const ProjectOwnerCardControlUnconfirmed = ({ applicantMemberId, setIsReject, isReject }: { applicantMemberId: number; setIsReject: Dispatch<SetStateAction<boolean>>; isReject: boolean }) => {
+const ProjectOwnerCardControlUnconfirmed = ({
+    applicantMemberId,
+    setIsReject,
+    isReject,
+    applicantId,
+}: {
+    applicantMemberId: number;
+    setIsReject: Dispatch<SetStateAction<boolean>>;
+    isReject: boolean;
+    applicantId: number;
+}) => {
     const { projectId, loginUserId } = useIdsForApplicant();
 
     const spinner = useSpinner();
@@ -222,7 +231,8 @@ const ProjectOwnerCardControlUnconfirmed = ({ applicantMemberId, setIsReject, is
     const onConfirmApplicant = () => {
         handleApplicantDecisionMutation.mutate({
             projectId,
-            memberId: applicantMemberId,
+            userId: applicantMemberId,
+            applyId: applicantId,
             decision: "CONFIRMED",
             rejectionMessage: "",
         });

@@ -2,7 +2,8 @@ import { Apis } from "@/utils/api";
 
 interface HandleApplicantDecisionRequest {
     projectId: number;
-    memberId: number;
+    userId: number;
+    applyId: number;
     decision: "CONFIRMED" | "REJECTED" | "UNDECIDED";
     rejectionMessage: string;
 }
@@ -30,6 +31,7 @@ export const handleApplicantDecisionApi = async (body: HandleApplicantDecisionRe
 interface UpdateApplicantApplicationMessageRequest {
     projectId: number;
     memberId: number;
+    applyId: number;
     message: string;
 }
 

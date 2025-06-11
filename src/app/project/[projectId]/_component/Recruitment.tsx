@@ -16,9 +16,7 @@ export default function Recruitment({ data }: { data: ProjectDetailData }) {
                 </div>
                 <div className="text-base text-n800 flex flex-col gap-3">
                     <div>{data.maxMembers}명</div>
-                    <div>
-                        {data.dueDateFrom.slice(0, 10).replaceAll("-", ".")}~{data.dueDateTo.slice(0, 10).replaceAll("-", ".")}
-                    </div>
+                    <div>{data.dueDateFrom ? data.dueDateFrom.slice(0, 10).replaceAll("-", ".") + "~" + data.dueDateTo.slice(0, 10).replaceAll("-", ".") : "미정"}</div>
                     <div
                         className="underline cursor-pointer"
                         onClick={() => {

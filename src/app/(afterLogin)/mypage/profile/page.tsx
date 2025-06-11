@@ -32,7 +32,7 @@ const ProfileInfo = () => {
 
             <div className="border border-n300 p-3 text-sm text-n900 flex flex-col gap-2 mb-3">
                 <div>경력 {user.career || 0}년</div>
-                <div>{user.job || "취업준비생"}</div>
+                <div>{user.job || "직업 미정"}</div>
             </div>
 
             <div className="flex items-center gap-6">

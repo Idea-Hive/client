@@ -25,11 +25,7 @@ export default function Checkbox({ checked = false, value, label, onClick }: Che
         >
             <div className="w-fit pl-3 flex gap-2 items-center">
                 <div className="w-4 flex justify-center flex-col">
-                    <div className={`w-full h-4 ${isChecked ? "bg-black border-none" : "bg-white border border-n400"} rounded`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="white" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                        </svg>
-                    </div>
+                    <div className={`w-full h-4 flex items-center justify-center bg-white border border-n400 rounded`}>{isChecked && <div className="w-2 h-2 bg-taskmateRed"></div>}</div>
                 </div>
                 {label && <div className="text-sm font-normal text-n900">{label}</div>}
             </div>

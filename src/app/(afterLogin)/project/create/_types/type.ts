@@ -3,8 +3,8 @@ export interface RequiredValues {
     description: string;
     idea: string;
     maxMembers: number;
-    dueDateFrom: string;
-    dueDateTo: string;
+    dueDateFrom: string | null;
+    dueDateTo: string | null;
     contact: string;
 }
 

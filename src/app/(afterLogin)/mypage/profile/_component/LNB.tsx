@@ -34,7 +34,7 @@ export default function LNB() {
                 <div className="my-3 text-h3 text-n900">{user?.name}</div>
 
                 <div className="flex items-center gap-2 text-sm text-n800 mb-6">
-                    <div>{user?.job || "취업준비생"}</div>
+                    <div>{user?.job || "직업 미정"}</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
                     <div>경력 {user?.career || 0}년</div>
                 </div>

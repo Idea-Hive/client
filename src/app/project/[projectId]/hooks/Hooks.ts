@@ -2,7 +2,7 @@ import { getUserInfoApi } from "@/apis/user/userApis";
 
 import { getApplicantInfoApi, getProjectDetailApi, getProjectViewCntApi } from "@/apis/project/projectApis";
 import { User } from "@/apis/user/userApis";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useUserInfo = () => {
     const { data: user, isPending: userIsPending } = useQuery({
@@ -23,8 +23,22 @@ export const useProjectDetail = (projectId: number, user: User | undefined) => {
 };
 
 export const useProjectViewCnt = (projectId: number) => {
+    const queryClient = useQueryClient();
+    const { user } = useUserInfo();
+
     const { mutate: viewCntMutate, isPending: viewCntIsPending } = useMutation({
         mutationFn: () => getProjectViewCntApi(projectId),
+        onSuccess: () => {
+            // Update project detail data in the cache with correct query key
+            queryClient.setQueryData(["getProjectDetail", { projectId, userId: user?.id }], (oldData: any) =>
+                oldData
+                    ? {
+                          ...oldData,
+                          viewCnt: oldData.viewCnt + 1,
+                      }
+                    : oldData
+            );
+        },
     });
 
     return { viewCntMutate, viewCntIsPending };

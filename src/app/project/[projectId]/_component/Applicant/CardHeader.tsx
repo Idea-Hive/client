@@ -60,7 +60,7 @@ const UserInfo = ({ applicant, state }: { applicant: Applicant; state: CardState
             </div>
 
             <div className="flex gap-2 items-center text-sm text-n900">
-                <div>{applicant.job || "프론트엔드 개발자"}</div>
+                <div>{applicant.job || "직업 미정"}</div>
                 <div className="w-[1px] h-[15.5px] bg-n300"></div>
                 <div>경력 {applicant.career || 0}년</div>
                 <div className="w-[1px] h-[15.5px] bg-n300"></div>

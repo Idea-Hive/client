@@ -10,8 +10,8 @@ export interface SaveProjectRequest {
     idea: string;
     contact: string;
     maxMembers: number;
-    dueDateFrom: string;
-    dueDateTo: string;
+    dueDateFrom: string | null;
+    dueDateTo: string | null;
     skillStackIds: number[];
     hashtags: string[];
     isSave: boolean;

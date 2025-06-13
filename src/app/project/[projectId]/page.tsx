@@ -3,7 +3,7 @@
 import Spinner from "@/components/Spinner";
 import Tab from "@/components/Tab";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Applicant from "./_component/Applicant/Applicant";
 import BaseInfo from "./_component/BaseInfo";
 import Header from "./_component/Header/Header";
@@ -20,10 +20,15 @@ export default function ProjectDetail() {
     const { applicantData, applicantIsPending } = useApplicantInfo(Number(projectId));
 
     const { setProjectId, setLoginUserId, setProjectCreatorId } = useIdsForApplicant();
+    const viewCountRef = useRef(false);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-        viewCntMutate();
-    }, [viewCntMutate]);
+        if (!viewCountRef.current) {
+            viewCntMutate();
+            viewCountRef.current = true;
+        }
+    }, []);
 
     useEffect(() => {
         if (project) {

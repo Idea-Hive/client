@@ -107,7 +107,12 @@ export default function CreateProject() {
 
         Object.entries(validations).forEach(([field, message]) => {
             const value = requiredValues[field as keyof RequiredValues];
-            if (!value || (field === "maxMembers" && value === 0)) {
+            if (field === "dueDateFrom" || field === "dueDateTo") {
+                if (value === "") {
+                    newErrors[field as keyof RequiredValues] = message;
+                    isValid = false;
+                }
+            } else if (!value || (field === "maxMembers" && value === 0)) {
                 newErrors[field as keyof RequiredValues] = message;
                 isValid = false;
             }

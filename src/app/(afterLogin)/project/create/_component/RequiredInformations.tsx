@@ -5,6 +5,7 @@ import DatePicker from "@/components/DatePicker/DatePicker";
 import Input from "@/components/Input";
 import Selectbox from "@/components/Selectbox";
 import Spinner from "@/components/Spinner";
+import { format } from "date-fns";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
@@ -131,12 +132,14 @@ const PredictDate = ({
     errors: { dueDateFrom: string; dueDateTo: string };
 }) => {
     const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
+    const [isUndefinedDate, setIsUndefinedDate] = useState(false);
     const [date, setDate] = useState<{ start: string; end: string }>({
         start: "",
         end: "",
     });
 
     useEffect(() => {
+        if (isUndefinedDate) return;
         setDate({
             start: requiredValues.dueDateFrom || "",
             end: requiredValues.dueDateTo || "",
@@ -152,9 +155,16 @@ const PredictDate = ({
 
         if (!(startDate instanceof Date) || !(endDate instanceof Date)) return;
 
-        setDate((prev) => ({ ...prev, start: startDate.toISOString(), end: endDate.toISOString() }));
-        setRequiredValues((prev) => ({ ...prev, dueDateFrom: startDate.toISOString(), dueDateTo: endDate.toISOString() }));
+        setDate((prev) => ({ ...prev, start: format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"), end: format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }));
+        setRequiredValues((prev) => ({ ...prev, dueDateFrom: format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"), dueDateTo: format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }));
         setIsOpenDatePicker(false);
+    };
+
+    const handleUnderfinedDate = () => {
+        // 미정 체크 시, 날짜 미입력
+        // useState 위에 넣는 이유는 useState가 비동기처럼 동작하기 때문에 미정 체크 시, 날짜 미입력 처리가 안되는 문제 발생
+        setRequiredValues((prev) => ({ ...prev, dueDateFrom: !isUndefinedDate ? null : requiredValues.dueDateFrom, dueDateTo: !isUndefinedDate ? null : requiredValues.dueDateTo }));
+        setIsUndefinedDate(!isUndefinedDate);
     };
 
     return (
@@ -164,12 +174,12 @@ const PredictDate = ({
                     <div className="text-sm font-medium text-gray-700">
                         예상 일정<span className="text-taskmateRed">*</span>
                     </div>
-                    <Checkbox checked={false} value="1" label="미정" onClick={() => {}} />
+                    <Checkbox checked={isUndefinedDate} value="1" label="미정" onClick={handleUnderfinedDate} />
                 </label>
                 <div
                     className={`flex w-full h-[46px] border ${
                         errors.dueDateFrom !== "" || errors.dueDateTo !== "" ? "border-red" : date.start === "" && date.end === "" ? "border-n400" : "border-n700"
-                    } rounded items-center px-3 justify-between cursor-pointer`}
+                    } ${isUndefinedDate && "bg-n200 !border-n400 cursor-default pointer-events-none"} rounded items-center px-3 justify-between cursor-pointer`}
                     onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
                 >
                     <div className="flex gap-[15px] text-sm">
@@ -186,7 +196,7 @@ const PredictDate = ({
                 </div>
             </div>
 
-            <DatePicker isRange={true} defaultValue={[date.start, date.end]} onChange={handleDatePicker} isOpen={isOpenDatePicker} />
+            <DatePicker isRange={true} defaultValue={[date.start, date.end]} onChange={handleDatePicker} isOpen={isOpenDatePicker} onClose={() => setIsOpenDatePicker(false)} />
 
             {errors.dueDateFrom !== "" ? (
                 <div className="text-red text-xs mt-2">{errors.dueDateFrom}</div>

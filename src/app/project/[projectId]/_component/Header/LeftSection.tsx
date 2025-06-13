@@ -64,7 +64,7 @@ export default function LeftSection() {
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
                     <div>프로젝트 경험 {project.creatorCompletedProjectCnt}회</div>
                     <div>·</div>
-                    <div>{project.dueDateFrom.slice(0, 10)}</div>
+                    <div>{project.expirationDate.slice(0, 10)}</div>
                 </div>
             </div>
         </div>

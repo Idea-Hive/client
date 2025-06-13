@@ -25,30 +25,34 @@ const ProfileInfo = () => {
     if (!user) return null;
     return (
         <div className="w-full py-5 px-6 bg-n50 border border-n400 rounded-xl">
-            <div className="mb-3 flex items-center gap-[30px]">
-                <div className="text-sm text-n900">{user.name}</div>
-                <div className="text-sm text-n800">{user.email}</div>
-            </div>
+            <div className="text-h3 text-n900 mb-4">프로필</div>
+            <div className="flex gap-4 items-center">
+                <div className="text-smEmphasize text-n900 w-[50px] flex flex-col gap-2">
+                    <div>name</div>
+                    <div>career</div>
+                    <div>job</div>
+                    <div>email</div>
+                    <div>보유기술</div>
+                </div>
 
-            <div className="border border-n300 p-3 text-sm text-n900 flex flex-col gap-2 mb-3">
-                <div>경력 {user.career || 0}년</div>
-                <div>{user.job || "취업준비생"}</div>
-            </div>
-
-            <div className="flex items-center gap-6">
-                <div className="text-sm text-n800">보유기술</div>
-                <div className="flex items-center gap-2">
-                    {user.SkillStacks.length > 0 ? (
-                        user.SkillStacks.map((v) => {
-                            return (
-                                <div key={v.id} className=" py-1.5 px-3 text-taskmateRed text-sm bg-taskmateRed/10 rounded-full">
-                                    {v.name}
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <div className="text-sm text-n800">보유기술이 없습니다.</div>
-                    )}
+                <div className="text-sm text-n800 flex-1 flex flex-col gap-2">
+                    <div>{user.name}</div>
+                    <div>경력 {user.career || 0}년</div>
+                    <div>{user.job || "직업 미정"}</div>
+                    <div>{user.email}</div>
+                    <div className="flex items-center gap-2">
+                        {user.SkillStacks.length > 0 ? (
+                            user.SkillStacks.map((v) => {
+                                return (
+                                    <div key={v.id} className=" py-1.5 px-3 text-taskmateRed text-sm bg-taskmateRed/10 rounded-full">
+                                        {v.name}
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="text-sm text-n800">보유기술이 없습니다.</div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

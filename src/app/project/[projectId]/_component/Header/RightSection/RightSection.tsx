@@ -16,6 +16,7 @@ export default function RightSection() {
     const { projectId } = useParams();
     const { user } = useUserInfo();
     const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
+    console.log("project:::", project);
 
     const [isCopied, setIsCopied] = useState<boolean>(false);
 
@@ -44,12 +45,12 @@ export default function RightSection() {
             {user && (
                 <div className="flex justify-end">
                     {/* 프로젝트 작성자 && 프로젝트 시작 전 */}
-                    {project.creatorId === user.id && project.projectStatus === "RECRUITING" && <StartProjectButton projectId={project.projectId} />}
+                    {project.creatorId === user.id && project.projectStatus === "RECRUITING" && <StartProjectButton projectId={project.projectId} isNew={project.isNew} />}
                     {/* 프로젝트 작성자 && 프로젝트 진행중 */}
                     {project.creatorId === user.id && project.projectStatus === "IN_PROGRESS" && <RecruitAdditionalMemberButton projectId={project.projectId} />}
                     {/* 지원자 && 아직 지원 안함 */}
                     {project.creatorId !== user.id && project.projectStatus === "RECRUITING" && !project.isApply && <ApplicantButton projectId={project.projectId} memberId={user.id} />}
-                    {/* 지원자 && 지원 했음 */}
+                    {/* 지원자 && 지원 했음(확정도 포함) */}
                     {project.creatorId !== user.id && project.isApply && <Button label="지원완료" disabled={true} className="w-fit px-6" onClick={() => {}} />}
                 </div>
             )}

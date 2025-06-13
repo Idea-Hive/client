@@ -58,8 +58,8 @@ export default function Home() {
             {(isNewProjectsPending || isAdditionalProjectsPending) && <Spinner />}
 
             <div className="w-full max-w-[1232px] px-4 mx-auto flex flex-col gap-[100px]">
-                <ProjectList projects={newProjects?.projects || []} label="모집중인 프로젝트" type="new" />
-                <ProjectList projects={additionalProjects?.projects || []} label="추가 모집중인 프로젝트" type="additional" />
+                <ProjectList projects={newProjects?.projects || []} label="모집중인 프로젝트" type="NEW" />
+                <ProjectList projects={additionalProjects?.projects || []} label="추가 모집중인 프로젝트" type="ADDITIONAL" />
             </div>
         </div>
     );
@@ -151,7 +151,7 @@ const ProjectList = ({ projects, label, type }: { projects: Project[]; label: st
                 <div
                     className="text-n800 text-sm cursor-pointer"
                     onClick={() => {
-                        router.push(`/project`);
+                        router.push(`/project?tab=${type}`);
                     }}
                 >
                     전체보기
@@ -174,7 +174,7 @@ const ProjectList = ({ projects, label, type }: { projects: Project[]; label: st
                             />
                         </svg>
 
-                        <div className="text-n800 text-base mt-3">{type === "new" ? "모집중인 프로젝트가 없습니다." : "추가 모집중인 프로젝트가 없습니다."}</div>
+                        <div className="text-n800 text-base mt-3">{type === "NEW" ? "모집중인 프로젝트가 없습니다." : "추가 모집중인 프로젝트가 없습니다."}</div>
                     </div>
                 </div>
             )}

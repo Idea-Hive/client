@@ -1,12 +1,13 @@
 import { Applicant } from "@/apis/project/projectApis";
 import { useState } from "react";
+import { CardState } from "./ApplicantCard";
 import CardBody from "./CardBody";
 import CardHeader from "./CardHeader";
 import CardRejectSection from "./CardRejectSection";
 import EditCard from "./EditCard";
 import RejectCard from "./RejectCard";
 
-export default function Card({ state, applicant, projectCreatorName }: { state: "default" | "locked" | "confirm" | "reject"; applicant: Applicant; projectCreatorName: string }) {
+export default function Card({ state, applicant, projectCreatorName }: { state: CardState; applicant: Applicant; projectCreatorName: string }) {
     const [isEdit, setIsEdit] = useState<boolean>(false); // 수정 모드 변경
     const [isReject, setIsReject] = useState<boolean>(false); // 거절 모드 변경
 

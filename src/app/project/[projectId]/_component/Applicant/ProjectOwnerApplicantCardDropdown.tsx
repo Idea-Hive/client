@@ -9,9 +9,11 @@ import { useIdsForApplicant } from "../../store/store";
 export default function ProjectOwnerApplicantCardDropdown({
     setIsDotsThreeVerticalOpen,
     applicantMemberId,
+    applyId,
 }: {
     setIsDotsThreeVerticalOpen: Dispatch<SetStateAction<boolean>>;
     applicantMemberId: number;
+    applyId: number;
 }) {
     const { projectId, loginUserId } = useIdsForApplicant();
 
@@ -46,7 +48,8 @@ export default function ProjectOwnerApplicantCardDropdown({
     const onUndecideApplicant = () => {
         handleApplicantDecisionMutation.mutate({
             projectId,
-            memberId: applicantMemberId,
+            userId: applicantMemberId,
+            applyId,
             decision: "UNDECIDED",
             rejectionMessage: "확정취소 메시지",
         });

@@ -35,9 +35,9 @@ export default function CardHeader({
 
             {!isEdit &&
                 (projectCreatorId === loginUserId ? (
-                    applicant.isAccepted === "CONFIRMED" ? (
-                        <ProjectOwnerCardControlConfirmed applicantMemberId={applicant.memberId} />
-                    ) : applicant.isAccepted === "UNDECIDED" ? (
+                    state === "CONFIRMED" ? (
+                        <ProjectOwnerCardControlConfirmed applicantMemberId={applicant.memberId} applyId={applicant.applyId} />
+                    ) : state === "UNDECIDED" ? (
                         <ProjectOwnerCardControlUnconfirmed applicantMemberId={applicant.memberId} applicantId={applicant.applyId} setIsReject={setIsReject} isReject={isReject} />
                     ) : null
                 ) : (
@@ -48,6 +48,7 @@ export default function CardHeader({
 }
 
 const UserInfo = ({ applicant, state }: { applicant: Applicant; state: CardState }) => {
+    console.log("state:::", state);
     return (
         <div className="flex items-center gap-2">
             <div className="flex gap-2 items-center">
@@ -55,12 +56,12 @@ const UserInfo = ({ applicant, state }: { applicant: Applicant; state: CardState
 
                 <div className="text-lg text-n900 font-medium flex gap-1 items-center">
                     {applicant.name}
-                    {state === "confirm" && <div className="w-fit h-[18px] px-1.5 bg-taskmateRed rounded-[12px] text-[10px] leading-[18px] text-white font-normal">확정</div>}
+                    {state === "CONFIRMED" && <div className="w-fit h-fit px-2 py-[3px] bg-blue rounded-[12px] text-xs text-white font-normal">확정</div>}
                 </div>
             </div>
 
             <div className="flex gap-2 items-center text-sm text-n900">
-                <div>{applicant.job || "프론트엔드 개발자"}</div>
+                <div>{applicant.job || "직업 미정"}</div>
                 <div className="w-[1px] h-[15.5px] bg-n300"></div>
                 <div>경력 {applicant.career || 0}년</div>
                 <div className="w-[1px] h-[15.5px] bg-n300"></div>
@@ -156,7 +157,7 @@ const ApplicantCardControl = ({ setIsEdit, applicant }: { setIsEdit: Dispatch<Se
 };
 
 // 프로젝트 생성자 카드 컨트롤 (For 확정 지원자)
-const ProjectOwnerCardControlConfirmed = ({ applicantMemberId }: { applicantMemberId: number }) => {
+const ProjectOwnerCardControlConfirmed = ({ applicantMemberId, applyId }: { applicantMemberId: number; applyId: number }) => {
     const [isDotsThreeVerticalOpen, setIsDotsThreeVerticalOpen] = useState(false); // DotsThreeVertical Dropdown 오픈
     const dotsThreeVerticalRef = useRef<HTMLDivElement>(null);
 
@@ -180,7 +181,7 @@ const ProjectOwnerCardControlConfirmed = ({ applicantMemberId }: { applicantMemb
                 <HamburgerIcon />
             </div>
 
-            {isDotsThreeVerticalOpen && <ProjectOwnerApplicantCardDropdown setIsDotsThreeVerticalOpen={setIsDotsThreeVerticalOpen} applicantMemberId={applicantMemberId} />}
+            {isDotsThreeVerticalOpen && <ProjectOwnerApplicantCardDropdown setIsDotsThreeVerticalOpen={setIsDotsThreeVerticalOpen} applyId={applyId} applicantMemberId={applicantMemberId} />}
         </div>
     );
 };

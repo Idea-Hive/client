@@ -11,7 +11,7 @@ import Tab from "@/components/Tab";
 import { useInput } from "@/hooks/hooks";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { InputHookType } from "../(beforeLogin)/signup/_component/EmailSignup/utils/types";
 
 export default function ProjectList() {
@@ -54,54 +54,52 @@ export default function ProjectList() {
     if (isError) return <div>Error</div>;
 
     return (
-        <Suspense fallback={<Spinner />}>
-            <div className="w-full pb-[60px]">
-                <div className="bg-n200 h-[90px] flex items-center">
-                    <div className="w-full max-w-[1232px] px-4 mx-auto text-h3 text-n900">나에게 딱 맞는 프로젝트를 탐색해보세요</div>
-                </div>
-
-                <div className="w-full max-w-[1232px] px-4 mx-auto relative">
-                    <h2 className="text-h2 text-n900 mt-6 mb-[34px]">프로젝트 탐색</h2>
-
-                    {/* 탭 */}
-                    <Tab
-                        items={[
-                            {
-                                label: "전체",
-                                value: "ALL",
-                            },
-                            {
-                                label: "모집중",
-                                value: "NEW",
-                            },
-                            {
-                                label: "추가모집중",
-                                value: "ADDITIONAL",
-                            },
-                        ]}
-                        defaultTab={selectedTab}
-                        onChange={(value) => {
-                            setSelectedTab(value);
-                        }}
-                    />
-
-                    {/* 검색 및 정렬 */}
-                    <SearchAndSort search={search} setSearchTerm={setSearchTerm} sortType={sortType} setSortType={setSortType} />
-
-                    {/* 프로젝트 리스트 */}
-                    <ProjectGrid projects={data?.projects} isPending={isPending} />
-
-                    {/* Pagination */}
-                    {data?.projects && data.projects.length > 0 && (
-                        <div className="w-full flex justify-center">
-                            <Pagination page={page} viewPerPage={12} total={data.totalCnt} onChange={(page) => setPage(page)} />
-                        </div>
-                    )}
-                </div>
-
-                {user && <FloatBtn userId={user.id} />}
+        <div className="w-full pb-[60px]">
+            <div className="bg-n200 h-[90px] flex items-center">
+                <div className="w-full max-w-[1232px] px-4 mx-auto text-h3 text-n900">나에게 딱 맞는 프로젝트를 탐색해보세요</div>
             </div>
-        </Suspense>
+
+            <div className="w-full max-w-[1232px] px-4 mx-auto relative">
+                <h2 className="text-h2 text-n900 mt-6 mb-[34px]">프로젝트 탐색</h2>
+
+                {/* 탭 */}
+                <Tab
+                    items={[
+                        {
+                            label: "전체",
+                            value: "ALL",
+                        },
+                        {
+                            label: "모집중",
+                            value: "NEW",
+                        },
+                        {
+                            label: "추가모집중",
+                            value: "ADDITIONAL",
+                        },
+                    ]}
+                    defaultTab={selectedTab}
+                    onChange={(value) => {
+                        setSelectedTab(value);
+                    }}
+                />
+
+                {/* 검색 및 정렬 */}
+                <SearchAndSort search={search} setSearchTerm={setSearchTerm} sortType={sortType} setSortType={setSortType} />
+
+                {/* 프로젝트 리스트 */}
+                <ProjectGrid projects={data?.projects} isPending={isPending} />
+
+                {/* Pagination */}
+                {data?.projects && data.projects.length > 0 && (
+                    <div className="w-full flex justify-center">
+                        <Pagination page={page} viewPerPage={12} total={data.totalCnt} onChange={(page) => setPage(page)} />
+                    </div>
+                )}
+            </div>
+
+            {user && <FloatBtn userId={user.id} />}
+        </div>
     );
 }
 

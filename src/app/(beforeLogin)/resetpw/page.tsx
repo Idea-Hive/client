@@ -1,5 +1,6 @@
 "use client";
 
+import Spinner from "@/components/Spinner";
 import { Suspense, useState } from "react";
 import ResetPwForm from "./_component/ResetPwForm";
 import SuccessResetPw from "./_component/SuccessResetPw";
@@ -10,7 +11,7 @@ export default function ResetPwPage() {
     return isReset ? (
         <SuccessResetPw />
     ) : (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Spinner />}>
             <ResetPwForm setIsReset={setIsReset} />
         </Suspense>
     );

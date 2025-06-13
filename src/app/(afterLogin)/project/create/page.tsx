@@ -4,11 +4,11 @@ import { getTemporarySavedProjectInfoApi, onSaveProjectApi, onTemporarySaveProje
 import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import { useSpinner } from "@/components/Spinner";
+import Spinner, { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import OptionalInformations from "./_component/OptionalInformations";
 import RequiredInformations from "./_component/RequiredInformations";
 import { RequiredValues } from "./_types/type";
@@ -201,25 +201,27 @@ export default function CreateProject() {
     };
 
     return (
-        <div className="w-[780px] mx-auto mb-[60px]">
-            <div className="mt-[50px] mb-8 text-h1 text-n900 w-full">프로젝트 등록</div>
-            <RequiredInformations requiredValues={requiredValues} setRequiredValues={setRequiredValues} errors={errors} setErrors={setErrors} />
-            <OptionalInformations hashTags={hashTags} setHashTags={setHashTags} skills={tempSavedSkills} setSkills={setSkills} />
+        <Suspense fallback={<Spinner />}>
+            <div className="w-[780px] mx-auto mb-[60px]">
+                <div className="mt-[50px] mb-8 text-h1 text-n900 w-full">프로젝트 등록</div>
+                <RequiredInformations requiredValues={requiredValues} setRequiredValues={setRequiredValues} errors={errors} setErrors={setErrors} />
+                <OptionalInformations hashTags={hashTags} setHashTags={setHashTags} skills={tempSavedSkills} setSkills={setSkills} />
 
-            <div className="flex justify-center gap-3 mt-6">
-                <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>
-                <Button label="등록" type="button" btnType="primary" className="w-[191px]" onClick={onSave}></Button>
+                <div className="flex justify-center gap-3 mt-6">
+                    <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>
+                    <Button label="등록" type="button" btnType="primary" className="w-[191px]" onClick={onSave}></Button>
+                </div>
+
+                <Modal
+                    isOpen={isOpenSuccessModal}
+                    title="등록 완료"
+                    children="프로젝트 등록이 완료되었습니다"
+                    onConfirm={() => {
+                        router.push(`/project/${projectId}`);
+                    }}
+                />
+                {isShowToast && <Toast type="info" message="임시저장 되었습니다." onClose={() => setIsShowToast(false)} />}
             </div>
-
-            <Modal
-                isOpen={isOpenSuccessModal}
-                title="등록 완료"
-                children="프로젝트 등록이 완료되었습니다"
-                onConfirm={() => {
-                    router.push(`/project/${projectId}`);
-                }}
-            />
-            {isShowToast && <Toast type="info" message="임시저장 되었습니다." onClose={() => setIsShowToast(false)} />}
-        </div>
+        </Suspense>
     );
 }

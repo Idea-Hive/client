@@ -20,11 +20,11 @@ const CardExample = () => {
                                 item={{
                                     id: 1,
                                     title: "태스크메이트 프로젝트 팀원 모집",
-                                    content: "태스크메이트(Taskmate) 플랫폼에 등록된 미완성 프로젝트를 완성해보세요.",
-                                    tags: ["서울", "카카오", "정부지원공모전"],
+                                    description: "태스크메이트(Taskmate) 플랫폼에 등록된 미완성 프로젝트를 완성해보세요.",
+                                    hashtagNames: ["서울", "카카오", "정부지원공모전"],
                                     creator: "홍길동",
-                                    likeCount: 10,
-                                    viewCount: 20,
+                                    likedCnt: 10,
+                                    viewCnt: 20,
                                 }}
                             />
                         </div>

@@ -1,16 +1,28 @@
 "use client";
 
 import { skillCategories } from "@/app/(afterLogin)/project/create/_data/skills";
+import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Selectbox from "@/components/Selectbox";
 import { useInput } from "@/hooks/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function EditProfile() {
+    const { user } = useUserInfo();
+    console.log("user:::", user);
+
     const nickname = useInput(""); // 닉네임
     const email = useInput(""); // 이메일
     const job = useInput(""); // 직업
+
+    useEffect(() => {
+        if (user) {
+            nickname.resetValue(user.name || "");
+            email.resetValue(user.email || "");
+            job.resetValue(user.job || "");
+        }
+    }, [user]);
 
     const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<keyof typeof skillCategories>("frontend");
@@ -40,7 +52,7 @@ export default function EditProfile() {
             </div>
 
             <form className="w-[780px] border border-n400 rounded-lg p-10 flex flex-col gap-5">
-                <Input {...email} label="이메일" placeholder="이메일을 입력해주세요" type="email" isRequired={true} />
+                <Input {...email} label="이메일" placeholder="이메일을 입력해주세요" type="email" isRequired={true} disabled={user?.type !== "email"} />
                 <Input {...nickname} label="닉네임" placeholder="닉네임을 입력해주세요" type="text" isRequired={true} />
                 <Input {...job} label="직업" placeholder="직업을 입력해주세요" type="text" />
                 <Selectbox
@@ -52,6 +64,7 @@ export default function EditProfile() {
                         { value: "3", label: "3년" },
                         { value: "4", label: "4년" },
                     ]}
+                    initialValue={user?.career ? user.career.toString() : undefined}
                 />
 
                 <div>

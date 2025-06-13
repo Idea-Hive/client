@@ -10,12 +10,15 @@ import Spinner from "@/components/Spinner";
 import Tab from "@/components/Tab";
 import { useInput } from "@/hooks/hooks";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { InputHookType } from "../(beforeLogin)/signup/_component/EmailSignup/utils/types";
 
 export default function ProjectList() {
-    const [selectedTab, setSelectedTab] = useState<string>("ALL");
+    const params = useSearchParams();
+    const tab = params.get("tab") || "ALL";
+
+    const [selectedTab, setSelectedTab] = useState<string>(tab);
     const [searchTerm, setSearchTerm] = useState("");
     const search = useInput("");
     const [page, setPage] = useState(1);
@@ -40,6 +43,8 @@ export default function ProjectList() {
         ],
         queryFn: onSearchProjectsApi,
     });
+
+    console.log("data:::", data);
 
     // 검색어, 탭, 정렬 변경 시 페이지 초기화
     useEffect(() => {
@@ -66,11 +71,11 @@ export default function ProjectList() {
                         },
                         {
                             label: "모집중",
-                            value: "recruiting",
+                            value: "NEW",
                         },
                         {
                             label: "추가모집중",
-                            value: "additional",
+                            value: "ADDITIONAL",
                         },
                     ]}
                     defaultTab={selectedTab}

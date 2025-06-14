@@ -1,16 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import SideMenu from "../_component/SideMenu";
 import RightSection from "../_component/RightSection";
 
 export default function ManageProjects() {
+    const [selectedMenu, setSelectedMenu] = useState("대시보드");
+
     return (
-        <div className="w-[1200px] mx-auto flex h-screen">
-            <div className="w-[300px]">
-                <SideMenu></SideMenu>
+        <div className="w-full h-screen flex">
+            <div className="w-[100px] bg-white"></div>
+            <div className="w-[300px] bg-white">
+                <SideMenu selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
             </div>
             <div className="flex-1 bg-n75">
-                <RightSection></RightSection>
+                <RightSection selectedMenu={selectedMenu} />
             </div>
         </div>
     );

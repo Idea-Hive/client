@@ -1,19 +1,28 @@
-'use client';
+"use client";
 
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import Selectbox from "@/components/Selectbox";
-import Menu from "../_component/Menu";
+import Menu from "./Menu";
 import { FolderIcon, SquaresFourIcon, GearSixIcon } from "@/components/icons/icons";
 import Button from "@/components/Button";
+import { useClickOutside } from "@/hooks/hooks";
 
-export default function SideMenu() {
-    const onProjectSubmit = () => {//TODO
-        const requestBody = '';
+interface SideMenuProps {
+    selectedMenu: string;
+    setSelectedMenu: (menu: string) => void;
+}
+
+const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) => {
+    const onProjectSubmit = () => {
+        //TODO
+        const requestBody = "";
     };
 
     const [isOpen, setIsOpen] = useState(false);
-
-    const toggleDropDown = () => setIsOpen(!isOpen);
+    const dropBoxRef = useRef<HTMLDivElement>(null);
+    useClickOutside(dropBoxRef, () => {
+        if (isOpen) setIsOpen(false);
+    });
 
     return (
         <div className="flex flex-col px-6 pt-10 md-25">
@@ -30,45 +39,39 @@ export default function SideMenu() {
                     <div className="relative">
                         <Menu
                             label="프로젝트"
-                            href="#"
-                            subItems={[
-                                { label: "대시보드", href: "#" },
-                                { label: "캘린더", href: "#" },
-                            ]}
-                            defaultOpen={true}
+                            subItems={[{ label: "대시보드" }, { label: "캘린더" }]}
                             icon={
                                 <div className="w-[20px] h-[20px] p-[3px]">
                                     <SquaresFourIcon />
                                 </div>
                             }
+                            selectedItem={selectedMenu}
+                            onSelect={setSelectedMenu}
                         />
                         <Menu
                             label="프로세스"
-                            href="#"
-                            subItems={[
-                                { label: "기획", href: "#" },
-                                { label: "디자인", href: "#" },
-                                { label: "개발", href: "#" },
-                                { label: "배포", href: "#" },
-                                { label: "완료", href: "#" },
-                            ]}
-                            defaultOpen={true}
+                            subItems={[{ label: "기획" }, { label: "디자인" }, { label: "개발" }, { label: "배포" }, { label: "완료" }]}
                             icon={<FolderIcon width={20} height={20} />}
+                            selectedItem={selectedMenu}
+                            onSelect={setSelectedMenu}
                         />
-                        <Menu label="팀" href="#" subItems={[]} defaultOpen={true} icon={<FolderIcon width={20} height={20} />} />
+                        <Menu label="팀" icon={<FolderIcon width={20} height={20} />} selectedItem={selectedMenu} onSelect={setSelectedMenu} />
                     </div>
                 </div>
             </div>
 
             <div className="flex flex-col">
-
                 <div className="relative">
-                    <span className="flex items-center justify-end text-sm mb-3" onClick={toggleDropDown}>
-                        <GearSixIcon />
-                        <span className="ml-1 text-n800">설정</span>
-                    </span>
+                    <div className="flex items-center justify-end text-sm mb-3">
+                        <button className="cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+                            <GearSixIcon />
+                        </button>
+                        <span className="ml-1 text-n800 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+                            설정
+                        </span>
+                    </div>
                     {isOpen && (
-                        <div className="absolute right-0 bottom-full mb-[9px]">
+                        <div ref={dropBoxRef} className="absolute right-0 bottom-full mb-[9px]">
                             <ul className="w-[120px] bg-white border rounded shadow z-10 text-sm text-n800">
                                 <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200 cursor-pointer">프로젝트 탈퇴</li>
                                 <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200 cursor-pointer">프로젝트 삭제</li>
@@ -79,11 +82,15 @@ export default function SideMenu() {
 
                 <Button
                     label="프로젝트 제출"
-                    onClick={() => {onProjectSubmit}}
+                    onClick={() => {
+                        onProjectSubmit;
+                    }}
                     size="large"
                     btnType="primary"
                 />
             </div>
         </div>
     );
-}
+};
+
+export default SideMenu;

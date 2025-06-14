@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { DropboxProps } from "../_types/Task";
 import { SmallUserImgIcon, CaretDownIcon } from "@/components/icons/icons";
+import { useClickOutside } from "@/hooks/hooks";
 
 const assigneeList: { label: string; value: string }[] = [
     { label: "선택없음", value: "" },
@@ -14,20 +15,9 @@ const Dropbox = ({ task, index, onSelectAssignee }: DropboxProps) => {
     const toggleDropdown = (index: number) => {
         setOpenDropdownIndex((prev) => (prev === index ? null : index));
     };
-    
-    const dropBoxRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropBoxRef.current && !dropBoxRef.current.contains(event.target as Node)) {
-                setOpenDropdownIndex(null);
-            }
-        };
 
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+    const dropBoxRef = useRef<HTMLDivElement>(null);
+    useClickOutside(dropBoxRef, () => setOpenDropdownIndex(null));
 
     const handleSelect = (index: number, assignee: { label: string; value: string }) => {
         onSelectAssignee(index, assignee);

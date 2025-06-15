@@ -44,7 +44,7 @@ export default function Release() {
 
     return (
         <div className="p-10">
-            <div className="text-h2 text-n900 left-0 pb-[16px] border-b-[1px] border-n400">디자인</div>
+            <div className="text-h2 text-n900 left-0 pb-[16px] border-b-[1px] border-n400">배포</div>
 
             <div className="mt-[40px] flex flex-col">
                 <div className="flex justify-between items-end">

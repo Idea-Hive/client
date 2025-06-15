@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { TaskTableProps } from "../_types/Task";
 import { FolderIcon, CalendaBlankIcon, UploadSimpleIcon } from "@/components/icons/icons";
+import Checkbox from "@/components/Checkbox";
 import Dropbox from "./Dropbox";
 import FileModal from "./FileModal";
 
-const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee }) => {
+const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, checkedIds = [], onCheck }) => {
+    //체크박스
+    const handleCheckBox = (key: string) => {
+        const next = checkedIds.includes(key) ? checkedIds.filter((i) => i !== key) : [...checkedIds, key];
+        onCheck(next); //상태는 비동기라 이렇게 해야 함.
+    };
+
     //파일 모달
     const [openFileModalIndex, setOpenFileModalIndex] = useState<number | null>(null);
     const openFileModal = (index: number) => {
@@ -15,7 +22,10 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee }) => {
             <table className="w-full text-xs border-separate border-spacing-0">
                 <thead className="bg-n50 text-center text-xsEmphasis">
                     <tr className="h-[42px]">
-                        <th className="border-b pt-3 pb-3 rounded-tl-xl w-[64px]">선택</th>
+                        <th className="border-b pt-3 pb-3 rounded-tl-xl w-[64px]">
+                            선택
+                            {/* checkbox 전체 선택/전체 해제 필요할 수도 */}
+                        </th>
                         <th className="border-b pt-3 pb-3 w-[74px]">Key</th>
                         <th className="border-b pt-3 pb-3 w-[243px]">과제</th>
                         <th className="border-b pt-3 pb-3 w-[120px]">담당자</th>
@@ -27,7 +37,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee }) => {
                     {tasks.map((task, index) => (
                         <tr key={task.key} className={`border-t h-[42px] ${index === tasks.length - 1 ? "last-row" : ""}`}>
                             <td className={`p-3 text-center ${index === tasks.length - 1 ? "rounded-bl-xl" : "border-b"}`}>
-                                <input type="checkbox" className="w-4 h-4 border-n400 cursor-pointer" />
+                                <Checkbox checked={checkedIds.includes(task.key)} value="1" onClick={() => handleCheckBox(task.key)} />
                             </td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.key}</td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.title}</td>

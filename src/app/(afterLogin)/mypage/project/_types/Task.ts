@@ -12,6 +12,8 @@ export interface Task {
 export interface TaskTableProps {
     tasks: Task[];
     onSelectAssignee: (index: number, assignee: { label: string; value: string }) => void;
+    checkedIds: string[];
+    onCheck: (indexs: string[]) => void;
 }
 
 export interface DropboxProps {

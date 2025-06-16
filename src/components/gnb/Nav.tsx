@@ -19,6 +19,9 @@ export default function Nav() {
         refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
         staleTime: 0, // 데이터를 항상 fresh하지 않게 설정
         gcTime: 0, // 캐시를 즉시 무효화
+        refetchOnMount: true, // 컴포넌트가 마운트될 때마다 refetch
+        refetchOnWindowFocus: true, // 윈도우가 포커스될 때마다 refetch
+        refetchOnReconnect: true, // 네트워크 재연결 시 refetch
     });
 
     return (
@@ -91,7 +94,7 @@ const NavRightSectionForLoggedInUser = ({ user }: { user: User }) => {
                             }}
                             className="w-full h-9 text-left px-3 text-sm text-n800 rounded-t hover:bg-n75"
                         >
-                            비밀번호
+                            비밀번호 변경
                         </button>
                         <button
                             onClick={async () => {

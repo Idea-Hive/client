@@ -1,8 +1,10 @@
 import { onCheckEmailVerificationCodeApi, onSendEmailVerificationCodeApi } from "@/apis/user/userApis";
 import Input from "@/components/Input";
 import { useSpinner } from "@/components/Spinner";
+import Toast from "@/components/Toast";
 import { useMutation } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useState } from "react";
+import { AxiosError } from "axios";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { InputHookType, SignupFormData } from "../utils/types";
 import { validateEmail } from "../utils/utils";
 
@@ -19,6 +21,15 @@ export default function EmailVerification({ email, verificationCode, errors, set
     const spinner = useSpinner();
 
     const [isClickEmailVerification, setIsClickEmailVerification] = useState(false); // 인증 요청 버튼 클릭 flag
+    const [isToast, setIsToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [isTimerFinish, setIsTimerFinish] = useState(false);
+
+    const finishTimer = () => {
+        setIsTimerFinish(true);
+        setIsToast(true);
+        setToastMessage("인증번호 유효기간이 만료되었습니다. 인증번호를 다시 요청해주세요.");
+    };
 
     const handleEmailVerificationMutation = useMutation({
         mutationFn: onSendEmailVerificationCodeApi,
@@ -29,9 +40,10 @@ export default function EmailVerification({ email, verificationCode, errors, set
             console.log("success data:::", data);
             setIsClickEmailVerification(true);
         },
-        onError: (error) => {
-            console.log(error);
-            window.alert("이메일 인증 요청에 실패했습니다.");
+        onError: (error: AxiosError) => {
+            console.log(error.response?.data);
+            setIsToast(true);
+            setToastMessage(error.response?.data as string);
         },
         onSettled: () => {
             spinner.close();
@@ -58,12 +70,18 @@ export default function EmailVerification({ email, verificationCode, errors, set
 
     // 이메일 인증 요청
     const handleEmailVerification = () => {
-        console.log("email.value:::", email.value);
+        setIsTimerFinish(false);
         handleEmailVerificationMutation.mutate(email.value);
     };
 
     const handleEmailVerificationCheck = () => {
-        console.log("verificationCode.value:::", verificationCode.value);
+        if (isTimerFinish) {
+            console.log("here");
+            setIsToast(true);
+            setToastMessage("인증번호 유효기간이 만료되었습니다. 인증번호를 다시 요청해주세요.");
+            return;
+        }
+
         handleEmailVerificationCheckMutation.mutate({
             email: email.value,
             code: verificationCode.value,
@@ -115,11 +133,11 @@ export default function EmailVerification({ email, verificationCode, errors, set
                         }}
                         placeholder="인증번호를 입력해 주세요"
                         type="text"
+                        children={isTimerFinish ? undefined : <Timer isTimerFinish={finishTimer} />}
                         isErr={!!errors.verificationCode}
                         errMsg={errors.verificationCode}
                     />
 
-                    {/* 인증 작업 아직 안했음 */}
                     <button
                         type="button"
                         className="h-[46px] mt-7 text-sm text-white w-20 rounded bg-[#ff6363] disabled:bg-[#d8dae5] disabled:text-[#8f95b2]"
@@ -130,6 +148,7 @@ export default function EmailVerification({ email, verificationCode, errors, set
                     </button>
                 </div>
             )}
+            {isToast && <Toast type="error" message={toastMessage} onClose={() => setIsToast(false)} />}
         </div>
     );
 }
@@ -142,3 +161,26 @@ const CheckIcon = () => (
         />
     </svg>
 );
+
+const Timer = ({ isTimerFinish }: { isTimerFinish: () => void }) => {
+    const [time, setTime] = useState(180); // 3분 = 180초
+
+    useEffect(() => {
+        if (time === 0) {
+            isTimerFinish();
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setTime((prevTime) => prevTime - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [time, isTimerFinish]);
+
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    const formattedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+    return <div className="text-sm text-[#ff6363] font-medium">{formattedTime}</div>;
+};

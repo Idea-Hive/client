@@ -79,11 +79,11 @@ export default function Calendar({ year, month, events = [] }: CalendarProps) {
 
     return (
         <div className="bg-[#f7f9fb] p-4 rounded-lg">
-            <table className="w-full border-separate border-spacing-0">
+            <table className="w-full border-separate border-spacing-0 border border-n400 rounded-md">
                 <thead>
                     <tr>
-                        {dayNames.map((d) => (
-                            <th key={d} className="py-2 px-1 text-xs font-semibold text-gray-400 border border-[#e5e8ef] bg-[#f7f9fb]">
+                        {dayNames.map((d, i) => (
+                            <th key={d} className={`p-2 text-xsEmphasize text-n800 border border-n400 bg-n50 text-start ${i === 0 ? "rounded-ss-md" : ""} ${i === 6 ? "rounded-se-md" : ""}`}>
                                 {d}
                             </th>
                         ))}
@@ -109,8 +109,8 @@ export default function Calendar({ year, month, events = [] }: CalendarProps) {
                                         : year
                                 }-${String(cell.month).padStart(2, "0")}-${String(cell.day).padStart(2, "0")}`;
                                 return (
-                                    <td key={i} className={clsx("align-top h-24 w-32 border border-[#e5e8ef] bg-white relative", !cell.isCurrentMonth && "bg-[#f7f9fb]")}>
-                                        <div className={clsx("text-xs px-2 pt-2", cell.isCurrentMonth ? "text-gray-400" : "text-gray-300")}>{cell.day}</div>
+                                    <td key={i} className={clsx("align-top h-[128px] w-32 border border-n400 bg-white relative", !cell.isCurrentMonth && "bg-[#f7f9fb]")}>
+                                        <div className={clsx("text-sm px-2 pt-2", cell.isCurrentMonth ? "text-n800" : "text-n600")}>{cell.day}</div>
                                         <div className="flex flex-col gap-1 px-2 mt-1">
                                             {eventMap[dateStr]?.map((ev, idx) => (
                                                 <div key={idx} className={clsx("rounded px-1 py-0.5 text-xs whitespace-nowrap", getEventColor(ev.type))}>

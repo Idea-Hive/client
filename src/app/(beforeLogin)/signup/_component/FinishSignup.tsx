@@ -1,6 +1,23 @@
+"use client";
+
+import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
+import FindPwModal from "@/components/gnb/FindPwModal/FindPwModal";
+import LoginModal from "@/components/gnb/LoginModal/LoginModal";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function FinishSignup() {
+    const [isShowLoginModal, setIsShowLoginModal] = useState(false);
+    const [isShowFindPwModal, setIsShowFindPwModal] = useState(false);
+
+    const { user } = useUserInfo();
+
+    useEffect(() => {
+        if (user) {
+            redirect("/");
+        }
+    }, [user]);
+
     const onClickMainPage = () => {
         redirect("/");
     };
@@ -29,8 +46,22 @@ export default function FinishSignup() {
                 <button type="button" className="flex-1 h-full border border-[#c1c4d6] text-base font-medium text-[#474d66] rounded-md" onClick={onClickMainPage}>
                     메인으로 이동
                 </button>
-                <button className="flex-1 h-full bg-[#ff6363] text-white rounded-md text-base font-medium">로그인</button>
+                <button className="flex-1 h-full bg-[#ff6363] text-white rounded-md text-base font-medium" onClick={() => setIsShowLoginModal(true)}>
+                    로그인
+                </button>
             </div>
+
+            {/* 로그인 모달 */}
+            {isShowLoginModal && (
+                <LoginModal
+                    onClose={() => {
+                        setIsShowLoginModal(false);
+                    }}
+                    onOpenFindPwModal={() => setIsShowFindPwModal(true)}
+                />
+            )}
+            {/* 비밀번호 찾기 모달 */}
+            {isShowFindPwModal && <FindPwModal onClose={() => setIsShowFindPwModal(false)} />}
         </div>
     );
 }

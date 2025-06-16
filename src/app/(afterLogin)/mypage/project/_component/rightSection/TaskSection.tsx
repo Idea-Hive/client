@@ -1,4 +1,6 @@
-import React from "react";
+
+/** 일단 보류 => 필수,선택을 별도로 나눠서 쓸 필요가 있을까.. */
+import React, {useState} from "react";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../Table";
@@ -9,10 +11,11 @@ interface TaskSectionProps {
     tasks: Task[];
     onDownloadTemplate: () => void;
     onSelectAssignee: (index: number, assignee: { label: string; value: string }) => void;
+    onCheck: (indexs: string[]) => void;
     isRequired?: boolean;
 }
 
-export default function TaskSection({ title, tasks, onDownloadTemplate, onSelectAssignee, isRequired = false }: TaskSectionProps) {
+export default function TaskSection({ title, tasks, onDownloadTemplate, onSelectAssignee, onCheck, isRequired = false }: TaskSectionProps) {
     return (
         <div className="mt-[40px] flex flex-col">
             <div className="flex justify-between items-end">
@@ -34,7 +37,7 @@ export default function TaskSection({ title, tasks, onDownloadTemplate, onSelect
                     </div>
                 )}
             </div>
-            <Table tasks={tasks} onSelectAssignee={onSelectAssignee} />
+            {/* <Table tasks={tasks} onSelectAssignee={onSelectAssignee} checkedIds={} onCheck={onCheck}/> */}
         </div>
     );
 }

@@ -16,15 +16,17 @@ export default function CardBody({ applicant }: { applicant: Applicant }) {
 
                 {isSpecOpen && (
                     <div className="flex flex-wrap gap-2">
-                        {applicant.skillStacks.length > 0
-                            ? applicant.skillStacks.map((item) => {
-                                  return (
-                                      <button key={item} className="border border-[#d8dae5] text-xs text-n900 rounded-full px-3 h-8 cursor-default pointer-events-none">
-                                          {item}
-                                      </button>
-                                  );
-                              })
-                            : "보유 스펙이 없습니다."}
+                        {applicant.skillStacks.length > 0 ? (
+                            applicant.skillStacks.map((item) => {
+                                return (
+                                    <button key={item} className="border border-[#d8dae5] text-xs text-n900 rounded-full px-3 h-8 cursor-default pointer-events-none">
+                                        {item}
+                                    </button>
+                                );
+                            })
+                        ) : (
+                            <div className="text-sm text-n700">보유 스펙이 없습니다.</div>
+                        )}
                         {/* 보유 스펙 없는 부분 디자인 필요 */}
                     </div>
                 )}

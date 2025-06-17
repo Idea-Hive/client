@@ -23,6 +23,13 @@ export default function ToastEditorWrapper({ editorRef, label, placeholder, onCh
         }
     }, [isErr]);
 
+    useEffect(() => {
+        if (editorRef.current && initialValue) {
+            const instance = editorRef.current.getInstance();
+            instance.setMarkdown(initialValue);
+        }
+    }, [initialValue, editorRef]);
+
     return (
         <div>
             {label !== "" && (

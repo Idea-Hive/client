@@ -4,13 +4,6 @@ import moment from "moment";
 import { useParams } from "next/navigation";
 import { useProjectDetail, useUserInfo } from "../../hooks/Hooks";
 
-const labels = [
-    { status: "RECRUITING", label: "모집중" },
-    { status: "RECRUITING_END", label: "모집완료" },
-    { status: "IN_PROGRESS", label: "진행중" },
-    { status: "COMPLETED", label: "완료" },
-];
-
 export default function LeftSection() {
     const { projectId } = useParams();
     const { user } = useUserInfo();
@@ -34,7 +27,12 @@ export default function LeftSection() {
     if (!project) return <div>존재하지 않는 프로젝트입니다.</div>;
     return (
         <div>
-            <div className="text-taskmateRed text-smEmphasize mb-2">{labels.find((item) => item.status === project.projectStatus)?.label}</div>
+            <div className="text-taskmateRed text-smEmphasize mb-2">
+                {(project.projectStatus === 'RECRUITING' && project.isNew) && '모집중'}
+                {(project.projectStatus === 'RECRUITING' && !project.isNew) && '추가모집중'}
+                {project.projectStatus === 'IN_PROGRESS' && '진행중'}
+                {project.projectStatus === 'COMPLETED' && '완료'}
+            </div>
 
             <div className="text-h2 text-n900 mb-3 flex items-center">
                 {project.title}

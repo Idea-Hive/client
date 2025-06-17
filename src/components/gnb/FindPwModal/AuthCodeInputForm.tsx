@@ -1,6 +1,8 @@
-import { onCheckAuthCodeForFindPwApi } from "@/apis/user/userApis";
+import { onCheckAuthCodeForFindPwApi, onSendAuthCodeForFindPwApi } from "@/apis/user/userApis";
 import { useSpinner } from "@/components/Spinner";
+import Toast from "@/components/Toast";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Button from "../../Button";
@@ -8,6 +10,37 @@ import Button from "../../Button";
 export default function AuthCodeInputForm({ onClose, email }: { onClose: () => void; email: string }) {
     const router = useRouter();
     const spinner = useSpinner();
+
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [toastType, setToastType] = useState<"error" | "success">("error");
+
+    const sendAuthCodeMutation = useMutation({
+        mutationFn: onSendAuthCodeForFindPwApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (data, variables, context) => {
+            console.log("인증번호 전송 성공:::", data, variables, context);
+            setShowToast(true);
+            setToastMessage("인증번호가 재전송되었습니다");
+            setToastType("success");
+        },
+        onError: (error: AxiosError) => {
+            console.log("인증번호 전송 실패:::", error);
+            setShowToast(true);
+            setToastMessage(error.response?.data as string);
+            setToastType("error");
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
+    const resendAuthCode = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        sendAuthCodeMutation.mutate(email);
+    };
 
     const onCheckAuthCodeMutation = useMutation({
         mutationFn: onCheckAuthCodeForFindPwApi,
@@ -19,8 +52,11 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
             router.push(`/resetpw?email=${encodeURIComponent(email)}`);
             onClose();
         },
-        onError: (error) => {
-            console.log("error:::", error);
+        onError: (error: AxiosError) => {
+            console.log("error:::", error.response?.data);
+            setShowToast(true);
+            setToastMessage(error.response?.data as string);
+            setToastType("error");
         },
         onSettled: () => {
             spinner.close();
@@ -42,6 +78,13 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
+
+        if (authCode.some((code) => code === "")) {
+            setShowToast(true);
+            setToastMessage("인증번호를 입력해주세요");
+            setToastType("error");
+            return;
+        }
 
         const code = authCode.join("");
         onCheckAuthCodeMutation.mutate({ email, code });
@@ -70,9 +113,11 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
                 ))}
             </div>
             <div className="w-full flex gap-2">
-                <Button btnType="line_red" label="인증번호 재전송" size="large" className="flex-1" type="button" onClick={() => {}} />
+                <Button btnType="line_red" label="인증번호 재전송" size="large" className="flex-1" type="button" onClick={resendAuthCode} />
                 <Button btnType="primary" label="확인" size="large" className="flex-1" type="button" onClick={handleSubmit} />
             </div>
+
+            {showToast && <Toast type={toastType} message={toastMessage} onClose={() => setShowToast(false)} />}
         </div>
     );
 }

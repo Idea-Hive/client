@@ -15,9 +15,10 @@ interface DatePickerProps {
     onChange: (value: LooseValue) => void;
     onClose?: () => void;
     isOpen: boolean;
+    minDate?: Date;
 }
 
-export default function DatePicker({ isRange, defaultValue, onChange, isOpen, onClose }: DatePickerProps) {
+export default function DatePicker({ isRange, defaultValue, onChange, isOpen, onClose, minDate }: DatePickerProps) {
     const calendarRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -37,7 +38,7 @@ export default function DatePicker({ isRange, defaultValue, onChange, isOpen, on
 
     return (
         <div className="calendar-wrapper" ref={calendarRef}>
-            <Calendar formatDay={(locale, date) => moment(date).format("DD")} onChange={onChange} selectRange={isRange} defaultValue={defaultValue} />
+            <Calendar formatDay={(locale, date) => moment(date).format("DD")} onChange={onChange} selectRange={isRange} defaultValue={defaultValue} minDate={minDate} />
         </div>
     );
 }

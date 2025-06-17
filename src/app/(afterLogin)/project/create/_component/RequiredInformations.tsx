@@ -115,7 +115,7 @@ const RequiredInformations = ({
                         />
                     </div>
 
-                    <PredictDate requiredValues={requiredValues} setRequiredValues={setRequiredValues} errors={errors} />
+                    <PredictDate requiredValues={requiredValues} setRequiredValues={setRequiredValues} errors={errors} setErrors={setErrors} />
                 </div>
             </div>
         </div>
@@ -126,10 +126,12 @@ const PredictDate = ({
     requiredValues,
     setRequiredValues,
     errors,
+    setErrors,
 }: {
     requiredValues: RequiredValues;
     setRequiredValues: Dispatch<SetStateAction<RequiredValues>>;
     errors: { dueDateFrom: string; dueDateTo: string };
+    setErrors: Dispatch<SetStateAction<{ title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string }>>;
 }) => {
     const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
     const [isUndefinedDate, setIsUndefinedDate] = useState(false);
@@ -158,13 +160,15 @@ const PredictDate = ({
         setDate((prev) => ({ ...prev, start: format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"), end: format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }));
         setRequiredValues((prev) => ({ ...prev, dueDateFrom: format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"), dueDateTo: format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }));
         setIsOpenDatePicker(false);
+        setErrors((prev) => ({ ...prev, dueDateFrom: "", dueDateTo: "" }));
     };
 
     const handleUnderfinedDate = () => {
         // 미정 체크 시, 날짜 미입력
         // useState 위에 넣는 이유는 useState가 비동기처럼 동작하기 때문에 미정 체크 시, 날짜 미입력 처리가 안되는 문제 발생
-        setRequiredValues((prev) => ({ ...prev, dueDateFrom: !isUndefinedDate ? null : requiredValues.dueDateFrom, dueDateTo: !isUndefinedDate ? null : requiredValues.dueDateTo }));
+        setRequiredValues((prev) => ({ ...prev, dueDateFrom: !isUndefinedDate ? null : requiredValues.dueDateFrom || "", dueDateTo: !isUndefinedDate ? null : requiredValues.dueDateTo || "" }));
         setIsUndefinedDate(!isUndefinedDate);
+        setErrors((prev) => ({ ...prev, dueDateFrom: "", dueDateTo: "" }));
     };
 
     return (
@@ -196,7 +200,7 @@ const PredictDate = ({
                 </div>
             </div>
 
-            <DatePicker isRange={true} defaultValue={[date.start, date.end]} onChange={handleDatePicker} isOpen={isOpenDatePicker} onClose={() => setIsOpenDatePicker(false)} />
+            <DatePicker isRange={true} defaultValue={[date.start, date.end]} onChange={handleDatePicker} isOpen={isOpenDatePicker} onClose={() => setIsOpenDatePicker(false)} minDate={new Date()} />
 
             {errors.dueDateFrom !== "" ? (
                 <div className="text-red text-xs mt-2">{errors.dueDateFrom}</div>

@@ -151,7 +151,7 @@ const OptionalInformations = ({ hashTags, setHashTags, skills, setSkills }: Opti
                     </div>
 
                     {/* 3depth - 선택된 기술 열 */}
-                    <div className="flex-1 rounded-r-[4px] p-3 flex flex-wrap content-start gap-3">
+                    <div className="flex-1 rounded-r-[4px] p-3 flex flex-wrap content-start gap-3 overflow-y-auto">
                         {selectedSkills.map((skill) => (
                             <div key={skill.id} className="flex items-center gap-1">
                                 <span className="text-taskmateRed text-sm">{skill.name}</span>

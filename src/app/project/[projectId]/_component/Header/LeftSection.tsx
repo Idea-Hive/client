@@ -28,10 +28,10 @@ export default function LeftSection() {
     return (
         <div>
             <div className="text-taskmateRed text-smEmphasize mb-2">
-                {(project.projectStatus === 'RECRUITING' && project.isNew) && '모집중'}
-                {(project.projectStatus === 'RECRUITING' && !project.isNew) && '추가모집중'}
-                {project.projectStatus === 'IN_PROGRESS' && '진행중'}
-                {project.projectStatus === 'COMPLETED' && '완료'}
+                {project.projectStatus === "RECRUITING" && project.isNew && "모집중"}
+                {project.projectStatus === "RECRUITING" && !project.isNew && "추가모집중"}
+                {project.projectStatus === "IN_PROGRESS" && "진행중"}
+                {project.projectStatus === "COMPLETED" && "완료"}
             </div>
 
             <div className="text-h2 text-n900 mb-3 flex items-center">
@@ -56,8 +56,13 @@ export default function LeftSection() {
                 </div>
 
                 <div className="flex gap-2 items-center text-sm text-n800">
-                    <div>{project.creatorJob || "직업 미정"}</div>
-                    <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                    {project.creatorJob && (
+                        <>
+                            <div>{project.creatorJob}</div>
+                            <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                        </>
+                    )}
+
                     <div>경력 {project.creatorCareer || 0}년</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
                     <div>프로젝트 경험 {project.creatorCompletedProjectCnt}회</div>

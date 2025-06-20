@@ -7,6 +7,7 @@ import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import OptionalInformations from "./_component/OptionalInformations";
@@ -97,8 +98,8 @@ export default function CreateProject() {
             description: "프로젝트 설명을 입력해주세요.",
             // idea: "프로젝트 아이디어를 입력해주세요.",
             maxMembers: "모집 인원을 입력해주세요.",
-            dueDateFrom: "시작일을 입력해주세요.",
-            dueDateTo: "종료일을 입력해주세요.",
+            dueDateFrom: "예상 일정을 입력해주세요.",
+            dueDateTo: "예상 일정을 입력해주세요.",
             contact: "연락수단을 입력해주세요.",
         };
 
@@ -108,6 +109,7 @@ export default function CreateProject() {
         Object.entries(validations).forEach(([field, message]) => {
             const value = requiredValues[field as keyof RequiredValues];
             if (field === "dueDateFrom" || field === "dueDateTo") {
+                console.log(`${field}:::`, value, typeof value);
                 if (value === "") {
                     newErrors[field as keyof RequiredValues] = message;
                     isValid = false;
@@ -123,6 +125,8 @@ export default function CreateProject() {
     };
 
     const [isShowToast, setIsShowToast] = useState<boolean>(false);
+    const [toastType, setToastType] = useState<"info" | "error">("info");
+    const [toastMessage, setToastMessage] = useState<string>("임시저장 되었습니다.");
 
     const onTemporarySaveMutation = useMutation({
         mutationFn: onTemporarySaveProjectApi,
@@ -132,11 +136,25 @@ export default function CreateProject() {
         onSuccess: (response) => {
             console.log("성공");
             setProjectId(response);
+            setToastType("info");
+            setToastMessage("임시저장 되었습니다.");
             setIsShowToast(true);
+            setErrors({
+                title: "",
+                description: "",
+                idea: "",
+                maxMembers: "",
+                dueDateFrom: "",
+                dueDateTo: "",
+                contact: "",
+            });
         },
-        onError: (error) => {
+        onError: (error: AxiosError) => {
             console.log("실패");
             console.log(error.message);
+            setIsShowToast(true);
+            setToastType("error");
+            setToastMessage(error.response?.data as string);
         },
         onSettled: () => {
             spinner.close();
@@ -149,13 +167,14 @@ export default function CreateProject() {
             spinner.open();
         },
         onSuccess: (response) => {
-            console.log("성공");
             setProjectId(response);
             setIsOpenSuccessModal(true);
         },
-        onError: (error) => {
-            console.log("실패");
-            console.log(error.message);
+        onError: (error: AxiosError) => {
+            console.log(error.response?.data);
+            setIsShowToast(true);
+            setToastType("error");
+            setToastMessage(error.response?.data as string);
         },
         onSettled: () => {
             spinner.close();
@@ -186,6 +205,28 @@ export default function CreateProject() {
 
     const onTemporarySave = () => {
         const requestBody = getRequestBody();
+        if (requestBody.title === "") {
+            setErrors({
+                title: "프로젝트명을 입력해주세요.",
+                description: "",
+                idea: "",
+                maxMembers: "",
+                dueDateFrom: "",
+                dueDateTo: "",
+                contact: "",
+            });
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+
+            setIsShowToast(true);
+            setToastType("error");
+            setToastMessage("프로젝트명을 입력해주세요.");
+            return;
+        }
+
         onTemporarySaveMutation.mutate({ ...requestBody, isSave: false });
     };
 
@@ -219,7 +260,7 @@ export default function CreateProject() {
                     router.push(`/project/${projectId}`);
                 }}
             />
-            {isShowToast && <Toast type="info" message="임시저장 되었습니다." onClose={() => setIsShowToast(false)} />}
+            {isShowToast && <Toast type={toastType} message={toastMessage} onClose={() => setIsShowToast(false)} />}
         </div>
     );
 }

@@ -24,6 +24,7 @@ export default function EmailVerification({ email, verificationCode, errors, set
     const [isToast, setIsToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
     const [isTimerFinish, setIsTimerFinish] = useState(false);
+    const [timerResetKey, setTimerResetKey] = useState(0); // 타이머 리셋을 위한 key
 
     const finishTimer = () => {
         setIsTimerFinish(true);
@@ -38,7 +39,9 @@ export default function EmailVerification({ email, verificationCode, errors, set
         },
         onSuccess: (data) => {
             console.log("success data:::", data);
+            setIsTimerFinish(false);
             setIsClickEmailVerification(true);
+            setTimerResetKey((prev) => prev + 1); // 타이머 리셋
         },
         onError: (error: AxiosError) => {
             console.log(error.response?.data);
@@ -70,7 +73,6 @@ export default function EmailVerification({ email, verificationCode, errors, set
 
     // 이메일 인증 요청
     const handleEmailVerification = () => {
-        setIsTimerFinish(false);
         handleEmailVerificationMutation.mutate(email.value);
     };
 
@@ -133,7 +135,7 @@ export default function EmailVerification({ email, verificationCode, errors, set
                         }}
                         placeholder="인증번호를 입력해 주세요"
                         type="text"
-                        children={isTimerFinish ? undefined : <Timer isTimerFinish={finishTimer} />}
+                        children={isTimerFinish ? undefined : <Timer isTimerFinish={finishTimer} resetKey={timerResetKey} />}
                         isErr={!!errors.verificationCode}
                         errMsg={errors.verificationCode}
                     />
@@ -142,9 +144,9 @@ export default function EmailVerification({ email, verificationCode, errors, set
                         type="button"
                         className="h-[46px] mt-7 text-sm text-white w-20 rounded bg-[#ff6363] disabled:bg-[#d8dae5] disabled:text-[#8f95b2]"
                         onClick={handleEmailVerificationCheck}
-                        disabled={verificationCode.value.length !== 6}
+                        disabled={verificationCode.value.length !== 6 || isTimerFinish}
                     >
-                        인증 완료
+                        {isTimerFinish ? "인증 실패" : "인증 완료"}
                     </button>
                 </div>
             )}
@@ -162,8 +164,13 @@ const CheckIcon = () => (
     </svg>
 );
 
-const Timer = ({ isTimerFinish }: { isTimerFinish: () => void }) => {
+const Timer = ({ isTimerFinish, resetKey }: { isTimerFinish: () => void; resetKey: number }) => {
     const [time, setTime] = useState(180); // 3분 = 180초
+
+    useEffect(() => {
+        // resetKey가 변경되면 타이머를 리셋
+        setTime(180);
+    }, [resetKey]);
 
     useEffect(() => {
         if (time === 0) {

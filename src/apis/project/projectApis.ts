@@ -111,6 +111,8 @@ export interface Applicant {
     isAccepted: "CONFIRMED" | "UNDECIDED" | "REJECTED";
     completedProjectCnt: number;
     rejectionMessage: string;
+    isReApplication?: boolean;
+    preRejectionMessage?: string;
 }
 
 export interface ProjectDetailData {

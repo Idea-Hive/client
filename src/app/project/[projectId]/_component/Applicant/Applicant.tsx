@@ -22,7 +22,7 @@ export default function Applicant() {
             <div className="flex flex-col gap-6">
                 {applicantData.applicants.length > 0 ? (
                     applicantData.applicants.map((applicant) => {
-                        return <ApplicantCard key={applicant.memberId} state={applicant.isAccepted} applicant={applicant} projectCreatorName={project.creatorName} />;
+                        return <ApplicantCard key={applicant.applyId} applicant={applicant} projectCreatorName={project.creatorName} />;
                     })
                 ) : (
                     <div className="flex flex-col items-center gap-3 mt-5">

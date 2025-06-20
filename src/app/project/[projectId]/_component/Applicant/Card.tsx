@@ -20,7 +20,9 @@ export default function Card({ state, applicant, projectCreatorName }: { state: 
             {isEdit ? <EditCard setIsEdit={setIsEdit} applicant={applicant} /> : <CardBody applicant={applicant} />}
             {isReject && <RejectCard applicantMemberId={applicant.memberId} applicantId={applicant.applyId} setIsReject={setIsReject} />}
 
-            {applicant.isAccepted === "REJECTED" && <CardRejectSection projectCreatorName={projectCreatorName} rejectionMessage={applicant.rejectionMessage} />}
+            {(applicant.isAccepted === "REJECTED" || applicant.isReApplication) && (
+                <CardRejectSection projectCreatorName={projectCreatorName} rejectionMessage={applicant.rejectionMessage} preRejectionMessage={applicant.preRejectionMessage} />
+            )}
         </div>
     );
 }

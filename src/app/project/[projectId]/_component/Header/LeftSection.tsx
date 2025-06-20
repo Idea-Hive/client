@@ -56,8 +56,13 @@ export default function LeftSection() {
                 </div>
 
                 <div className="flex gap-2 items-center text-sm text-n800">
-                    <div>{project.creatorJob || "직업 미정"}</div>
-                    <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                    {project.creatorJob && (
+                        <>
+                            <div>{project.creatorJob}</div>
+                            <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                        </>
+                    )}
+
                     <div>경력 {project.creatorCareer || 0}년</div>
                     <div className="w-[1px] h-[15.5px] bg-n300"></div>
                     <div>프로젝트 경험 {project.creatorCompletedProjectCnt}회</div>

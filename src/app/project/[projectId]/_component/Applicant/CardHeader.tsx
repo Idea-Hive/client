@@ -40,7 +40,7 @@ export default function CardHeader({
                     ) : state === "UNDECIDED" ? (
                         <ProjectOwnerCardControlUnconfirmed applicantMemberId={applicant.memberId} applicantId={applicant.applyId} setIsReject={setIsReject} isReject={isReject} />
                     ) : null
-                ) : (
+                ) : state === "REJECTED" ? null : (
                     <ApplicantCardControl applicant={applicant} setIsEdit={setIsEdit} />
                 ))}
         </div>
@@ -48,21 +48,26 @@ export default function CardHeader({
 }
 
 const UserInfo = ({ applicant, state }: { applicant: Applicant; state: CardState }) => {
-    console.log("state:::", state);
     return (
         <div className="flex items-center gap-2">
             <div className="flex gap-2 items-center">
                 <UserImgIcon />
 
                 <div className="text-lg text-n900 font-medium flex gap-1 items-center">
-                    {applicant.name}
+                    {applicant.name.length > 6 ? `${applicant.name.slice(0, 6)}...` : applicant.name}
                     {state === "CONFIRMED" && <div className="w-fit h-fit px-2 py-[3px] bg-blue rounded-[12px] text-xs text-white font-normal">확정</div>}
+                    {applicant.isReApplication && <div className="text-baseEmphasize text-taskmateRed ml-1">재지원</div>}
                 </div>
             </div>
 
             <div className="flex gap-2 items-center text-sm text-n900">
-                <div>{applicant.job || "직업 미정"}</div>
-                <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                {applicant.job && (
+                    <>
+                        <div>{applicant.job}</div>
+                        <div className="w-[1px] h-[15.5px] bg-n300"></div>
+                    </>
+                )}
+
                 <div>경력 {applicant.career || 0}년</div>
                 <div className="w-[1px] h-[15.5px] bg-n300"></div>
                 <div>프로젝트 경험 {applicant.completedProjectCnt}회</div>
@@ -135,7 +140,12 @@ const ApplicantCardControl = ({ setIsEdit, applicant }: { setIsEdit: Dispatch<Se
                 </div>
 
                 {isDotsThreeVerticalOpen && (
-                    <ProjectApplicantApplicantCardDropdown setIsDotsThreeVerticalOpen={setIsDotsThreeVerticalOpen} setIsCancelModalOpen={setIsCancelModalOpen} setIsEdit={setIsEdit} />
+                    <ProjectApplicantApplicantCardDropdown
+                        setIsDotsThreeVerticalOpen={setIsDotsThreeVerticalOpen}
+                        setIsCancelModalOpen={setIsCancelModalOpen}
+                        setIsEdit={setIsEdit}
+                        state={applicant.isAccepted}
+                    />
                 )}
             </div>
 

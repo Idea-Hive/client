@@ -51,7 +51,7 @@ export default function EditCard({ setIsEdit, applicant }: { setIsEdit: Dispatch
     return (
         <>
             <div className="w-full h-fit p-4 border border-n300 rounded-[4px] flex gap-2">
-                <textarea className="w-full h-fit min-h-12 resize-none border-none text-base text-n800 focus:outline-none" value={value} onChange={onChangeApplicationMessage}></textarea>
+                <textarea className="w-full h-fit min-h-12 resize-none border-none text-base text-n800 focus:outline-none" value={value} onChange={onChangeApplicationMessage} maxLength={20}></textarea>
                 <div className="flex flex-col justify-end text-xs text-n800">{value.length}/20</div>
             </div>
             <div className="w-full flex justify-end gap-2">

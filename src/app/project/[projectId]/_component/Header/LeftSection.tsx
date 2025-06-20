@@ -28,10 +28,10 @@ export default function LeftSection() {
     return (
         <div>
             <div className="text-taskmateRed text-smEmphasize mb-2">
-                {project.projectStatus === "RECRUITING" && project.isNew && "모집중"}
-                {project.projectStatus === "RECRUITING" && !project.isNew && "추가모집중"}
-                {project.projectStatus === "IN_PROGRESS" && "진행중"}
-                {project.projectStatus === "COMPLETED" && "완료"}
+                {project.projectStatus === 'RECRUITING' && project.isNew && '모집중'}
+                {project.projectStatus === 'RECRUITING' && !project.isNew && '추가모집중'}
+                {project.projectStatus === 'IN_PROGRESS' && '진행중'}
+                {project.projectStatus === 'COMPLETED' && '완료'}
             </div>
 
             <div className="text-h2 text-n900 mb-3 flex items-center">

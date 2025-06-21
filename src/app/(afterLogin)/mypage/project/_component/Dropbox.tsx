@@ -28,7 +28,7 @@ const Dropbox = ({ task, index, onSelectAssignee }: DropboxProps) => {
             {task.isSelectedAssignee ? (
                 <div className="flex justify-start items-center gap-[6px]" onClick={() => toggleDropdown(index)}>
                     <SmallUserImgIcon />
-                    <span>{task.assignee}</span>
+                    <span>{task.assignee?.label}</span>
                 </div>
             ) : (
                 <div className="flex justify-start items-center gap-[6px] text-n600 cursor-pointer" onClick={() => toggleDropdown(index)}>

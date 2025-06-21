@@ -16,11 +16,11 @@ export default function Applicant() {
     return (
         <div className="w-[718px]">
             <div className="text-h3 text-n900 mb-4 flex items-center gap-2">
-                지원자<div className="rounded-full px-1.5 h-[18px] bg-taskmateRed text-xs text-n0">{applicantData.applicants.length}</div>
+                지원자<div className="rounded-full px-1.5 h-[18px] bg-taskmateRed text-xs text-n0">{applicantData.applicants?.length}</div>
             </div>
 
             <div className="flex flex-col gap-6">
-                {applicantData.applicants.length > 0 ? (
+                {applicantData.applicants && applicantData.applicants.length > 0 ? (
                     applicantData.applicants.map((applicant) => {
                         return <ApplicantCard key={applicant.applyId} applicant={applicant} projectCreatorName={project.creatorName} />;
                     })
@@ -38,7 +38,7 @@ export default function Applicant() {
             </div>
 
             <div className="mt-10 w-full flex justify-center">
-                {applicantData.applicants.length > 0 && <Pagination page={1} viewPerPage={10} total={applicantData.applicants.length} onChange={() => {}} />}
+                {applicantData.applicants && applicantData.applicants.length > 0 && <Pagination page={1} viewPerPage={10} total={applicantData.applicants.length} onChange={() => {}} />}
             </div>
         </div>
     );

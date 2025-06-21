@@ -171,7 +171,7 @@ export interface GetApplicantInfoRequest {
     size: number;
 }
 export interface ApplicantInfo {
-    applicants: Applicant[];
+    applicants?: Applicant[];
     totalCnt: number;
     totalPages: number;
     currentPage: number;

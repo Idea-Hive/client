@@ -54,7 +54,7 @@ const UserInfo = ({ applicant, state }: { applicant: Applicant; state: CardState
                 <UserImgIcon />
 
                 <div className="text-lg text-n900 font-medium flex gap-1 items-center">
-                    {applicant.name.length > 6 ? `${applicant.name.slice(0, 6)}...` : applicant.name}
+                    {applicant.name && applicant.name.length > 6 ? `${applicant.name.slice(0, 6)}...` : applicant.name}
                     {state === "CONFIRMED" && <div className="w-fit h-fit px-2 py-[3px] bg-blue rounded-[12px] text-xs text-white font-normal">확정</div>}
                     {applicant.isReApplication && <div className="text-baseEmphasize text-taskmateRed ml-1">재지원</div>}
                 </div>

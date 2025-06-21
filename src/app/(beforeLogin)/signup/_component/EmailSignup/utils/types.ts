@@ -2,6 +2,7 @@ export interface SignupFormData {
     email: string;
     password: string;
     passwordConfirm: string;
+    name: string;
     verificationCode?: string;
 }
 

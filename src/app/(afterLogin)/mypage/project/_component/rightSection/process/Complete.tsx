@@ -6,46 +6,14 @@ import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
 
-import { getTaskInfoByType } from "@/apis/project/manageApis";
-import { useQuery } from "@tanstack/react-query";
-import { useProjectStore } from "../../../store/manageStore";
+import { useTasksByType } from "../../../_hook/hook";
 
 export default function Complete() {
-    const projectId = useProjectStore((state) => state.projectId);
-    const [requiredTasks, setRequiredTasks] = useState<Task[]>([{ key: "C_1", title: "프로젝트 결과물" }]);
-    const [optionalTasks, setOptionalTasks] = useState<Task[]>([{ key: "C_2", title: "프로젝트 회고" }]);
-
-    const { data, isPending, isError } = useQuery({
-        queryKey: [
-            "getTasks",
-            {
-                projectId: projectId!,
-                taskType: "COMPLETE"
-            }
-        ],
-        queryFn: getTaskInfoByType,
-        enabled: !!projectId
+    const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks} = useTasksByType({
+        taskType: "COMPLETE",
+        defaultRequiredTasks: [{ key: "C_1", title: "프로젝트 결과물" }],
+        defaultOptionalTasks: [{ key: "C_2", title: "프로젝트 회고" }],
     });
-
-    useEffect(() => {
-        if (data) {
-            const allTasks = [...data.requiredTasks, ...data.optionalTasks];
-            const mappedTasks = allTasks.map((task, idx) => ({ //isSubmitted, uploadDate
-                key: `C_${idx}`,
-                title: task.title,
-                assignee: { label: task.pic, value: String(task.picId) },
-                dueDate: task.dueDate,
-                file: task.filePath,
-                isSelectedAssignee: task.picId != null,
-                isSelectedDate: task.dueDate != null,
-                isSubmittedFile: task.filePath != null,
-                isRequired: task.isRequired
-            }));
-            console.log('mappedTasks:: ', mappedTasks);
-            setRequiredTasks(mappedTasks.filter((t) => t.isRequired));
-            setOptionalTasks(mappedTasks.filter((t) => !t.isRequired));
-        }
-    }, [data]);
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
@@ -65,7 +33,7 @@ export default function Complete() {
             const updated = [...tasks];
             updated[index] = {
                 ...updated[index],
-                assignee: { label: assignee.label, value: assignee.value},
+                assignee: { label: assignee.label, value: assignee.value },
                 isSelectedAssignee: assignee.value !== "",
             };
             return updated;

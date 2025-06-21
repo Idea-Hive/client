@@ -1,62 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
-
-import { getTaskInfoByType } from "@/apis/project/manageApis";
-import { useQuery } from "@tanstack/react-query";
-import { useProjectStore } from "../../../store/manageStore";
+import { useTasksByType } from "../../../_hook/hook";
 
 export default function Develop() {
-    const projectId = useProjectStore((state) => state.projectId);
-    const [requiredTasks, setRequiredTasks] = useState<Task[]>([
-        { key: "DEV_1", title: "API 명세서" },
-        { key: "DEV_2", title: "DB 설계도" },
-        { key: "DEV_3", title: "프로젝트 환경 설정 문서" },
-        { key: "DEV_4", title: "Github Link" },
-    ]);
-
-    const [optionalTasks, setOptionalTasks] = useState<Task[]>([
-        { key: "DEV_5", title: "문제 해결 문서" },
-        { key: "DEV_6", title: "사용자 설정" },
-    ]);
-
-    /** 과제 불러오기 */
-    const { data, isPending, isError } = useQuery({
-        queryKey: [
-            "getTasks",
-            {
-                projectId: projectId!,
-                taskType: "DEVELOP",
-            },
+    const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
+        taskType: "DEVELOP",
+        defaultRequiredTasks: [
+            { key: "DEV_1", title: "API 명세서" },
+            { key: "DEV_2", title: "DB 설계도" },
+            { key: "DEV_3", title: "프로젝트 환경 설정 문서" },
+            { key: "DEV_4", title: "Github Link" },
         ],
-        queryFn: getTaskInfoByType,
-        enabled: !!projectId,
+        defaultOptionalTasks: [
+            { key: "DEV_5", title: "문제 해결 문서" },
+            { key: "DEV_6", title: "사용자 설정" },
+        ],
     });
-
-    useEffect(() => {
-        if (data) {
-            const allTasks = [...data.requiredTasks, ...data.optionalTasks];
-            const mappedTasks = allTasks.map((task, idx) => ({
-                //isSubmitted, uploadDate
-                key: `C_${idx}`,
-                title: task.title,
-                assignee: { label: task.pic, value: String(task.picId) },
-                dueDate: task.dueDate,
-                file: task.filePath,
-                isSelectedAssignee: task.picId != null,
-                isSelectedDate: task.dueDate != null,
-                isSubmittedFile: task.filePath != null,
-                isRequired: task.isRequired,
-            }));
-            console.log("mappedTasks:: ", mappedTasks);
-            setRequiredTasks(mappedTasks.filter((t) => t.isRequired));
-            setOptionalTasks(mappedTasks.filter((t) => !t.isRequired));
-        }
-    }, [data]);
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
@@ -76,7 +40,7 @@ export default function Develop() {
             const updated = [...tasks];
             updated[index] = {
                 ...updated[index],
-                assignee: { label: assignee.label, value: assignee.value},
+                assignee: { label: assignee.label, value: assignee.value },
                 isSelectedAssignee: assignee.value !== "",
             };
             return updated;

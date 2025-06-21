@@ -7,7 +7,7 @@ import { FolderIcon, SquaresFourIcon, GearSixIcon } from "@/components/icons/ico
 import Button from "@/components/Button";
 import { useClickOutside } from "@/hooks/hooks";
 
-import { useProjectStore } from "../store/manageStore";
+import { useProjectStore } from "../_store/manageStore";
 import { getMyProjectInfo, onSubmitProjectApi } from "@/apis/project/manageApis";
 import { useQuery, useMutation } from "@tanstack/react-query";
 

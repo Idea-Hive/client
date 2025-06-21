@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Selectbox from "@/components/Selectbox";
 import Menu from "./Menu";
 import { FolderIcon, SquaresFourIcon, GearSixIcon } from "@/components/icons/icons";
 import Button from "@/components/Button";
 import { useClickOutside } from "@/hooks/hooks";
+
+import { useProjectStore } from "../store/manageStore";
+import { getMyProjectInfo } from "@/apis/project/manageApis";
+import { useQuery } from "@tanstack/react-query";
 
 interface SideMenuProps {
     selectedMenu: string;
@@ -13,16 +17,45 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) => {
+    /** 프로젝트 제출 */
     const onProjectSubmit = () => {
         //TODO
         const requestBody = "";
     };
 
+    /** 내 프로젝트 */
+    const { data, isPending, isError } = useQuery({
+        queryKey: [
+            "getMyProjects",
+            {
+                status: "IN_PROGRESS",
+                page: 10,
+            },
+        ],
+        queryFn: getMyProjectInfo,
+    });
+    const projectOptions = data?.projects?.map((item) => ({
+        value: String(item.id),
+        label: item.title
+    })) ?? [];
+
+    const { setProjectId } = useProjectStore();
+    const handleProjectChange = (value: string) => {
+        setProjectId(Number(value));
+    };
+
+    /** 드롭박스 */
     const [isOpen, setIsOpen] = useState(false);
     const dropBoxRef = useRef<HTMLDivElement>(null);
     useClickOutside(dropBoxRef, () => {
         if (isOpen) setIsOpen(false);
     });
+
+    useEffect(() => {
+        console.log('data:: ', data);
+        console.log('projectOptions :: ', projectOptions);
+
+    }, [data, projectOptions]);
 
     return (
         <div className="flex flex-col px-6 pt-10 md-25">
@@ -30,11 +63,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
                 <div className="flex flex-col gap-4">
                     <Selectbox
                         placeholder="프로젝트 선택"
-                        options={[
-                            { value: "1", label: "테스크메이트" },
-                            { value: "2", label: "음하하프로젝트" },
-                            { value: "3", label: "냐하하프로젝트" },
-                        ]}
+                        options={projectOptions}
+                        onChange={handleProjectChange}
                     />
                     <div className="relative">
                         <Menu

@@ -1,12 +1,13 @@
 export interface Task {
     key: string;
     title: string;
-    assignee?: string;
-    dueDate?: string;
-    file?: string;
+    assignee?: { label: string; value: string };
+    dueDate?: string | null;
+    file?: string | null;
     isSelectedAssignee?: boolean;
     isSelectedDate?: boolean;
     isSubmittedFile?: boolean;
+    isRequired?: boolean;
 }
 
 export interface TaskTableProps {

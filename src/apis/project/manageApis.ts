@@ -26,12 +26,16 @@ export interface ProjectInfoRequest {
 export const getMyProjectInfo: QueryFunction<ProjectInfoResponse, [_1: string, ProjectInfoRequest]> = async ({ queryKey }) => {
     try {
         const [_, params] = queryKey;
-        const { status, page } = params;
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
 
-        return await Apis.get("/project/info", {
-            params: {
-                status,
-                page,
+        return await Apis.get("/project/manage", {
+            params,
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
         });
     } catch (error) {
@@ -55,7 +59,7 @@ export interface Task {
 }
 
 export interface TaskResponse {
-    requiredTask: Task[];
+    requiredTasks: Task[];
     optionalTasks: Task[];
 }
 
@@ -67,12 +71,17 @@ export interface TaskRequest {
 export const getTaskInfoByType: QueryFunction<TaskResponse, [_1: string, TaskRequest]> = async ({ queryKey }) => {
     try {
         const [_, params] = queryKey;
-        const { projectId, taskType } = params;
+
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
 
         return await Apis.get("/api/task", {
-            params: {
-                projectId,
-                taskType,
+            params,
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
         });
     } catch (error) {

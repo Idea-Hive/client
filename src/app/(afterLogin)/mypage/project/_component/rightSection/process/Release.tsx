@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
-
+import { useTasksByType } from "../../../_hook/hook";
 
 export default function Release() {
-    const [requiredTasks, setRequiredTasks] = useState<Task[]>([{ key: "R_1", title: "배포 환경 구성 문서" }]);
-    const [optionalTasks, setOptionalTasks] = useState<Task[]>([{ key: "R_2", title: "사용자 설정" }]);
+    const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
+        taskType: "DEPLOY",
+        defaultRequiredTasks: [{ key: "R_1", title: "배포 환경 구성 문서" }],
+        defaultOptionalTasks: [{ key: "R_2", title: "사용자 설정" }],
+    });
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
@@ -29,7 +32,7 @@ export default function Release() {
             const updated = [...tasks];
             updated[index] = {
                 ...updated[index],
-                assignee: assignee.label,
+                assignee: { label: assignee.label, value: assignee.value },
                 isSelectedAssignee: assignee.value !== "",
             };
             return updated;

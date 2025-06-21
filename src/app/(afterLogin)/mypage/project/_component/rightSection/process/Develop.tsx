@@ -5,19 +5,22 @@ import { Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
+import { useTasksByType } from "../../../_hook/hook";
 
 export default function Develop() {
-    const [requiredTasks, setRequiredTasks] = useState<Task[]>([
-        { key: "DEV_1", title: "API 명세서" },
-        { key: "DEV_2", title: "DB 설계도" },
-        { key: "DEV_3", title: "프로젝트 환경 설정 문서" },
-        { key: "DEV_4", title: "Github Link" },
-    ]);
-
-    const [optionalTasks, setOptionalTasks] = useState<Task[]>([
-        { key: "DEV_5", title: "문제 해결 문서" },
-        { key: "DEV_6", title: "사용자 설정" },
-    ]);
+    const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
+        taskType: "DEVELOP",
+        defaultRequiredTasks: [
+            { key: "DEV_1", title: "API 명세서" },
+            { key: "DEV_2", title: "DB 설계도" },
+            { key: "DEV_3", title: "프로젝트 환경 설정 문서" },
+            { key: "DEV_4", title: "Github Link" },
+        ],
+        defaultOptionalTasks: [
+            { key: "DEV_5", title: "문제 해결 문서" },
+            { key: "DEV_6", title: "사용자 설정" },
+        ],
+    });
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
@@ -37,7 +40,7 @@ export default function Develop() {
             const updated = [...tasks];
             updated[index] = {
                 ...updated[index],
-                assignee: assignee.label,
+                assignee: { label: assignee.label, value: assignee.value },
                 isSelectedAssignee: assignee.value !== "",
             };
             return updated;

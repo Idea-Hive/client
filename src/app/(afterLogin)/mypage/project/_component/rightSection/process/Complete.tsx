@@ -1,14 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
 
+import { useTasksByType } from "../../../_hook/hook";
+
 export default function Complete() {
-    const [requiredTasks, setRequiredTasks] = useState<Task[]>([{ key: "C_1", title: "프로젝트 결과물" }]);
-    const [optionalTasks, setOptionalTasks] = useState<Task[]>([{ key: "C_2", title: "프로젝트 회고" }]);
+    const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks} = useTasksByType({
+        taskType: "COMPLETE",
+        defaultRequiredTasks: [{ key: "C_1", title: "프로젝트 결과물" }],
+        defaultOptionalTasks: [{ key: "C_2", title: "프로젝트 회고" }],
+    });
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
@@ -28,7 +33,7 @@ export default function Complete() {
             const updated = [...tasks];
             updated[index] = {
                 ...updated[index],
-                assignee: assignee.label,
+                assignee: { label: assignee.label, value: assignee.value },
                 isSelectedAssignee: assignee.value !== "",
             };
             return updated;

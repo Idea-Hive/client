@@ -1,42 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
+import { useTasksByType } from "../../../_hook/hook";
 
 export default function Design() {
-    const [requiredTasks, setRequiredTasks] = useState<Task[]>([
-        {
-            key: "D_1",
-            title: "[디자인] 시스템",
-            assignee: "홍길동",
-            dueDate: "2025-02-20",
-            isSelectedAssignee: true,
-            isSelectedDate: true,
-            isSubmittedFile: true,
-        },
-        {
-            key: "D_2",
-            title: "디자인 파일 or URL",
-        },
-    ]);
-
-    const [optionalTasks, setOptionalTasks] = useState<Task[]>([
-        {
-            key: "D_3",
-            title: "테스트 계획서",
-        },
-        {
-            key: "D_4",
-            title: "시스템 설계도",
-        },
-        {
-            key: "D_5",
-            title: "사용자 설정",
-        },
-    ]);
+    const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
+        taskType: "DESIGN",
+        defaultRequiredTasks: [
+            { key: "D_1", title: "[디자인] 시스템" },
+            { key: "D_2", title: "디자인 파일 or URL" },
+        ],
+        defaultOptionalTasks: [
+            { key: "D_3", title: "테스트 계획서" },
+            { key: "D_4", title: "시스템 설계도" },
+            { key: "D_5", title: "사용자 설정" },
+        ],
+    });
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
@@ -56,7 +39,7 @@ export default function Design() {
             const updated = [...tasks];
             updated[index] = {
                 ...updated[index],
-                assignee: assignee.label,
+                assignee: { label: assignee.label, value: assignee.value },
                 isSelectedAssignee: assignee.value !== "",
             };
             return updated;

@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Selectbox from "@/components/Selectbox";
 import Menu from "./Menu";
 import { FolderIcon, SquaresFourIcon, GearSixIcon } from "@/components/icons/icons";
 import Button from "@/components/Button";
 import { useClickOutside } from "@/hooks/hooks";
+
+import { useProjectStore } from "../_store/manageStore";
+import { getMyProjectInfo, onSubmitProjectApi } from "@/apis/project/manageApis";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 interface SideMenuProps {
     selectedMenu: string;
@@ -13,29 +17,63 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) => {
-    const onProjectSubmit = () => {
-        //TODO
-        const requestBody = "";
+    const { projectId, setProjectId } = useProjectStore();
+    const handleProjectChange = (value: string) => {
+        setProjectId(Number(value));
     };
 
+    /** 내 프로젝트 */
+    const { data, isPending, isError } = useQuery({
+        queryKey: [
+            "getMyProjects",
+            {
+                status: "IN_PROGRESS",
+                page: 10,
+            },
+        ],
+        queryFn: getMyProjectInfo,
+    });
+
+    const projectOptions = data?.projects?.map((item) => ({
+            value: String(item.id),
+            label: item.title,
+    })) ?? [];
+    
+    /** 프로젝트 제출 */
+    const onProjectSubmit = () => {
+        if (!projectId) {
+            alert("프로젝트를 선택해주세요.");
+            return;
+        }
+        const { mutate, isPending, isSuccess, isError } = useMutation({
+            mutationFn: onSubmitProjectApi,
+            onSuccess: () => {
+                alert("프로젝트가 성공적으로 제출되었습니다!");
+            },
+            onError: (err) => {
+                alert("제출에 실패했습니다.");
+                console.error("제출 오류:", err);
+            },
+        });
+    };
+    
+    /** 드롭박스 */
     const [isOpen, setIsOpen] = useState(false);
     const dropBoxRef = useRef<HTMLDivElement>(null);
     useClickOutside(dropBoxRef, () => {
         if (isOpen) setIsOpen(false);
     });
 
+    useEffect(() => {
+        console.log("data:: ", data);
+        console.log("projectOptions :: ", projectOptions);
+    }, [data, projectOptions]);
+
     return (
         <div className="flex flex-col px-6 pt-10 md-25">
             <div>
                 <div className="flex flex-col gap-4">
-                    <Selectbox
-                        placeholder="프로젝트 선택"
-                        options={[
-                            { value: "1", label: "테스크메이트" },
-                            { value: "2", label: "음하하프로젝트" },
-                            { value: "3", label: "냐하하프로젝트" },
-                        ]}
-                    />
+                    <Selectbox placeholder="프로젝트 선택" options={projectOptions} onChange={handleProjectChange} />
                     <div className="relative">
                         <Menu
                             label="프로젝트"
@@ -82,9 +120,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
 
                 <Button
                     label="프로젝트 제출"
-                    onClick={() => {
-                        onProjectSubmit;
-                    }}
+                    onClick={onProjectSubmit}
                     size="large"
                     btnType="primary"
                 />

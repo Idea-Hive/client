@@ -26,6 +26,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
     const email = useInput(""); // 이메일
     const password = useInput(""); // 비밀번호
     const passwordConfirm = useInput(""); // 비밀번호 확인
+    const name = useInput(""); // 이름
     const verificationCode = useInput(""); // 인증코드
 
     const [errors, setErrors] = useState<Partial<SignupFormData>>({});
@@ -71,6 +72,9 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
         } else if (password.value !== passwordConfirm.value) {
             newErrors.passwordConfirm = "입력한 비밀번호와 동일하게 입력해주세요.";
         }
+        if (name.value === "") {
+            newErrors.name = "이름을 입력해주세요.";
+        }
         if (!isEmailVerified) {
             setShowToast(true);
             setToastMessage("이메일 인증을 완료해주세요.");
@@ -99,6 +103,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
                     email: email.value,
                     password: password.value,
                     passwordCheck: passwordConfirm.value,
+                    name: name.value,
                 };
 
                 console.log("signup request:::", request);
@@ -106,7 +111,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
                 signupMutation.mutate(request);
             }
         },
-        [validate, email, password, passwordConfirm, verificationCode]
+        [validate, email, password, passwordConfirm, verificationCode, name]
     );
 
     return (
@@ -116,6 +121,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
                     email={email}
                     password={password}
                     passwordConfirm={passwordConfirm}
+                    name={name}
                     verificationCode={verificationCode}
                     errors={errors}
                     setErrors={setErrors}

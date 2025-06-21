@@ -49,6 +49,7 @@ export interface SignupRequest {
     email: string;
     password: string;
     passwordCheck: string;
+    name: string;
 }
 
 export const onSignupApi = async (body: SignupRequest) => {

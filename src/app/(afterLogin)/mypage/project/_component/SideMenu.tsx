@@ -8,8 +8,8 @@ import Button from "@/components/Button";
 import { useClickOutside } from "@/hooks/hooks";
 
 import { useProjectStore } from "../store/manageStore";
-import { getMyProjectInfo } from "@/apis/project/manageApis";
-import { useQuery } from "@tanstack/react-query";
+import { getMyProjectInfo, onSubmitProjectApi } from "@/apis/project/manageApis";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 interface SideMenuProps {
     selectedMenu: string;
@@ -17,10 +17,9 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) => {
-    /** 프로젝트 제출 */
-    const onProjectSubmit = () => {
-        //TODO
-        const requestBody = "";
+    const { projectId, setProjectId } = useProjectStore();
+    const handleProjectChange = (value: string) => {
+        setProjectId(Number(value));
     };
 
     /** 내 프로젝트 */
@@ -34,16 +33,30 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
         ],
         queryFn: getMyProjectInfo,
     });
+
     const projectOptions = data?.projects?.map((item) => ({
-        value: String(item.id),
-        label: item.title
+            value: String(item.id),
+            label: item.title,
     })) ?? [];
-
-    const { setProjectId } = useProjectStore();
-    const handleProjectChange = (value: string) => {
-        setProjectId(Number(value));
+    
+    /** 프로젝트 제출 */
+    const onProjectSubmit = () => {
+        if (!projectId) {
+            alert("프로젝트를 선택해주세요.");
+            return;
+        }
+        const { mutate, isPending, isSuccess, isError } = useMutation({
+            mutationFn: onSubmitProjectApi,
+            onSuccess: () => {
+                alert("프로젝트가 성공적으로 제출되었습니다!");
+            },
+            onError: (err) => {
+                alert("제출에 실패했습니다.");
+                console.error("제출 오류:", err);
+            },
+        });
     };
-
+    
     /** 드롭박스 */
     const [isOpen, setIsOpen] = useState(false);
     const dropBoxRef = useRef<HTMLDivElement>(null);
@@ -52,20 +65,15 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
     });
 
     useEffect(() => {
-        console.log('data:: ', data);
-        console.log('projectOptions :: ', projectOptions);
-
+        console.log("data:: ", data);
+        console.log("projectOptions :: ", projectOptions);
     }, [data, projectOptions]);
 
     return (
         <div className="flex flex-col px-6 pt-10 md-25">
             <div>
                 <div className="flex flex-col gap-4">
-                    <Selectbox
-                        placeholder="프로젝트 선택"
-                        options={projectOptions}
-                        onChange={handleProjectChange}
-                    />
+                    <Selectbox placeholder="프로젝트 선택" options={projectOptions} onChange={handleProjectChange} />
                     <div className="relative">
                         <Menu
                             label="프로젝트"
@@ -112,9 +120,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
 
                 <Button
                     label="프로젝트 제출"
-                    onClick={() => {
-                        onProjectSubmit;
-                    }}
+                    onClick={onProjectSubmit}
                     size="large"
                     btnType="primary"
                 />

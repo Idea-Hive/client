@@ -17,13 +17,14 @@ interface SelectboxProps {
     isRequired?: boolean;
     placeholder?: string;
     options: { value: string; label: string }[];
+    className?: string;
     initialValue?: string;
     onChange?: (value: string) => void;
     isErr?: boolean;
     errMsg?: string;
 }
 
-const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, placeholder, options, initialValue, onChange, isErr = false, errMsg }) => {
+const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, placeholder, options, className, initialValue, onChange, isErr = false, errMsg }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
     const selectboxRef = useRef<HTMLDivElement>(null);
@@ -67,7 +68,7 @@ const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, p
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-full h-[46px] px-3 bg-white border ${isErr ? "border-red" : "border-[#d8dae5]"} ${
                     selectedOption ? "border-n700" : "has-[:focus]:border-n700"
-                } rounded flex justify-between items-center cursor-pointer focus:outline-none`}
+                } rounded flex justify-between items-center cursor-pointer focus:outline-none ${className}`}
             >
                 <span className={`text-sm font-normal ${selectedOption ? "text-[#474d66]" : "text-[#8f95b2]"}`}>{selectedOption || placeholder}</span>
                 <span className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>

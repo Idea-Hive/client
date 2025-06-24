@@ -1,6 +1,6 @@
 "use client";
 
-import { getTemporarySavedProjectInfoApi, onSaveProjectApi, onTemporarySaveProjectApi, SaveProjectRequest } from "@/apis/project/projectApis";
+import { EditProjectRequest, getTemporarySavedProjectInfoApi, onEditProjectApi } from "@/apis/project/projectApis";
 import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
@@ -8,16 +8,16 @@ import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import OptionalInformations from "./_component/OptionalInformations";
 import RequiredInformations from "./_component/RequiredInformations";
 import { RequiredValues } from "./_types/type";
 
-export default function CreateProject() {
+export default function EditProjectPage() {
     const spinner = useSpinner();
-    const searchParams = useSearchParams();
-    const id = searchParams.get("id");
+    const params = useParams();
+    const id = params.projectId as string;
 
     const [isOpenSuccessModal, setIsOpenSuccessModal] = useState<boolean>(false);
     const [projectId, setProjectId] = useState<number | null>(null);
@@ -137,41 +137,8 @@ export default function CreateProject() {
     const [toastType, setToastType] = useState<"info" | "error">("info");
     const [toastMessage, setToastMessage] = useState<string>("임시저장 되었습니다.");
 
-    const onTemporarySaveMutation = useMutation({
-        mutationFn: onTemporarySaveProjectApi,
-        onMutate: () => {
-            spinner.open();
-        },
-        onSuccess: (response) => {
-            console.log("성공");
-            setProjectId(response);
-            setToastType("info");
-            setToastMessage("임시저장 되었습니다.");
-            setIsShowToast(true);
-            setErrors({
-                title: "",
-                description: "",
-                idea: "",
-                maxMembers: "",
-                dueDateFrom: "",
-                dueDateTo: "",
-                contact: "",
-            });
-        },
-        onError: (error: AxiosError) => {
-            console.log("실패");
-            console.log(error.message);
-            setIsShowToast(true);
-            setToastType("error");
-            setToastMessage(error.response?.data as string);
-        },
-        onSettled: () => {
-            spinner.close();
-        },
-    });
-
-    const onSaveMutation = useMutation({
-        mutationFn: onSaveProjectApi,
+    const onEditMutation = useMutation({
+        mutationFn: onEditProjectApi,
         onMutate: () => {
             spinner.open();
         },
@@ -190,12 +157,11 @@ export default function CreateProject() {
         },
     });
 
-    const getRequestBody = (): SaveProjectRequest => {
+    const getRequestBody = (): EditProjectRequest => {
         const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = requiredValues;
 
-        const requestBody: SaveProjectRequest = {
+        const requestBody: EditProjectRequest = {
             projectId,
-            userId: user!.id,
             title,
             description,
             idea,
@@ -205,38 +171,10 @@ export default function CreateProject() {
             dueDateTo,
             skillStackIds: skills,
             hashtags: hashTags,
-            isSave: true,
         };
 
         console.log("requestBody:::", requestBody);
         return requestBody;
-    };
-
-    const onTemporarySave = () => {
-        const requestBody = getRequestBody();
-        if (requestBody.title === "") {
-            setErrors({
-                title: "프로젝트명을 입력해주세요.",
-                description: "",
-                idea: "",
-                maxMembers: "",
-                dueDateFrom: "",
-                dueDateTo: "",
-                contact: "",
-            });
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-            });
-
-            setIsShowToast(true);
-            setToastType("error");
-            setToastMessage("프로젝트명을 입력해주세요.");
-            return;
-        }
-
-        onTemporarySaveMutation.mutate({ ...requestBody, isSave: false });
     };
 
     const onSave = async () => {
@@ -247,7 +185,7 @@ export default function CreateProject() {
             return;
         }
 
-        onSaveMutation.mutate(requestBody);
+        onEditMutation.mutate(requestBody);
     };
 
     return (
@@ -257,14 +195,13 @@ export default function CreateProject() {
             <OptionalInformations hashTags={hashTags} setHashTags={setHashTags} skills={tempSavedSkills} setSkills={setSkills} />
 
             <div className="flex justify-center gap-3 mt-6">
-                <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>
-                <Button label="등록" type="button" btnType="primary" className="w-[191px]" onClick={onSave}></Button>
+                <Button label="수정" type="button" btnType="primary" className="w-[191px]" onClick={onSave}></Button>
             </div>
 
             <Modal
                 isOpen={isOpenSuccessModal}
-                title="등록 완료"
-                children="프로젝트 등록이 완료되었습니다"
+                title="수정 완료"
+                children="프로젝트 수정이 완료되었습니다"
                 onConfirm={() => {
                     router.push(`/project/${projectId}`);
                 }}

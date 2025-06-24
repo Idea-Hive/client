@@ -58,8 +58,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
         onSuccess: async (data) => {
             console.log("onLoginSuccess:::", data);
             document.cookie = `token=${data.accessToken}; path=/`;
-            await queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
-            await queryClient.refetchQueries({ queryKey: ["isLoggedIn"] });
+            queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
             onClose();
         },
         onError: (error) => {

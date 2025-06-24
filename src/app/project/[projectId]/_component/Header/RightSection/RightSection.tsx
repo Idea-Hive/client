@@ -1,12 +1,14 @@
-import { onLikeProjectApi, ProjectDetailData } from "@/apis/project/projectApis";
+import { onLikeProjectApi, onPullUpProjectApi, ProjectDetailData } from "@/apis/project/projectApis";
 import { User } from "@/apis/user/userApis";
 import Button from "@/components/Button";
-import { LikedIcon, ShareIcon, ViewIcon } from "@/components/icons/icons";
+import { HamburgerIcon, LikedIcon, ShareIcon, ViewIcon } from "@/components/icons/icons";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
+import { useClickOutside } from "@/hooks/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import { AxiosError } from "axios";
+import { useParams, useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { useProjectDetail, useUserInfo } from "../../../hooks/Hooks";
 import ApplicantButton from "./ApplicantButton";
 import RecruitAdditionalMemberButton from "./RecruitAdditionalMemberButton";
@@ -41,7 +43,10 @@ export default function RightSection() {
                     <ViewIcon />
                     {project.viewCnt}
                 </div>
+
+                {user && project.creatorId === user.id && <ProjectOwnerControl projectId={project.projectId} />}
             </div>
+
             {user && (
                 <div className="flex justify-end">
                     {/* 프로젝트 작성자 && 프로젝트 시작 전 */}
@@ -113,5 +118,73 @@ const Like = ({ project, user }: { project: ProjectDetailData; user: User | unde
             {likedErr && <Toast message={likedErrMsg} type="error" onClose={() => setLikedErr(false)} />}
             {isSuccess && <Toast message={`${project.isLike ? "좋아요" : "좋아요 취소"} 처리가 완료되었습니다.`} type="success" onClose={() => setIsSuccess(false)} />}
         </>
+    );
+};
+
+const ProjectOwnerControl = ({ projectId }: { projectId: number }) => {
+    const [isDotsThreeVerticalOpen, setIsDotsThreeVerticalOpen] = useState(false); // DotsThreeVertical Dropdown 오픈
+    const dotsThreeVerticalRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
+    const spinner = useSpinner();
+
+    useClickOutside(dotsThreeVerticalRef, () => setIsDotsThreeVerticalOpen(false));
+
+    const onClickEdit = () => {
+        setIsDotsThreeVerticalOpen(false);
+        router.push(`/project/edit/${projectId}`);
+    };
+
+    const [showToast, setShowToast] = useState<boolean>(false);
+    const [toastMessage, setToastMessage] = useState<string>("");
+    const [toastType, setToastType] = useState<"success" | "error">("success");
+
+    const pullUpMutation = useMutation({
+        mutationFn: onPullUpProjectApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: (data) => {
+            console.log("끌어올리기 success:::", data);
+            setToastMessage("끌어올리기 처리가 완료되었습니다.");
+            setToastType("success");
+            setShowToast(true);
+        },
+        onError: (error: AxiosError) => {
+            setToastMessage(error.response?.data as string);
+            setToastType("error");
+            setShowToast(true);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+    const onClickPullUp = () => {
+        setIsDotsThreeVerticalOpen(false);
+        pullUpMutation.mutate({
+            projectId: projectId,
+        });
+    };
+
+    return (
+        <div>
+            <div className="relative" ref={dotsThreeVerticalRef}>
+                <div className=" w-8 h-8 rounded-[4px] border border-n500 flex justify-center items-center cursor-pointer" onClick={() => setIsDotsThreeVerticalOpen(!isDotsThreeVerticalOpen)}>
+                    <HamburgerIcon />
+                </div>
+
+                {isDotsThreeVerticalOpen && (
+                    <div className="absolute w-[120px] top-10 right-0 border border-n400 rounded-[4px] shadow-elevation2 bg-white">
+                        <button className="w-full h-12 text-sm text-n800 px-3 text-start hover:bg-n75 rounded-t-[4px]" onClick={onClickEdit}>
+                            수정
+                        </button>
+                        <button className="w-full h-12 text-sm text-n800 px-3 text-start hover:bg-n75 rounded-t-[4px]" onClick={onClickPullUp}>
+                            끌어올리기
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {showToast && <Toast message={toastMessage} type={toastType} onClose={() => setShowToast(false)} />}
+        </div>
     );
 };

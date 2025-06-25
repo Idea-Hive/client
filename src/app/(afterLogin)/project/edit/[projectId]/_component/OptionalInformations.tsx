@@ -4,8 +4,8 @@ import Input from "@/components/Input";
 import { useInput } from "@/hooks/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { skillCategories } from "../../../create/_data/skills";
 import { getSkillStackApi } from "../_api/api";
-import { skillCategories } from "../_data/skills";
 
 interface OptionalInformationsProps {
     hashTags: string[];

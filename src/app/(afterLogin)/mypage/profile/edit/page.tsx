@@ -1,11 +1,13 @@
 "use client";
 
+import { editProfileApi } from "@/apis/user/userApis";
 import { skillCategories } from "@/app/(afterLogin)/project/create/_data/skills";
 import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Selectbox from "@/components/Selectbox";
 import { useInput } from "@/hooks/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export default function EditProfile() {
@@ -37,6 +39,16 @@ export default function EditProfile() {
                 // setSkills([...selectedSkills, skill]);
             }
         }
+    };
+
+    const editProfileMutation = useMutation({
+        mutationFn: editProfileApi,
+    });
+
+    const handleSubmit = () => {
+        editProfileMutation.mutate({
+            email: email.value,
+        });
     };
 
     return (

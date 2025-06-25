@@ -105,3 +105,7 @@ export const getUserInfoApi: QueryFunction<User, [_1: string]> = async ({ queryK
         throw error;
     }
 };
+
+export const editProfileApi = async (body: any) => {
+    return await Apis.post("/member/info", body);
+};

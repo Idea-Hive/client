@@ -53,6 +53,38 @@ export const onTemporarySaveProjectApi = async (body: SaveProjectRequest) => {
     }
 };
 
+export interface EditProjectRequest {
+    projectId: number | null;
+    title: string;
+    description: string;
+    idea: string;
+    contact: string;
+    maxMembers: number;
+    dueDateFrom: string | null;
+    dueDateTo: string | null;
+    skillStackIds: number[];
+    hashtags: string[];
+}
+
+export const onEditProjectApi = async (body: EditProjectRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        return await Apis.post("/project/update", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 수정 중 오류 발생:", error);
+        throw error;
+    }
+};
+
 // 프로젝트 검색
 export interface SearchProjectsRequest {
     keyword: string;
@@ -369,6 +401,29 @@ export const onCancelApplicantApi = async (body: CancelApplicantRequest) => {
         });
     } catch (error) {
         console.error("프로젝트 지원 취소 처리 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// Project 끌어올리기
+export interface PullUpProjectRequest {
+    projectId: number;
+}
+
+export const onPullUpProjectApi = async (body: PullUpProjectRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/project/pushToTop", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 끌어올리기 처리 중 오류 발생:", error);
         throw error;
     }
 };

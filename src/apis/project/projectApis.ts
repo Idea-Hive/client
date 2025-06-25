@@ -80,7 +80,7 @@ export const onEditProjectApi = async (body: EditProjectRequest) => {
             },
         });
     } catch (error) {
-        console.error("프로젝트 임시저장 중 오류 발생:", error);
+        console.error("프로젝트 수정 중 오류 발생:", error);
         throw error;
     }
 };

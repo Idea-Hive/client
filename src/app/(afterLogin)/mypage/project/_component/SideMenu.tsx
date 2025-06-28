@@ -8,44 +8,35 @@ import Button from "@/components/Button";
 import { useClickOutside } from "@/hooks/hooks";
 
 import { useParams, useRouter } from "next/navigation";
-import { getMyProjectInfo, onSubmitProjectApi } from "@/apis/project/manageApis";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { onSubmitProjectApi } from "@/apis/project/manageApis";
+import { useMutation } from "@tanstack/react-query";
 
 interface SideMenuProps {
     selectedMenu: string;
     setSelectedMenu: (menu: string) => void;
 }
 
+import { useProjectWithTeam } from "../_hook/hook";
+
 const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) => {
     const router = useRouter();
-    const projectId = (useParams()?.projectId as string) || "";
-
-    // 내 프로젝트 조회
-    const { data, isPending, isError } = useQuery({
-        queryKey: [
-            "getMyProjects",
-            {
-                status: "IN_PROGRESS",
-                page: 0,
-            },
-        ],
-        queryFn: getMyProjectInfo,
-    });
+    const projectId = (useParams()?.projectId as string) || ""; //path 용
+    const { myProjects, loading, error } = useProjectWithTeam(projectId);
+    const [selectedProjectId, setSelectedProjectId] = useState(""); //새로고침 용
 
     const projectOptions = useMemo(() => {
         return (
-            data?.projects?.map((item) => ({
+            myProjects?.projects?.map((item) => ({
                 label: item.title,
                 value: String(item.id),
             })) || []
         );
-    }, [data]);
+    }, [myProjects]);
 
-    const [selectedProjectId, setSelectedProjectId] = useState("");
     useEffect(() => {
         //새로 고침 시,  projectOptions가 빌 경우 initialValue가 반영이 안 됨.
         if (projectOptions.length > 0 && projectId) {
-            setSelectedProjectId(String(projectId));
+            setSelectedProjectId(projectId);
         }
     }, [projectId, projectOptions]);
 
@@ -53,7 +44,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
         if (value) {
             router.push(`/mypage/project/${value}/manage`);
         }
-    };
+    }
 
     return (
         <div className="flex flex-col px-6 pt-10 md-25">

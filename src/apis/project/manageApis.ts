@@ -140,6 +140,10 @@ export const onUpdateDueDate = async (body: UpdateTaskDueDateRequest) => {
 export interface MemberResponse {
     id: number;
     name: string;
+    job: string;
+    profileUrl: string;
+    isDeleted: boolean;
+    isVerified: boolean;
 }
 export interface MemberRequest {
     id: number;
@@ -179,7 +183,7 @@ export const onUpdateManager = async (body: UpdateTaskManagerRequest) => {
             .split("; ")
             .find((row) => row.startsWith("token="))
             ?.split("=")[1];
-        return await Apis.put("/api/task/pic", body, {
+        return await Apis.put("/task/pic", body, {
             withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,

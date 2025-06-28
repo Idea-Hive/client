@@ -1,25 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Task } from "../../../_types/Task";
+import { AssigneeOption, Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
-import { useTasksByType } from "../../../_hook/hook";
+import { useAssigneeUpdater, useTasksByType } from "../../../_hook/hook";
+import { useParams } from "next/navigation";
 
 export default function Develop() {
+    const projectId = (useParams()?.projectId as string) || ""; //path 용
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
-        taskType: "DEVELOP",
-        defaultRequiredTasks: [
-            // { key: "DEV_1", title: "API 명세서" },
-            // { key: "DEV_2", title: "DB 설계도" },
-            // { key: "DEV_3", title: "프로젝트 환경 설정 문서" },
-            // { key: "DEV_4", title: "Github Link" },
-        ],
-        defaultOptionalTasks: [
-            // { key: "DEV_5", title: "문제 해결 문서" },
-            // { key: "DEV_6", title: "사용자 설정" },
-        ],
+        taskType: "DEVELOP"
     });
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
@@ -35,22 +27,9 @@ export default function Develop() {
         }
     };
 
-    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: { label: string; value: string }) => {
-        const update = (tasks: Task[]) => {
-            const updated = [...tasks];
-            updated[index] = {
-                ...updated[index],
-                assignee: { label: assignee.label, value: assignee.value },
-                isSelectedAssignee: assignee.value !== "",
-            };
-            return updated;
-        };
-
-        if (type === "required") {
-            setRequiredTasks(update(requiredTasks));
-        } else {
-            setOptionalTasks(update(optionalTasks));
-        }
+    const { updateAssignee } = useAssigneeUpdater(projectId);
+    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: AssigneeOption) => {
+        updateAssignee(type, index, assignee, requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks);
     };
 
     return (

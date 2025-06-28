@@ -1,51 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Task } from "../../../_types/Task";
+import { AssigneeOption, Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
-import { useTasksByType } from "../../../_hook/hook";
+import { useAssigneeUpdater, useTasksByType } from "../../../_hook/hook";
+import { useParams } from "next/navigation";
 
 export default function Plan() {
+    const projectId = (useParams()?.projectId as string) || ""; //path 용
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
         taskType: "PLANNING",
-        defaultRequiredTasks: [
-            // { key: "P_1", title: "프로젝트 제목(주제)" },
-            // { key: "P_2", title: "프로젝트 개요 문서" },
-            // { key: "P_3", title: "요구사항 정의서" },
-            // { key: "P_4", title: "WBS" },
-            // { key: "P_5", title: "WireFrame" },
-            // { key: "P_6", title: "Convention" },
-            // { key: "P_7", title: "화면정의서" },
-        ],
-        defaultOptionalTasks: [
-            // { key: "P_8", title: "Flow Chart" },
-            // { key: "P_9", title: "사용자 페르소나" },
-            // { key: "P_10", title: "유스케이스 시나리오" },
-            // { key: "P_11", title: "유사 서비스 분석 자료" },
-            // { key: "P_12", title: "정보 구조도" },
-            // { key: "P_13", title: "사용자 설정" },
-        ],
     });
-
-    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: { label: string; value: string }) => {
-        const update = (tasks: Task[]) => {
-            const updated = [...tasks];
-            updated[index] = {
-                ...updated[index],
-                assignee: { label: assignee.label, value: assignee.value },
-                isSelectedAssignee: assignee.value !== "",
-            };
-            return updated;
-        };
-
-        if (type === "required") {
-            setRequiredTasks(update(requiredTasks));
-        } else {
-            setOptionalTasks(update(optionalTasks));
-        }
-    };
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
@@ -60,6 +27,12 @@ export default function Plan() {
             return;
         }
     };
+
+    const { updateAssignee } = useAssigneeUpdater(projectId);
+    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: AssigneeOption) => {
+        updateAssignee(type, index, assignee, requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks);
+    };
+    
     return (
         <div className="p-10">
             <div className="text-h2 text-n900 left-0 pb-[16px] border-b-[1px] border-n400">기획</div>

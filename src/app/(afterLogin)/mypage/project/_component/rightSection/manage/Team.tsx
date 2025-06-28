@@ -1,3 +1,13 @@
-export default function Team() {
-    return <div>Team Content</div>;
+import { useTeamStore } from "../../../_store/teamStore";
+
+const Team = () => {
+    const { members } = useTeamStore();
+
+    return (
+        <div>
+            Team 컴포넌트입니다.
+        </div>
+    );
 }
+
+export default Team;

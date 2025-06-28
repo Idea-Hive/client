@@ -1,18 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Task } from "../../../_types/Task";
+import { AssigneeOption, Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
-
-import { useTasksByType } from "../../../_hook/hook";
+import { useAssigneeUpdater, useTasksByType } from "../../../_hook/hook";
+import { useParams } from "next/navigation";
 
 export default function Complete() {
+    const projectId = (useParams()?.projectId as string) || ""; //path 용
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
         taskType: "COMPLETE",
-        defaultRequiredTasks: [], //{ key: "C_1", title: "프로젝트 결과물" }
-        defaultOptionalTasks: [], //{ key: "C_2", title: "프로젝트 회고" }
     });
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
@@ -27,23 +26,10 @@ export default function Complete() {
             return;
         }
     };
-
-    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: { label: string; value: string }) => {
-        const update = (tasks: Task[]) => {
-            const updated = [...tasks];
-            updated[index] = {
-                ...updated[index],
-                assignee: { label: assignee.label, value: assignee.value },
-                isSelectedAssignee: assignee.value !== "",
-            };
-            return updated;
-        };
-
-        if (type === "required") {
-            setRequiredTasks(update(requiredTasks));
-        } else {
-            setOptionalTasks(update(optionalTasks));
-        }
+    
+    const { updateAssignee } = useAssigneeUpdater(projectId);
+    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: AssigneeOption) => {
+        updateAssignee(type, index, assignee, requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks);
     };
 
     return (

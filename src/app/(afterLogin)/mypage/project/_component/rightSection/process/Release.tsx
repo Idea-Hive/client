@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Task } from "../../../_types/Task";
+import { AssigneeOption, Task } from "../../../_types/Task";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
 import Table from "../../Table";
-import { useTasksByType } from "../../../_hook/hook";
+import { useAssigneeUpdater, useTasksByType } from "../../../_hook/hook";
+import { useParams } from "next/navigation";
 
 export default function Release() {
+    const projectId = (useParams()?.projectId as string) || ""; //path 용
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
         taskType: "DEPLOY",
-        defaultRequiredTasks: [], //{ key: "R_1", title: "배포 환경 구성 문서" }
-        defaultOptionalTasks: [], //{ key: "R_2", title: "사용자 설정" }
     });
 
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
@@ -27,22 +27,9 @@ export default function Release() {
         }
     };
 
-    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: { label: string; value: string }) => {
-        const update = (tasks: Task[]) => {
-            const updated = [...tasks];
-            updated[index] = {
-                ...updated[index],
-                assignee: { label: assignee.label, value: assignee.value },
-                isSelectedAssignee: assignee.value !== "",
-            };
-            return updated;
-        };
-
-        if (type === "required") {
-            setRequiredTasks(update(requiredTasks));
-        } else {
-            setOptionalTasks(update(optionalTasks));
-        }
+    const { updateAssignee } = useAssigneeUpdater(projectId);
+    const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: AssigneeOption) => {
+        updateAssignee(type, index, assignee, requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks);
     };
 
     return (

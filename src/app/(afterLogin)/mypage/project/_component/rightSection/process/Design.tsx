@@ -11,13 +11,13 @@ export default function Design() {
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
         taskType: "DESIGN",
         defaultRequiredTasks: [
-            { key: "D_1", title: "[디자인] 시스템" },
-            { key: "D_2", title: "디자인 파일 or URL" },
+            // { key: "D_1", title: "[디자인] 시스템" },
+            // { key: "D_2", title: "디자인 파일 or URL" },
         ],
         defaultOptionalTasks: [
-            { key: "D_3", title: "테스트 계획서" },
-            { key: "D_4", title: "시스템 설계도" },
-            { key: "D_5", title: "사용자 설정" },
+            // { key: "D_3", title: "테스트 계획서" },
+            // { key: "D_4", title: "시스템 설계도" },
+            // { key: "D_5", title: "사용자 설정" },
         ],
     });
 
@@ -59,20 +59,17 @@ export default function Design() {
             <div className="mt-[40px] flex flex-col">
                 <div className="flex justify-between items-end">
                     <div className="text-h3 text-n900">필수 과제</div>
-                    <div className="flex gap-2">
-                        <Button
-                            label="선택 탬플릿"
-                            onClick={onDownloadTemplate}
-                            icLeft={
-                                <div className="w-3 h-3">
-                                    <DownloadSimpleIcon />
-                                </div>
-                            }
-                            size="small"
-                            btnType="line"
-                        />
-                        <Button label="전체 탬플릿" onClick={onDownloadTemplate} icLeft={<DownloadSimpleIconWhite />} size="small" btnType="primary" />
-                    </div>
+                    <Button
+                        label="탬플릿 다운로드"
+                        onClick={onDownloadTemplate}
+                        icLeft={
+                            <div className="w-3 h-3">
+                                <DownloadSimpleIcon />
+                            </div>
+                        }
+                        size="small"
+                        btnType="line"
+                    />
                 </div>
                 <Table
                     tasks={requiredTasks}

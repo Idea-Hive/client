@@ -11,21 +11,21 @@ export default function Plan() {
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
         taskType: "PLANNING",
         defaultRequiredTasks: [
-            { key: "P_1", title: "프로젝트 제목(주제)" },
-            { key: "P_2", title: "프로젝트 개요 문서" },
-            { key: "P_3", title: "요구사항 정의서" },
-            { key: "P_4", title: "WBS" },
-            { key: "P_5", title: "WireFrame" },
-            { key: "P_6", title: "Convention" },
-            { key: "P_7", title: "화면정의서" },
+            // { key: "P_1", title: "프로젝트 제목(주제)" },
+            // { key: "P_2", title: "프로젝트 개요 문서" },
+            // { key: "P_3", title: "요구사항 정의서" },
+            // { key: "P_4", title: "WBS" },
+            // { key: "P_5", title: "WireFrame" },
+            // { key: "P_6", title: "Convention" },
+            // { key: "P_7", title: "화면정의서" },
         ],
         defaultOptionalTasks: [
-            { key: "P_8", title: "Flow Chart" },
-            { key: "P_9", title: "사용자 페르소나" },
-            { key: "P_10", title: "유스케이스 시나리오" },
-            { key: "P_11", title: "유사 서비스 분석 자료" },
-            { key: "P_12", title: "정보 구조도" },
-            { key: "P_13", title: "사용자 설정" },
+            // { key: "P_8", title: "Flow Chart" },
+            // { key: "P_9", title: "사용자 페르소나" },
+            // { key: "P_10", title: "유스케이스 시나리오" },
+            // { key: "P_11", title: "유사 서비스 분석 자료" },
+            // { key: "P_12", title: "정보 구조도" },
+            // { key: "P_13", title: "사용자 설정" },
         ],
     });
 
@@ -54,7 +54,7 @@ export default function Plan() {
     };
     const onDownloadTemplate = () => {
         const selectedTasks = [...requiredTasks, ...optionalTasks].filter((task) => checkedIds.includes(task.key));
-        console.log('selectedTasks :: ', selectedTasks);
+        console.log("selectedTasks :: ", selectedTasks);
         if (selectedTasks.length === 0) {
             alert("선택된 항목이 없습니다.");
             return;
@@ -67,20 +67,17 @@ export default function Plan() {
             <div className="mt-[40px] flex flex-col">
                 <div className="flex justify-between items-end">
                     <div className="text-h3 text-n900">필수 과제</div>
-                    <div className="flex gap-2">
-                        <Button
-                            label="선택 탬플릿"
-                            onClick={onDownloadTemplate}
-                            icLeft={
-                                <div className="w-3 h-3">
-                                    <DownloadSimpleIcon />
-                                </div>
-                            }
-                            size="small"
-                            btnType="line"
-                        />
-                        <Button label="전체 탬플릿" onClick={onDownloadTemplate} icLeft={<DownloadSimpleIconWhite />} size="small" btnType="primary" />
-                    </div>
+                    <Button
+                        label="탬플릿 다운로드"
+                        onClick={onDownloadTemplate}
+                        icLeft={
+                            <div className="w-3 h-3">
+                                <DownloadSimpleIcon />
+                            </div>
+                        }
+                        size="small"
+                        btnType="line"
+                    />
                 </div>
                 <Table
                     tasks={requiredTasks}

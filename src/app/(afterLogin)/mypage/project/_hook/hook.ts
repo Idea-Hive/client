@@ -27,9 +27,27 @@ export const useTasksByType = ({ taskType, defaultRequiredTasks = [], defaultOpt
     useEffect(() => {
         if (data) {
             const allTasks = [...data.requiredTasks, ...data.optionalTasks];
+            let prefix = '';
+            switch(taskType) {
+                case 'PLANNING':
+                    prefix = 'P';
+                    break;
+                case 'DESIGN':
+                    prefix = 'D';
+                    break;
+                case 'DEVELOP':
+                    prefix = 'DEV';
+                    break;
+                case 'DEPLOY':
+                    prefix = 'R';
+                    break;
+                case 'COMPLETE':
+                    prefix = 'C';
+                    break;
+            }
 
             const mappedTasks = allTasks.map((task, idx) => ({
-                key: `C_${idx}`,
+                key: `${prefix}_${idx}`,
                 title: task.title,
                 assignee: { label: task.pic, value: String(task.picId) },
                 dueDate: task.dueDate ?? undefined,

@@ -33,7 +33,6 @@ export default function TaskSection({ title, tasks, onDownloadTemplate, onSelect
                             size="small"
                             btnType="line"
                         />
-                        <Button label="전체 탬플릿" onClick={onDownloadTemplate} icLeft={<DownloadSimpleIconWhite />} size="small" btnType="primary" />
                     </div>
                 )}
             </div>

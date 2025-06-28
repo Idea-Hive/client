@@ -11,14 +11,14 @@ export default function Develop() {
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
         taskType: "DEVELOP",
         defaultRequiredTasks: [
-            { key: "DEV_1", title: "API 명세서" },
-            { key: "DEV_2", title: "DB 설계도" },
-            { key: "DEV_3", title: "프로젝트 환경 설정 문서" },
-            { key: "DEV_4", title: "Github Link" },
+            // { key: "DEV_1", title: "API 명세서" },
+            // { key: "DEV_2", title: "DB 설계도" },
+            // { key: "DEV_3", title: "프로젝트 환경 설정 문서" },
+            // { key: "DEV_4", title: "Github Link" },
         ],
         defaultOptionalTasks: [
-            { key: "DEV_5", title: "문제 해결 문서" },
-            { key: "DEV_6", title: "사용자 설정" },
+            // { key: "DEV_5", title: "문제 해결 문서" },
+            // { key: "DEV_6", title: "사용자 설정" },
         ],
     });
 
@@ -60,20 +60,17 @@ export default function Develop() {
             <div className="mt-[40px] flex flex-col">
                 <div className="flex justify-between items-end">
                     <div className="text-h3 text-n900">필수 과제</div>
-                    <div className="flex gap-2">
-                        <Button
-                            label="선택 탬플릿"
-                            onClick={onDownloadTemplate}
-                            icLeft={
-                                <div className="w-3 h-3">
-                                    <DownloadSimpleIcon />
-                                </div>
-                            }
-                            size="small"
-                            btnType="line"
-                        />
-                        <Button label="전체 탬플릿" onClick={onDownloadTemplate} icLeft={<DownloadSimpleIconWhite />} size="small" btnType="primary" />
-                    </div>
+                    <Button
+                        label="탬플릿 다운로드"
+                        onClick={onDownloadTemplate}
+                        icLeft={
+                            <div className="w-3 h-3">
+                                <DownloadSimpleIcon />
+                            </div>
+                        }
+                        size="small"
+                        btnType="line"
+                    />
                 </div>
                 <Table
                     tasks={requiredTasks}

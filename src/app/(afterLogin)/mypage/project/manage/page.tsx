@@ -1,21 +1,40 @@
 "use client";
 
-import { useState } from "react";
-import SideMenu from "../_component/SideMenu";
-import RightSection from "../_component/RightSection";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getMyProjectInfo } from "@/apis/project/manageApis";
+import { useQuery } from "@tanstack/react-query";
 
-export default function ManageProjects() {
-    const [selectedMenu, setSelectedMenu] = useState("캘린더");
+export default function ManageRedirectPage() {
+    const router = useRouter();
 
-    return (
-        <div className="w-full h-screen flex">
-            <div className="w-[100px] bg-white"></div>
-            <div className="w-[300px] bg-white">
-                <SideMenu selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
-            </div>
-            <div className="flex-1 bg-n75">
-                <RightSection selectedMenu={selectedMenu} />
-            </div>
-        </div>
-    );
+    //내 프로젝트 조회
+    const { data, isPending, isError } = useQuery({
+        queryKey: [
+            "getMyProjects",
+            {
+                status: "IN_PROGRESS",
+                page: 0,
+            },
+        ],
+        queryFn: getMyProjectInfo,
+    });
+
+    useEffect(() => {
+        const fetchAndRedirect = () => {
+            if(data && data.totalCnt > 0) {
+                const firstProjectId = data.projects[0].id;
+                router.replace(`/mypage/project/${firstProjectId}/manage`);
+            }
+        };
+        fetchAndRedirect();
+    }, [data]);
+
+    if (isPending) return <div></div>;
+    if (isError) return <div>프로젝트를 불러오는 중 오류가 발생했습니다.</div>;
+    if (data?.totalCnt === 0) {
+        <div>프로젝트가 없습니다.</div>
+    }
+
+    return null;
 }

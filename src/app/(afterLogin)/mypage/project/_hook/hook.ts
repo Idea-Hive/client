@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTaskInfoByType } from "@/apis/project/manageApis";
-import { useProjectStore } from "../_store/manageStore";
 import { useEffect, useState } from "react";
 import type { Task } from "../_types/Task";
+import { useParams } from "next/navigation";
 
 type TaskType = "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
 
@@ -13,13 +13,13 @@ interface UseTasksByTypeOptions {
 }
 
 export const useTasksByType = ({ taskType, defaultRequiredTasks = [], defaultOptionalTasks = [] }: UseTasksByTypeOptions) => {
-    const projectId = useProjectStore((state) => state.projectId);
+    const projectId = (useParams()?.projectId as string) || "";
 
     const [requiredTasks, setRequiredTasks] = useState<Task[]>(defaultRequiredTasks);
     const [optionalTasks, setOptionalTasks] = useState<Task[]>(defaultOptionalTasks);
 
     const { data, isPending, isError } = useQuery({
-        queryKey: ["getTasks", { projectId: projectId!, taskType }],
+        queryKey: ["getTasks", { projectId: Number(projectId!), taskType }],
         queryFn: getTaskInfoByType,
         enabled: !!projectId,
     });

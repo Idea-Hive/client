@@ -28,7 +28,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
             "getMyProjects",
             {
                 status: "IN_PROGRESS",
-                page: 10,
+                page: 0,
             },
         ],
         queryFn: getMyProjectInfo,

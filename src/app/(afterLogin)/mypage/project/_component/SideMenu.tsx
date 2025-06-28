@@ -77,23 +77,22 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
                     <div className="relative">
                         <Menu
                             label="프로젝트"
-                            subItems={[{ label: "대시보드" }, { label: "캘린더" }]}
-                            icon={
-                                <div className="w-[20px] h-[20px] p-[3px]">
-                                    <SquaresFourIcon />
-                                </div>
-                            }
-                            selectedItem={selectedMenu}
-                            onSelect={setSelectedMenu}
-                        />
-                        <Menu
-                            label="프로세스"
                             subItems={[{ label: "기획" }, { label: "디자인" }, { label: "개발" }, { label: "배포" }, { label: "완료" }]}
                             icon={<FolderIcon width={20} height={20} />}
                             selectedItem={selectedMenu}
                             onSelect={setSelectedMenu}
                         />
-                        <Menu label="팀" icon={<FolderIcon width={20} height={20} />} selectedItem={selectedMenu} onSelect={setSelectedMenu} />
+                        <Menu 
+                            label="관리" 
+                            subItems={[{ label: "캘린더" }, { label: "팀" }]}
+                            icon={
+                                <div className="w-[20px] h-[20px] p-[3px]">
+                                    <SquaresFourIcon />
+                                </div>
+                            }
+                            selectedItem={selectedMenu} 
+                            onSelect={setSelectedMenu} 
+                        />
                     </div>
                 </div>
             </div>

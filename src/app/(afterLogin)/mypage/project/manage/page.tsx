@@ -5,7 +5,7 @@ import SideMenu from "../_component/SideMenu";
 import RightSection from "../_component/RightSection";
 
 export default function ManageProjects() {
-    const [selectedMenu, setSelectedMenu] = useState("대시보드");
+    const [selectedMenu, setSelectedMenu] = useState("캘린더");
 
     return (
         <div className="w-full h-screen flex">

@@ -2,15 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { DropboxProps } from "../_types/Task";
 import { SmallUserImgIcon, CaretDownIcon } from "@/components/icons/icons";
 import { useClickOutside } from "@/hooks/hooks";
+import { AssigneeOption } from "../_types/Task";
 
-const assigneeList: { label: string; value: string }[] = [
-    { label: "선택없음", value: "" },
-    { label: "이서연", value: "manager1" },
-    { label: "홍길동", value: "manager2" },
-    { label: "김철수", value: "manager3" },
-];
-
-const Dropbox = ({ task, index, onSelectAssignee }: DropboxProps) => {
+const Dropbox = ({ task, index, assigneeList = [], onSelectAssignee }: DropboxProps) => {
     const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
     const toggleDropdown = (index: number) => {
         setOpenDropdownIndex((prev) => (prev === index ? null : index));
@@ -19,16 +13,23 @@ const Dropbox = ({ task, index, onSelectAssignee }: DropboxProps) => {
     const dropBoxRef = useRef<HTMLDivElement>(null);
     useClickOutside(dropBoxRef, () => setOpenDropdownIndex(null));
 
-    const handleSelect = (index: number, assignee: { label: string; value: string }) => {
+    const handleSelect = (index: number, assignee: AssigneeOption) => {
         onSelectAssignee(index, assignee);
-    }
+    };
 
     return (
         <div ref={dropBoxRef}>
             {task.isSelectedAssignee ? (
                 <div className="flex justify-start items-center gap-[6px]" onClick={() => toggleDropdown(index)}>
-                    <SmallUserImgIcon />
-                    <span>{task.assignee?.label}</span>
+                    {(() => {
+                        const selected = assigneeList.find((item) => item.value === task.assignee?.value);
+                        return (
+                            <>
+                                {selected?.profileUrl ? (<img src={selected.profileUrl} alt="profile" className="w-5 h-5 rounded-full" />) : <SmallUserImgIcon/> }
+                                <span>{selected?.label}</span>
+                            </>
+                        );
+                    })()}
                 </div>
             ) : (
                 <div className="flex justify-start items-center gap-[6px] text-n600 cursor-pointer" onClick={() => toggleDropdown(index)}>

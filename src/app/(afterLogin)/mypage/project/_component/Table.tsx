@@ -4,8 +4,12 @@ import { FolderIcon, CalendaBlankIcon, UploadSimpleIcon } from "@/components/ico
 import Checkbox from "@/components/Checkbox";
 import Dropbox from "./Dropbox";
 import FileModal from "./FileModal";
+import { useTeamStore } from "../_store/teamStore";
 
 const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, checkedIds = [], onCheck }) => {
+    //담당자 
+    const { members } = useTeamStore();
+
     //체크박스
     const handleCheckBox = (key: string) => {
         const next = checkedIds.includes(key) ? checkedIds.filter((i) => i !== key) : [...checkedIds, key];
@@ -42,7 +46,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, checkedIds =
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.key}</td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.title}</td>
                             <td className={`relative p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>
-                                <Dropbox task={task} index={index} onSelectAssignee={onSelectAssignee} />
+                                <Dropbox task={task} index={task.id} assigneeList={[{ label: "선택 없음", value: "", profileUrl: ""}, ...(members?.map((item) => ({label: item.name, value: String(item.id), profileUrl: item.profileUrl})) ?? [])]} onSelectAssignee={onSelectAssignee} />
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>
                                 {task.isSelectedDate ? (

@@ -77,7 +77,7 @@ export const getTaskInfoByType: QueryFunction<TaskResponse, [_1: string, TaskReq
             .find((row) => row.startsWith("token="))
             ?.split("=")[1];
 
-        return await Apis.get("/api/task", {
+        return await Apis.get("/task", {
             params,
             withCredentials: true,
             headers: {
@@ -101,7 +101,7 @@ export const onSubmitProjectApi = async (body: SubmitProjectRequest) => {
             .split("; ")
             .find((row) => row.startsWith("token="))
             ?.split("=")[1];
-        return await Apis.post("/api/project/submit", body, {
+        return await Apis.post("/project/submit", body, {
             withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -125,7 +125,7 @@ export const onUpdateDueDate = async (body: UpdateTaskDueDateRequest) => {
             .split("; ")
             .find((row) => row.startsWith("token="))
             ?.split("=")[1];
-        return await Apis.put("/api/task/duedate", body, {
+        return await Apis.put("/task/duedate", body, {
             withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -136,6 +136,39 @@ export const onUpdateDueDate = async (body: UpdateTaskDueDateRequest) => {
         throw error;
     }
 };
+//프로젝트 팀원 조회 api
+export interface MemberResponse {
+    id: number;
+    name: string;
+    job: string;
+    profileUrl: string;
+    isDeleted: boolean;
+    isVerified: boolean;
+}
+export interface MemberRequest {
+    id: number;
+}
+export const getTeamMemberList: QueryFunction<MemberResponse[], [_1: string, MemberRequest]> = async ({ queryKey }) => {
+    try {
+        const [_, params] = queryKey;
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        return await Apis.get("/project/members", {
+            params,
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 팀원 조회 중 오류 발생:", error);
+        throw error;
+    }
+};
+
 
 //담당자 수정 API
 export interface UpdateTaskManagerRequest {
@@ -150,7 +183,7 @@ export const onUpdateManager = async (body: UpdateTaskManagerRequest) => {
             .split("; ")
             .find((row) => row.startsWith("token="))
             ?.split("=")[1];
-        return await Apis.put("/api/task/pic", body, {
+        return await Apis.put("/task/pic", body, {
             withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,

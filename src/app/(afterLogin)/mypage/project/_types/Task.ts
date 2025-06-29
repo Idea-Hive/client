@@ -1,7 +1,8 @@
 export interface Task {
+    id: number;
     key: string;
     title: string;
-    assignee?: { label: string; value: string };
+    assignee?: AssigneeOption;
     dueDate?: string | null;
     file?: string | null;
     isSelectedAssignee?: boolean;
@@ -12,13 +13,20 @@ export interface Task {
 
 export interface TaskTableProps {
     tasks: Task[];
-    onSelectAssignee: (index: number, assignee: { label: string; value: string }) => void;
+    onSelectAssignee: (index: number, assignee: AssigneeOption) => void;
     checkedIds: string[];
     onCheck: (indexs: string[]) => void;
+}
+
+export interface AssigneeOption {
+    label: string;
+    value: string;
+    profileUrl?: string;
 }
 
 export interface DropboxProps {
     task: Task;
     index: number;
-    onSelectAssignee: (index: number, assignee: { label: string; value: string }) => void;
+    assigneeList: AssigneeOption[];
+    onSelectAssignee: (index: number, assignee: AssigneeOption) => void;
 }

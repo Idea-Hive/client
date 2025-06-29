@@ -91,7 +91,7 @@ const Banner = () => {
                     nextEl: ".swiper-button-next",
                 }}
                 centeredSlides={true}
-                loop={false}
+                loop={true}
                 className="h-[370px]"
                 slidesPerView="auto"
                 spaceBetween={24}

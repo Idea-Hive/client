@@ -159,14 +159,11 @@ const NotificationDropdown = ({ userId }: { userId: number }) => {
         console.log("loadMoreAlarms");
     };
 
-    if (isPending) return <div>Loading...</div>;
-    if (!notifications) return <div>Error...</div>;
-
     return (
         <div className="absolute right-0 mt-2 w-[300px] bg-n200 rounded-lg z-10 py-4 px-2.5">
             <div className="px-2.5 text-h3 text-n900 mb-6">알림</div>
 
-            {notifications.length === 0 && (
+            {notifications && notifications.length === 0 && (
                 <div className="text-xs text-n800">
                     <div className="w-full flex justify-center mb-4">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -177,11 +174,11 @@ const NotificationDropdown = ({ userId }: { userId: number }) => {
                         </svg>
                     </div>
 
-                    <div className="mb-0.5">받은 알림이 없습니다</div>
-                    <div>새로운 알림이 생기면 알려드릴게요</div>
+                    <div className="mb-0.5 text-center">받은 알림이 없습니다</div>
+                    <div className="text-center">새로운 알림이 생기면 알려드릴게요</div>
                 </div>
             )}
-            {notifications.length > 0 && (
+            {notifications && notifications.length > 0 && (
                 <div className="flex flex-col gap-2 w-full">
                     {notifications.map((notification) => (
                         <div key={notification.id} className="w-full px-5 py-[15px] bg-white rounded-lg flex items-center gap-2">

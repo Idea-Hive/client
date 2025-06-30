@@ -23,6 +23,7 @@ export default function Nav() {
         staleTime: 0, // 데이터를 항상 fresh하지 않게 설정
         gcTime: 0, // 캐시를 즉시 무효화
         retry: false,
+        refetchOnMount: true,
     });
 
     return (

@@ -12,6 +12,7 @@ import FindPwModal from "./FindPwModal/FindPwModal";
 import LoginModal from "./LoginModal/LoginModal";
 
 export default function Nav() {
+    console.log("Nav 렌더링됨");
     const [isShowLoginModal, setIsShowLoginModal] = useState(false);
     const [isShowFindPwModal, setIsShowFindPwModal] = useState(false);
 

@@ -88,6 +88,7 @@ export const getUserInfoApi: QueryFunction<User, [_1: string]> = async ({ queryK
         .find((row) => row.startsWith("token="))
         ?.split("=")[1];
 
+    console.log("token:::", token);
     // 토큰이 없으면 api 태우지 않음
     if (!token) return null;
 

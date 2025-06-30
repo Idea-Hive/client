@@ -60,6 +60,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             await new Promise((resolve) => setTimeout(resolve, 0));
             console.log("캐시 무효화 직전");
             queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
+            queryClient.refetchQueries({ queryKey: ["isLoggedIn"] });
             onClose();
         },
         onError: (error) => {

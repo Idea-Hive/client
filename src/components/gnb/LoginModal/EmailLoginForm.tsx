@@ -56,13 +56,10 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             spinner.open();
         },
         onSuccess: async (data) => {
-            console.log("onLoginSuccess:::", data);
-            document.cookie = `token=${data.accessToken}; path=/`;
-
-            // 쿠키 설정이 완료될 때까지 기다린 후 캐시 무효화
+            document.cookie = `token=${data.accessToken}; path=/; SameSite=Lax; Secure`;
             await new Promise((resolve) => setTimeout(resolve, 0));
+            console.log("캐시 무효화 직전");
             queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
-
             onClose();
         },
         onError: (error) => {

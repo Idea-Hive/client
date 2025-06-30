@@ -1,10 +1,8 @@
 import { montserrat, pretendard } from "@/assets/fonts/fonts";
+import Nav from "@/components/gnb/Nav";
 import { SpinnerProvider } from "@/components/Spinner";
 import QueryProviderWrapper from "@/components/wrappers/QueryProviderWrapper";
-import dynamic from "next/dynamic";
 import "./globals.css";
-
-const Nav = dynamic(() => import("@/components/gnb/Nav"), { ssr: false });
 
 export const metadata = {
     title: "Taskmate",

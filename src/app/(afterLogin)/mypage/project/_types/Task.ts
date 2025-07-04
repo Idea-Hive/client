@@ -14,6 +14,7 @@ export interface Task {
 export interface TaskTableProps {
     tasks: Task[];
     onSelectAssignee: (index: number, assignee: AssigneeOption) => void;
+    onSelectDate: (index: number, date: string) => void;
     checkedIds: string[];
     onCheck: (indexs: string[]) => void;
 }
@@ -29,4 +30,10 @@ export interface DropboxProps {
     index: number;
     assigneeList: AssigneeOption[];
     onSelectAssignee: (index: number, assignee: AssigneeOption) => void;
+}
+
+export interface TableDateProps {
+    task: Task;
+    index: number;
+    onSelectDate: (index: number, date: string) => void;
 }

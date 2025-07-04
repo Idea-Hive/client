@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AssigneeOption, Task } from "../../../_types/Task";
 import Button from "@/components/Button";
-import { DownloadSimpleIcon, DownloadSimpleIconWhite } from "@/components/icons/icons";
+import { DownloadSimpleIcon } from "@/components/icons/icons";
 import Table from "../../Table";
-import { useAssigneeUpdater, useTasksByType } from "../../../_hook/hook";
+import { useTasksByType, useAssigneeUpdater } from "../../../_hook/hook";
+import { useMutation } from "@tanstack/react-query";
+import { onUpdateDueDate } from "@/apis/project/manageApis";
 import { useParams } from "next/navigation";
 
 export default function Release() {
@@ -14,6 +16,7 @@ export default function Release() {
         taskType: "DEPLOY",
     });
 
+    //체크박스
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {
         const tableKeys = tableTasks.map((task) => task.key);
@@ -27,9 +30,40 @@ export default function Release() {
         }
     };
 
+    //담당자
     const { updateAssignee } = useAssigneeUpdater(projectId);
     const handleSelectAssignee = (type: "required" | "optional", index: number, assignee: AssigneeOption) => {
         updateAssignee(type, index, assignee, requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks);
+    };
+
+    //마감기한
+    const { mutate } = useMutation({
+        mutationFn: onUpdateDueDate,
+    });
+    const handleSelectDate = (index: number, value: string) => {
+        mutate(
+            { taskId: index, dueDate: value },
+            {
+                onSuccess: () => {
+                    const update = (tasks: Task[]) =>
+                        tasks.map((item) =>
+                            item.id === index
+                                ? {
+                                      ...item,
+                                      dueDate: value,
+                                      isSelectedDate: true,
+                                  }
+                                : item
+                        );
+                    setRequiredTasks((prev) => update(prev));
+                    setOptionalTasks((prev) => update(prev));
+                    console.log("완료");
+                },
+                onError: () => {
+                    console.error("실패");
+                },
+            }
+        );
     };
 
     return (
@@ -53,6 +87,7 @@ export default function Release() {
                 </div>
                 <Table
                     tasks={requiredTasks}
+                    onSelectDate={(index, value) => handleSelectDate(index, value)}
                     onSelectAssignee={(index, assignee) => handleSelectAssignee("required", index, assignee)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, requiredTasks)}
@@ -65,6 +100,7 @@ export default function Release() {
                 </div>
                 <Table
                     tasks={optionalTasks}
+                    onSelectDate={(index, value) => handleSelectDate(index, value)}
                     onSelectAssignee={(index, assignee) => handleSelectAssignee("optional", index, assignee)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, optionalTasks)}

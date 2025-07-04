@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { TaskTableProps } from "../_types/Task";
-import { FolderIcon, CalendaBlankIcon, UploadSimpleIcon } from "@/components/icons/icons";
+import { FolderIcon, UploadSimpleIcon } from "@/components/icons/icons";
 import Checkbox from "@/components/Checkbox";
 import Dropbox from "./Dropbox";
 import FileModal from "./FileModal";
 import { useTeamStore } from "../_store/teamStore";
+import TableDatePicker from "./TableDatePicker";
 
-const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, checkedIds = [], onCheck }) => {
-    //담당자 
+const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate, checkedIds = [], onCheck }) => {
+    //담당자
     const { members } = useTeamStore();
 
     //체크박스
@@ -21,6 +22,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, checkedIds =
     const openFileModal = (index: number) => {
         setOpenFileModalIndex(index);
     };
+
     return (
         <div className="mt-4 rounded border border-n400">
             <table className="w-full text-xs border-separate border-spacing-0">
@@ -49,14 +51,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, checkedIds =
                                 <Dropbox task={task} index={task.id} assigneeList={[{ label: "선택 없음", value: "", profileUrl: ""}, ...(members?.map((item) => ({label: item.name, value: String(item.id), profileUrl: item.profileUrl})) ?? [])]} onSelectAssignee={onSelectAssignee} />
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>
-                                {task.isSelectedDate ? (
-                                    task.dueDate
-                                ) : (
-                                    <div className="flex justify-center items-center gap-1 text-n600 cursor-pointer">
-                                        <CalendaBlankIcon />
-                                        <span>기한 설정</span>
-                                    </div>
-                                )}
+                                <TableDatePicker task={task} index={task.id} onSelectDate={onSelectDate}></TableDatePicker>
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "rounded-br-xl" : "border-b"}`}>
                                 {task.isSubmittedFile ? (

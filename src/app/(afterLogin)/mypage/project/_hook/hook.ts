@@ -21,7 +21,6 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
     useEffect(() => {
         if (data) {
             const allTasks = [...data.requiredTasks, ...data.optionalTasks];
-            console.log("allTasks :: ", allTasks);
 
             let prefix = "";
             switch (taskType) {

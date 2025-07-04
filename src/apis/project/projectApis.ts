@@ -427,3 +427,51 @@ export const onPullUpProjectApi = async (body: PullUpProjectRequest) => {
         throw error;
     }
 };
+
+// 내 프로젝트 조회
+export interface GetMyProjectRequest {
+    page: number;
+}
+export interface MyProject {
+    id: number;
+    title: string;
+    description: string;
+    hashtagNames: string[];
+    creator: string;
+    viewCnt: number;
+    likedCnt: number;
+    expirationDate: string;
+}
+export interface GetMyProjectResponse {
+    totalCnt: number;
+    totalPages: number;
+    currentPage: number;
+    pageSize: number;
+    projects: MyProject[];
+}
+export const getMyProjectApi: QueryFunction<GetMyProjectResponse, [_1: string, page: number]> = async ({ queryKey }) => {
+    try {
+        const [_, page] = queryKey;
+
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        if (!token) {
+            throw new Error("토큰이 없습니다.");
+            return null;
+        }
+
+        return await Apis.get("/project/all", {
+            params: { page },
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("프로젝트 상세 정보 조회 중 오류 발생:", error);
+        throw error;
+    }
+};

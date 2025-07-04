@@ -63,6 +63,33 @@ export const onSignupApi = async (body: SignupRequest) => {
     return await Apis.post("/member/signup", requestBody);
 };
 
+export interface EditUserInfoRequest {
+    name: string;
+    job: string;
+    career: number;
+    skillStackIds: number[];
+}
+export const onEditUserInfoApi = async (body: EditUserInfoRequest): Promise<User> => {
+    const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+
+    if (!token) throw new Error("토큰이 없습니다.");
+
+    try {
+        return await Apis.put("/member/update", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (err) {
+        console.error("API Error:", err);
+        throw err;
+    }
+};
+
 // 유저 정보 가져오기
 export interface User {
     id: number;
@@ -105,8 +132,4 @@ export const getUserInfoApi: QueryFunction<User, [_1: string]> = async ({ queryK
         console.error("API Error:", error);
         throw error;
     }
-};
-
-export const editProfileApi = async (body: any) => {
-    return await Apis.post("/member/info", body);
 };

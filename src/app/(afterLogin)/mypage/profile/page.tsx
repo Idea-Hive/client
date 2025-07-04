@@ -1,5 +1,6 @@
 "use client";
 
+import { getMyProjectApi } from "@/apis/project/projectApis";
 import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
@@ -28,11 +29,11 @@ const ProfileInfo = () => {
             <div className="text-h3 text-n900 mb-4">프로필</div>
             <div className="flex gap-4 items-center">
                 <div className="text-smEmphasize text-n900 w-[50px] flex flex-col gap-2">
-                    <div>name</div>
-                    <div>career</div>
-                    <div>job</div>
-                    <div>email</div>
-                    <div>보유기술</div>
+                    <div>닉네임</div>
+                    <div>경력</div>
+                    <div>직업</div>
+                    <div>이메일</div>
+                    <div className="leading-8">보유기술</div>
                 </div>
 
                 <div className="text-sm text-n800 flex-1 flex flex-col gap-2">
@@ -114,6 +115,14 @@ const MyProject = () => {
             ),
         },
     ];
+
+    const { data: projects, isPending } = useQuery({
+        queryKey: ["myProjects", 1],
+        queryFn: getMyProjectApi,
+        refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
+    });
+
+    console.log(projects);
 
     return (
         <div className="border border-n500 rounded-xl px-6 py-10 bg-white">

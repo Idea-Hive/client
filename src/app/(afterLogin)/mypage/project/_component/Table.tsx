@@ -7,7 +7,7 @@ import FileModal from "./FileModal";
 import { useTeamStore } from "../_store/teamStore";
 import TableDatePicker from "./TableDatePicker";
 
-const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate, checkedIds = [], onCheck }) => {
+const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate, onSubmitLink, checkedIds = [], onCheck }) => {
     //담당자
     const { members } = useTeamStore();
 
@@ -54,8 +54,8 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                                 <TableDatePicker task={task} index={task.id} onSelectDate={onSelectDate}></TableDatePicker>
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "rounded-br-xl" : "border-b"}`}>
-                                {task.isSubmittedFile ? (
-                                    <div className="flex justify-center items-center gap-1" onClick={() => openFileModal(index)}>
+                                {task.isSubmittedContent ? (
+                                    <div className="flex justify-center items-center gap-1 cursor-pointer" onClick={() => openFileModal(index)}>
                                         <FolderIcon />
                                         <span>제출완료</span>
                                     </div>
@@ -71,7 +71,15 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                 </tbody>
             </table>
             {/* 모달 렌더링 부분 */}
-            {openFileModalIndex !== null && <FileModal isOpen={true} onClose={() => setOpenFileModalIndex(null)} />}
+            {openFileModalIndex !== null && 
+                <FileModal 
+                    isOpen={true} 
+                    onClose={() => setOpenFileModalIndex(null)}
+                    taskId={tasks[openFileModalIndex].id} 
+                    onSuccess={onSubmitLink}
+                    originLink={tasks[openFileModalIndex].attachedLink}
+                    originFileName={tasks[openFileModalIndex].file}
+                />}
         </div>
     );
 };

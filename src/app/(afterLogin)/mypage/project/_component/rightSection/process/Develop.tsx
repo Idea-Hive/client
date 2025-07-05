@@ -65,6 +65,18 @@ export default function Develop() {
             }
         );
     };
+    
+    //파일/링크 제출
+    const handleContentsSuccess = (index: number, updates?: object) => { //파일/링크 제출에 성공한 taskId
+        const update = (tasks: Task[]) =>
+            tasks.map((item) => 
+                item.id === index ? 
+                { ...item, ...updates} 
+            : item
+        );
+        setRequiredTasks((prev) => update(prev));
+        setOptionalTasks((prev) => update(prev));
+    };
 
     return (
         <div className="p-10">
@@ -89,6 +101,7 @@ export default function Develop() {
                     tasks={requiredTasks}
                     onSelectDate={(index, value) => handleSelectDate(index, value)}
                     onSelectAssignee={(index, assignee) => handleSelectAssignee("required", index, assignee)}
+                    onSubmitLink={(index, updates) => handleContentsSuccess(index, updates)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, requiredTasks)}
                 />
@@ -101,6 +114,7 @@ export default function Develop() {
                     tasks={optionalTasks}
                     onSelectDate={(index, value) => handleSelectDate(index, value)}
                     onSelectAssignee={(index, assignee) => handleSelectAssignee("optional", index, assignee)}
+                    onSubmitLink={(index, updates) => handleContentsSuccess(index, updates)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, optionalTasks)}
                 />

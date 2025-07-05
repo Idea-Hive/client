@@ -66,6 +66,18 @@ export default function Design() {
         );
     };
 
+    //파일/링크 제출
+    const handleContentsSuccess = (index: number, updates?: object) => { //파일/링크 제출에 성공한 taskId
+        const update = (tasks: Task[]) =>
+            tasks.map((item) => 
+                item.id === index ? 
+                { ...item, ...updates} 
+            : item
+        );
+        setRequiredTasks((prev) => update(prev));
+        setOptionalTasks((prev) => update(prev));
+    };
+
     return (
         <div className="p-10">
             <div className="text-h2 text-n900 left-0 pb-[16px] border-b-[1px] border-n400">디자인</div>
@@ -89,6 +101,7 @@ export default function Design() {
                     tasks={requiredTasks}
                     onSelectDate={(index, value) => handleSelectDate(index, value)}
                     onSelectAssignee={(index, assignee) => handleSelectAssignee("required", index, assignee)}
+                    onSubmitLink={(index, updates) => handleContentsSuccess(index, updates)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, requiredTasks)}
                 />
@@ -102,6 +115,7 @@ export default function Design() {
                     tasks={optionalTasks}
                     onSelectDate={(index, value) => handleSelectDate(index, value)}
                     onSelectAssignee={(index, assignee) => handleSelectAssignee("optional", index, assignee)}
+                    onSubmitLink={(index, updates) => handleContentsSuccess(index, updates)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, optionalTasks)}
                 />

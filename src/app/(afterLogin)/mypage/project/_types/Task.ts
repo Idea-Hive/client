@@ -4,10 +4,11 @@ export interface Task {
     title: string;
     assignee?: AssigneeOption;
     dueDate?: string | null;
-    file?: string | null;
+    attachedLink?: string | null; //링크 1개
+    file?: string | null;         //파일 1개
     isSelectedAssignee?: boolean;
     isSelectedDate?: boolean;
-    isSubmittedFile?: boolean;
+    isSubmittedContent?: boolean;
     isRequired?: boolean;
 }
 
@@ -15,6 +16,7 @@ export interface TaskTableProps {
     tasks: Task[];
     onSelectAssignee: (index: number, assignee: AssigneeOption) => void;
     onSelectDate: (index: number, date: string) => void;
+    onSubmitLink: (index: number, updates?: Partial<Task>) => void;
     checkedIds: string[];
     onCheck: (indexs: string[]) => void;
 }

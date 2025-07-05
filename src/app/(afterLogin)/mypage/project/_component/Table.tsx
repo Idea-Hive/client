@@ -14,7 +14,18 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
     //체크박스
     const handleCheckBox = (key: string) => {
         const next = checkedIds.includes(key) ? checkedIds.filter((i) => i !== key) : [...checkedIds, key];
-        onCheck(next); //상태는 비동기라 이렇게 해야 함.
+        onCheck(next);
+    };
+    const handleCheckAll = () => {
+        //필수, 선택 2개의 테이블이 한 화면에서 나타나기 때문에 taskKey들을 확인해야 함. 
+        const taskKeys = tasks.map((task) => task.key);
+        const isAllChecked = taskKeys.every((key) => checkedIds.includes(key));
+
+        if (isAllChecked) {
+            onCheck([]);
+        } else {
+            onCheck(taskKeys);
+        }
     };
 
     //파일 모달
@@ -29,8 +40,10 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                 <thead className="bg-n50 text-center text-xsEmphasis">
                     <tr className="h-[42px]">
                         <th className="border-b pt-3 pb-3 rounded-tl-xl w-[64px]">
-                            선택
-                            {/* checkbox 전체 선택/전체 해제 필요할 수도 */}
+                            <Checkbox checked={
+                                tasks.length > 0 &&
+                                tasks.every((task) => checkedIds.includes(task.key))
+                            } value="all" onClick={handleCheckAll} inTable={true} />
                         </th>
                         <th className="border-b pt-3 pb-3 w-[74px]">Key</th>
                         <th className="border-b pt-3 pb-3 w-[243px]">과제</th>
@@ -43,7 +56,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                     {tasks.map((task, index) => (
                         <tr key={task.key} className={`border-t h-[42px] ${index === tasks.length - 1 ? "last-row" : ""}`}>
                             <td className={`p-3 text-center ${index === tasks.length - 1 ? "rounded-bl-xl" : "border-b"}`}>
-                                <Checkbox checked={checkedIds.includes(task.key)} value="1" onClick={() => handleCheckBox(task.key)} />
+                                <Checkbox checked={checkedIds.includes(task.key)} value="1" onClick={() => handleCheckBox(task.key)} inTable={true} />
                             </td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.key}</td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.title}</td>
@@ -72,10 +85,10 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
             </table>
             {/* 모달 렌더링 부분 */}
             {openFileModalIndex !== null && 
-                <FileModal 
-                    isOpen={true} 
+                <FileModal
+                    isOpen={true}
                     onClose={() => setOpenFileModalIndex(null)}
-                    taskId={tasks[openFileModalIndex].id} 
+                    taskId={tasks[openFileModalIndex].id}
                     onSuccess={onSubmitLink}
                     originLink={tasks[openFileModalIndex].attachedLink}
                     originFileName={tasks[openFileModalIndex].file}

@@ -1,17 +1,9 @@
+import { MemberResponse } from "@/apis/project/manageApis";
 import { create } from "zustand";
 
-interface TeamMember {
-    id: number;
-    name: string;
-    job: string;
-    profileUrl: string;
-    isDeleted: boolean;
-    isVerified: boolean;
-}
-
 interface TeamStore {
-    members: TeamMember[];
-    setMembers: (members: TeamMember[]) => void;
+    members: MemberResponse[];
+    setMembers: (members: MemberResponse[]) => void;
 }
 
 export const useTeamStore = create<TeamStore>((set) => ({

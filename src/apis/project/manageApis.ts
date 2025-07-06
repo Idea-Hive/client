@@ -257,3 +257,29 @@ export const onUploadFile = async (request: FileUploadRequest) => {
         throw error;
     }
 };
+
+export interface CreateCustomTaskRequest {
+    projectId: number;
+    taskType: "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
+}
+
+//과제 추가 api
+export const onCreateCustomTask = async (body: CreateCustomTaskRequest) => {
+     try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        const response = await Apis.post("/task/option", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        return response.data;
+    } catch (error) {
+        console.error("과제 추가 API 중 오류 발생:", error);
+        throw error;
+    }
+}

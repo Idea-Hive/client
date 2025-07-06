@@ -17,6 +17,7 @@ interface SideMenuProps {
 }
 
 import { useProjectWithTeam } from "../_hook/hook";
+import Dropbox from "./Dropbox";
 
 const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) => {
     const router = useRouter();
@@ -84,7 +85,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
 
 const ProjectSettingDropDown = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const dropBoxRef = useRef<HTMLDivElement>(null);
+    const dropBoxRef = useRef<HTMLDivElement | null>(null);
     useClickOutside(dropBoxRef, () => {
         if (isOpen) setIsOpen(false);
     });
@@ -99,12 +100,23 @@ const ProjectSettingDropDown = () => {
                 </span>
             </div>
             {isOpen && (
-                <div ref={dropBoxRef} className="absolute right-0 bottom-full mb-[9px]">
-                    <ul className="w-[120px] bg-white border rounded shadow z-10 text-sm text-n800">
-                        <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200 cursor-pointer">프로젝트 탈퇴</li>
-                        <li className="h-[36px] pl-3 pr-3 pt-2 pd-2 hover:bg-n200 cursor-pointer">프로젝트 삭제</li>
-                    </ul>
-                </div>
+                <Dropbox
+                    items={[
+                        {
+                            label: "프로젝트 탈퇴",
+                            onClick: () => {
+                                console.log("탈퇴");
+                            },
+                        },
+                        {
+                            label: "프로젝트 삭제",
+                            onClick: () => {
+                                console.log("삭제");
+                            },
+                        },
+                    ]}
+                    dropBoxRef={dropBoxRef}
+                />
             )}
         </div>
     );

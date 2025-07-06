@@ -1,60 +1,26 @@
-import { useState, useRef, useEffect } from "react";
-import { DropboxProps } from "../_types/Task";
-import { SmallUserImgIcon, CaretDownIcon } from "@/components/icons/icons";
-import { useClickOutside } from "@/hooks/hooks";
-import { AssigneeOption } from "../_types/Task";
+import React from "react";
 
-const Dropbox = ({ task, index, assigneeList = [], onSelectAssignee }: DropboxProps) => {
-    const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
-    const toggleDropdown = (index: number) => {
-        setOpenDropdownIndex((prev) => (prev === index ? null : index));
-    };
+interface DropBoxItem {
+    label: string;
+    onClick: () => void;
+}
 
-    const dropBoxRef = useRef<HTMLDivElement>(null);
-    useClickOutside(dropBoxRef, () => setOpenDropdownIndex(null));
+interface DropboxListProps {
+    items: DropBoxItem[];
+    dropBoxRef: React.RefObject<HTMLDivElement | null>;
+    className?: string;
+}
 
-    const handleSelect = (index: number, assignee: AssigneeOption) => {
-        onSelectAssignee(index, assignee);
-    };
-
+const Dropbox = ({ items, dropBoxRef, className = "" }: DropboxListProps) => {
     return (
-        <div ref={dropBoxRef} className="cursor-pointer">
-            {task.isSelectedAssignee ? (
-                <div className="flex justify-start items-center gap-[6px]" onClick={() => toggleDropdown(index)}>
-                    {(() => {
-                        const selected = assigneeList.find((item) => item.value === task.assignee?.value);
-                        return (
-                            <>
-                                {selected?.profileUrl ? (<img src={selected.profileUrl} alt="profile" className="w-5 h-5 rounded-full" />) : <SmallUserImgIcon/> }
-                                <span>{selected?.label}</span>
-                            </>
-                        );
-                    })()}
-                </div>
-            ) : (
-                <div className="flex justify-start items-center gap-[6px] text-n600" onClick={() => toggleDropdown(index)}>
-                    <span>담당자 선택</span>
-                    <CaretDownIcon />
-                </div>
-            )}
-            {openDropdownIndex === index && (
-                <div className="absolute right-0 z-10">
-                    <ul className="w-[120px] bg-white border rounded shadow text-left">
-                        {assigneeList.map((assignee) => (
-                            <li
-                                key={assignee.value}
-                                className="h-[36px] px-3 py-2 hover:bg-n200"
-                                onClick={() => {
-                                    handleSelect(index, assignee);
-                                    setOpenDropdownIndex(null);
-                                }}
-                            >
-                                {assignee.label}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+        <div ref={dropBoxRef} className={`absolute right-0 bottom-full mb-[9px] ${className}}`}>
+            <ul className="w-[120px] bg-white border rounded shadow z-10 text-sm text-n800">
+                {items.map((item, idx) => (
+                    <li key={idx} className="h-[36px] px-3 py-2 hover:bg-n200 cursor-pointer">
+                        {item.label}
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };

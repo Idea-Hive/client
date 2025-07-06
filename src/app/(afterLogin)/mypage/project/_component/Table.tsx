@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TaskTableProps } from "../_types/Task";
 import { FolderIcon, UploadSimpleIcon } from "@/components/icons/icons";
 import Checkbox from "@/components/Checkbox";
-import Dropbox from "./Dropbox";
+import Dropbox from "./TableDropbox";
 import FileModal from "./FileModal";
 import { useTeamStore } from "../_store/teamStore";
 import TableDatePicker from "./TableDatePicker";

@@ -21,7 +21,6 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
     useEffect(() => {
         if (data) {
             const allTasks = [...data.requiredTasks, ...data.optionalTasks];
-            console.log("allTasks :: ", allTasks);
 
             let prefix = "";
             switch (taskType) {
@@ -48,10 +47,11 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
                 title: task.title,
                 assignee: { label: task.pic, value: String(task.picId) },
                 dueDate: task.dueDate ?? undefined,
+                attachedLink: task.attachedLink ?? undefined,
                 file: task.filePath ?? undefined,
                 isSelectedAssignee: task.picId != null,
                 isSelectedDate: task.dueDate != null,
-                isSubmittedFile: task.filePath != null,
+                isSubmittedContent: (!!task.filePath || !!task.attachedLink),
                 isRequired: task.isRequired,
             }));
 

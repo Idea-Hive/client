@@ -51,6 +51,7 @@ export interface Task {
     isSubmitted: boolean;
     title: string;
     taskType: "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
+    attachedLink: string | null;
     filePath: string;
     pic: string;
     dueDate: string | null;
@@ -136,6 +137,7 @@ export const onUpdateDueDate = async (body: UpdateTaskDueDateRequest) => {
         throw error;
     }
 };
+
 //프로젝트 팀원 조회 api
 export interface MemberResponse {
     id: number;
@@ -194,3 +196,90 @@ export const onUpdateManager = async (body: UpdateTaskManagerRequest) => {
         throw error;
     }
 };
+
+//과제 링크 첨부 API
+export interface UpdateLinkRequest {
+    taskId: number;
+    attachedLink: string;
+}
+
+export const onUploadLink = async (body: UpdateLinkRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        return await Apis.post("/task/attach-link", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("과제 링크 첨부 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+//첨부파일 업로드 API
+export interface FileUploadRequest {
+    file: File | null;
+    taskId: number;
+}
+export const onUploadFile = async (request: FileUploadRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+        const formData = new FormData();
+
+        if(request.file != null) {
+            formData.append("file", request.file);
+        }
+        formData.append("taskInfo", new Blob([JSON.stringify({ taskId: request.taskId })], { type: "application/json" }));
+
+        for (const pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
+        const response = await Apis.post("/task/file-upload", formData, {
+            withCredentials: true,
+            headers: {
+                "Content-Type": undefined, //파일 첨부 시, 기본 content-type 무시
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("과제 파일 업로드 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+export interface CreateCustomTaskRequest {
+    projectId: number;
+    taskType: "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
+}
+
+//과제 추가 api
+export const onCreateCustomTask = async (body: CreateCustomTaskRequest) => {
+     try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        const response = await Apis.post("/task/option", body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        return response.data;
+    } catch (error) {
+        console.error("과제 추가 API 중 오류 발생:", error);
+        throw error;
+    }
+}

@@ -18,7 +18,7 @@ const Dropbox = ({ task, index, assigneeList = [], onSelectAssignee }: DropboxPr
     };
 
     return (
-        <div ref={dropBoxRef}>
+        <div ref={dropBoxRef} className="cursor-pointer">
             {task.isSelectedAssignee ? (
                 <div className="flex justify-start items-center gap-[6px]" onClick={() => toggleDropdown(index)}>
                     {(() => {
@@ -32,7 +32,7 @@ const Dropbox = ({ task, index, assigneeList = [], onSelectAssignee }: DropboxPr
                     })()}
                 </div>
             ) : (
-                <div className="flex justify-start items-center gap-[6px] text-n600 cursor-pointer" onClick={() => toggleDropdown(index)}>
+                <div className="flex justify-start items-center gap-[6px] text-n600" onClick={() => toggleDropdown(index)}>
                     <span>담당자 선택</span>
                     <CaretDownIcon />
                 </div>
@@ -43,7 +43,7 @@ const Dropbox = ({ task, index, assigneeList = [], onSelectAssignee }: DropboxPr
                         {assigneeList.map((assignee) => (
                             <li
                                 key={assignee.value}
-                                className="h-[36px] px-3 py-2 hover:bg-n200 cursor-pointer"
+                                className="h-[36px] px-3 py-2 hover:bg-n200"
                                 onClick={() => {
                                     handleSelect(index, assignee);
                                     setOpenDropdownIndex(null);

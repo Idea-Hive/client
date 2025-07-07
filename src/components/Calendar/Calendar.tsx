@@ -1,3 +1,4 @@
+import { CalendarTaskType } from "@/apis/project/projectApis";
 import clsx from "clsx";
 import { useState } from "react";
 import Selectbox from "../Selectbox";
@@ -5,12 +6,12 @@ import Selectbox from "../Selectbox";
 type CalendarEvent = {
     date: string; // 'YYYY-MM-DD'
     label: string;
-    type?: "default" | "design" | "fe";
+    type?: CalendarTaskType;
 };
 
 type CalendarProps = {
-    year: number;
-    month: number; // 1~12
+    year?: number;
+    month?: number; // 1~12
     events?: CalendarEvent[];
 };
 
@@ -58,20 +59,26 @@ function getDaysArray(year: number, month: number): CalendarCell[] {
     return days;
 }
 
-function getEventColor(type?: string) {
+function getEventColor(type?: CalendarTaskType) {
     switch (type) {
-        case "design":
+        case "PLANNING":
             return "bg-blue-100 text-blue-500";
-        case "fe":
-            return "bg-orange-100 text-orange-400";
+        case "DESIGN":
+            return "bg-[#0085FF]/10 text-[#0085FF]";
+        case "DEVELOP":
+            return "bg-[#FFF4E8] text-[#FF9F2D]";
+        case "DEPLOY":
+            return "bg-purple-100 text-purple-500";
+        case "COMPLETE":
+            return "bg-gray-100 text-gray-700";
         default:
             return "bg-gray-100 text-gray-700";
     }
 }
 
 export default function Calendar({ year: initialYear, month: initialMonth, events = [] }: CalendarProps) {
-    const [currentYear, setCurrentYear] = useState(initialYear);
-    const [currentMonth, setCurrentMonth] = useState(initialMonth);
+    const [currentYear, setCurrentYear] = useState(initialYear || new Date().getFullYear());
+    const [currentMonth, setCurrentMonth] = useState(initialMonth || new Date().getMonth() + 1);
 
     const days = getDaysArray(currentYear, currentMonth);
 
@@ -106,6 +113,20 @@ export default function Calendar({ year: initialYear, month: initialMonth, event
         setCurrentMonth(today.getMonth() + 1);
     };
 
+    const [filter, setFilter] = useState<CalendarTaskType | "all">("all");
+    const filterOptions = [
+        { label: "전체", value: "all" },
+        { label: "기획", value: "PLANNING" },
+        { label: "디자인", value: "DESIGN" },
+        { label: "개발", value: "DEVELOP" },
+        { label: "배포", value: "DEPLOY" },
+        { label: "완료", value: "COMPLETE" },
+    ];
+    const handleFilterChange = (value: CalendarTaskType | "all") => {
+        console.log("value:::", value);
+        setFilter(value);
+    };
+
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
@@ -137,13 +158,7 @@ export default function Calendar({ year: initialYear, month: initialMonth, event
                 </div>
 
                 <div className="w-[100px]">
-                    <Selectbox
-                        options={[
-                            { label: "월별", value: "month" },
-                            { label: "주별", value: "week" },
-                        ]}
-                        className="!h-10"
-                    />
+                    <Selectbox options={filterOptions} initialValue="all" className="!h-10" onChange={(value) => handleFilterChange(value as CalendarTaskType | "all")} />
                 </div>
             </div>
 
@@ -177,14 +192,17 @@ export default function Calendar({ year: initialYear, month: initialMonth, event
                                         : currentYear
                                 }-${String(cell.month).padStart(2, "0")}-${String(cell.day).padStart(2, "0")}`;
                                 return (
-                                    <td key={i} className={clsx("align-top h-[128px] w-32 border border-n400 bg-white relative", !cell.isCurrentMonth && "bg-[#f7f9fb]")}>
-                                        <div className={clsx("text-sm px-2 pt-2", cell.isCurrentMonth ? "text-n800" : "text-n600")}>{cell.day}</div>
-                                        <div className="flex flex-col gap-1 px-2 mt-1">
-                                            {eventMap[dateStr]?.map((ev, idx) => (
-                                                <div key={idx} className={clsx("rounded px-1 py-0.5 text-xs whitespace-nowrap", getEventColor(ev.type))}>
-                                                    {ev.label}
-                                                </div>
-                                            ))}
+                                    <td key={i} className={clsx("align-top h-[128px] w-32 border border-n400 bg-white relative p-2", !cell.isCurrentMonth && "bg-[#f7f9fb]")}>
+                                        <div className={clsx("text-sm", cell.isCurrentMonth ? "text-n800" : "text-n600")}>{cell.day}</div>
+                                        <div className="flex flex-col justify-end gap-1 mt-1 h-[86px]">
+                                            {eventMap[dateStr]
+                                                ?.filter((ev) => (filter === "all" ? true : ev.type === filter))
+                                                ?.slice(0, 3)
+                                                ?.map((ev, idx) => (
+                                                    <div key={idx} className={clsx("rounded px-1 py-0.5 text-xs cursor-pointer", getEventColor(ev.type))} title={ev.label}>
+                                                        [{filterOptions.find((f) => f.value === ev.type)?.label}] {ev.label.length > 5 ? ev.label.slice(0, 5) + "..." : ev.label}
+                                                    </div>
+                                                ))}
                                         </div>
                                     </td>
                                 );

@@ -28,7 +28,7 @@ export default function Nav() {
 
     return (
         <nav className="w-full h-[72px] flex justify-center border-b border-[#d8dae5]">
-            <nav className="w-[1280px] h-full bg-white flex items-center justify-between px-4">
+            <nav className="max-w-[1232px] w-full h-full bg-white flex items-center justify-between px-4">
                 <div className="flex items-center gap-6">
                     <Link href="/" className="flex items-center gap-[3.75px]">
                         <LogoIcon />

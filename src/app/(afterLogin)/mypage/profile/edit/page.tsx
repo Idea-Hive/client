@@ -38,7 +38,7 @@ export default function EditProfile() {
             nickname.resetValue(user.name || "");
             email.resetValue(user.email || "");
             job.resetValue(user.job || "");
-            setCareer(user.career.toString() || "");
+            setCareer(user.career ? user.career.toString() : "");
         }
     }, [user]);
 

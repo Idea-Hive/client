@@ -447,7 +447,12 @@ export interface GetMyProjectResponse {
     totalPages: number;
     currentPage: number;
     pageSize: number;
-    projects: MyProject[];
+    projects: {
+        RECRUITING?: MyProject[];
+        IN_PROGRESS?: MyProject[];
+        COMPLETED?: MyProject[];
+        LIKED?: MyProject[];
+    };
 }
 export const getMyProjectApi: QueryFunction<GetMyProjectResponse, [_1: string, page: number]> = async ({ queryKey }) => {
     try {
@@ -472,6 +477,67 @@ export const getMyProjectApi: QueryFunction<GetMyProjectResponse, [_1: string, p
         });
     } catch (error) {
         console.error("프로젝트 상세 정보 조회 중 오류 발생:", error);
+        throw error;
+    }
+};
+
+// 캘린더 태스크 조회
+export interface GetCalendarTasksRequest {
+    userId: number;
+    projectId: number;
+}
+
+export type CalendarTaskType = "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
+export interface CalendarTask {
+    id: number;
+    isRequired: boolean;
+    isSubmitted: boolean;
+    title: string;
+    taskType: CalendarTaskType;
+    attachedLink: string;
+    filePath: string;
+    pic: string;
+    dueDate: string;
+    uploadDate: string;
+    picId: number;
+}
+
+export interface ProjectTasks {
+    requiredTasks: CalendarTask[];
+    optionalTasks: CalendarTask[];
+}
+
+export interface GetCalendarTasksResponse {
+    [key: string]: ProjectTasks;
+}
+export const getCalendarTasksApi: QueryFunction<GetCalendarTasksResponse, [_1: string, memberId: number | undefined, projectId: number | undefined]> = async ({ queryKey }) => {
+    try {
+        const [_, memberId, projectId] = queryKey;
+
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        if (!token) {
+            throw new Error("토큰이 없습니다.");
+            return null;
+        }
+
+        if (!memberId || !projectId) {
+            throw new Error("memberId 또는 projectId가 없습니다.");
+            return null;
+        }
+
+        return await Apis.get("/project/calender", {
+            params: { memberId, projectId },
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.error("캘린더 태스크 조회 중 오류 발생:", error);
         throw error;
     }
 };

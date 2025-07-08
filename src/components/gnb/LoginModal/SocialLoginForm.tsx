@@ -2,7 +2,7 @@ import { GithubIcon, GoogleIcon, KakaoIcon } from "@/components/icons/icons";
 
 export default function SocialLoginForm() {
     const handleSocialLogin = (provider: string) => {
-        window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+        window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/oauth2/authorization/${provider}`;
     };
 
     return (

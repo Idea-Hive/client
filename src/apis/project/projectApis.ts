@@ -447,7 +447,12 @@ export interface GetMyProjectResponse {
     totalPages: number;
     currentPage: number;
     pageSize: number;
-    projects: MyProject[];
+    projects: {
+        RECRUITING?: MyProject[];
+        IN_PROGRESS?: MyProject[];
+        COMPLETED?: MyProject[];
+        LIKED?: MyProject[];
+    };
 }
 export const getMyProjectApi: QueryFunction<GetMyProjectResponse, [_1: string, page: number]> = async ({ queryKey }) => {
     try {

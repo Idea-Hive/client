@@ -1,5 +1,6 @@
 "use client";
 
+import { getMyProjectApi } from "@/apis/project/projectApis";
 import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +14,19 @@ export default function LNB() {
         queryFn: getUserInfoApi,
         refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
     });
+
+    const { data: projectData, isPending } = useQuery({
+        queryKey: ["myProjects", 1],
+        queryFn: getMyProjectApi,
+        refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
+    });
+
+    const tabCnt = {
+        RECRUITING: projectData?.projects?.RECRUITING?.length || 0,
+        IN_PROGRESS: projectData?.projects?.IN_PROGRESS?.length || 0,
+        COMPLETED: projectData?.projects?.COMPLETED?.length || 0,
+        LIKED: projectData?.projects?.LIKED?.length || 0,
+    };
 
     return (
         <div className="w-[300px] h-fit border border-n500 rounded-xl px-6 py-10 fixed top-[112px] left-[calc((100%-1200px)/2)] z-10 bg-white">
@@ -58,7 +72,7 @@ export default function LNB() {
                         />
                     </svg>
                     <div className="text-base text-n700 mb-1">모집중</div>
-                    <div className="text-baseEmphasize text-n700">0개</div>
+                    <div className="text-baseEmphasize text-n700">{tabCnt.RECRUITING}개</div>
                 </div>
                 <div className="flex flex-col items-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-2">
@@ -69,7 +83,7 @@ export default function LNB() {
                     </svg>
 
                     <div className="text-base text-n700 mb-1">진행중</div>
-                    <div className="text-baseEmphasize text-n700">0개</div>
+                    <div className="text-baseEmphasize text-n700">{tabCnt.IN_PROGRESS}개</div>
                 </div>
                 <div className="flex flex-col items-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-2">
@@ -80,7 +94,7 @@ export default function LNB() {
                     </svg>
 
                     <div className="text-base text-n700 mb-1">완료</div>
-                    <div className="text-baseEmphasize text-n700">0개</div>
+                    <div className="text-baseEmphasize text-n700">{tabCnt.COMPLETED}개</div>
                 </div>
                 <div className="flex flex-col items-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-2">
@@ -91,7 +105,7 @@ export default function LNB() {
                     </svg>
 
                     <div className="text-base text-n700 mb-1">찜</div>
-                    <div className="text-baseEmphasize text-n700">0개</div>
+                    <div className="text-baseEmphasize text-n700">{tabCnt.LIKED}개</div>
                 </div>
             </div>
         </div>

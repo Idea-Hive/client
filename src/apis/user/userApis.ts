@@ -110,11 +110,22 @@ export interface User {
     isVerified: boolean;
 }
 export const getUserInfoApi: QueryFunction<User, [_1: string]> = async ({ queryKey }) => {
-    const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
+    // 더 안전한 토큰 파싱
+    const getToken = () => {
+        try {
+            const cookies = document.cookie.split("; ");
+            const tokenCookie = cookies.find((row) => row.trim().startsWith("token="));
+            if (!tokenCookie) return null;
 
+            const token = tokenCookie.split("=")[1];
+            return token && token.trim() !== "" ? token : null;
+        } catch (error) {
+            console.error("토큰 파싱 에러:", error);
+            return null;
+        }
+    };
+
+    const token = getToken();
     console.log("token:::", token);
     // 토큰이 없으면 api 태우지 않음
     if (!token) return null;

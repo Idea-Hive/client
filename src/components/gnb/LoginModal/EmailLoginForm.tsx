@@ -71,7 +71,11 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             // 캐시를 완전히 제거하고 새로 요청
             queryClient.removeQueries({ queryKey: ["isLoggedIn"] });
             queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
-            queryClient.refetchQueries({ queryKey: ["isLoggedIn"] });
+
+            // 강제로 새로 요청
+            await queryClient.refetchQueries({ queryKey: ["isLoggedIn"] });
+
+            console.log("캐시 무효화 완료");
             onClose();
         },
         onError: (error) => {

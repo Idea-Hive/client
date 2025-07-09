@@ -16,7 +16,7 @@ export default function Nav() {
     const [isShowLoginModal, setIsShowLoginModal] = useState(false);
     const [isShowFindPwModal, setIsShowFindPwModal] = useState(false);
 
-    const { data } = useQuery({
+    const { data, isPending, isError } = useQuery({
         queryKey: ["isLoggedIn"],
         queryFn: getUserInfoApi,
         refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
@@ -26,6 +26,8 @@ export default function Nav() {
         refetchOnMount: true,
         refetchOnWindowFocus: true, // 윈도우 포커스 시 리페치
     });
+
+    console.log("Nav - data:", data, "isPending:", isPending, "isError:", isError);
 
     return (
         <nav className="w-full h-[72px] flex justify-center border-b border-[#d8dae5]">

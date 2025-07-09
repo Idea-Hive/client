@@ -140,7 +140,10 @@ export const getUserInfoApi: QueryFunction<User, [_1: string]> = async ({ queryK
     const token = getToken();
     console.log("getUserInfoApi - 최종 token:::", token);
     // 토큰이 없으면 api 태우지 않음
-    if (!token) return null;
+    if (!token) {
+        console.log("토큰이 없어서 API 호출하지 않음");
+        return null;
+    }
 
     try {
         const response = await Apis.get("/member/info", {

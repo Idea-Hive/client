@@ -21,9 +21,10 @@ export default function Nav() {
         queryFn: getUserInfoApi,
         refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
         staleTime: 0, // 데이터를 항상 fresh하지 않게 설정
-        gcTime: 0, // 캐시를 즉시 무효화
+        gcTime: 5 * 60 * 1000, // 5분간 캐시 유지
         retry: false,
         refetchOnMount: true,
+        refetchOnWindowFocus: true, // 윈도우 포커스 시 리페치
     });
 
     return (

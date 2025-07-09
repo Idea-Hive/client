@@ -56,8 +56,15 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             spinner.open();
         },
         onSuccess: async (data) => {
-            document.cookie = `token=${data.accessToken}; path=/; SameSite=Lax; Secure`;
-            await new Promise((resolve) => setTimeout(resolve, 0));
+            // 배포 환경과 로컬 환경에 따른 쿠키 설정
+            const isProduction = process.env.NODE_ENV === "production";
+            const cookieOptions = isProduction ? `token=${data.accessToken}; path=/; SameSite=Lax; Secure` : `token=${data.accessToken}; path=/; SameSite=Lax`;
+
+            document.cookie = cookieOptions;
+
+            // 쿠키 설정 후 잠시 대기하여 브라우저가 쿠키를 처리할 시간 확보
+            await new Promise((resolve) => setTimeout(resolve, 100));
+
             console.log("캐시 무효화 직전");
             queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
             queryClient.refetchQueries({ queryKey: ["isLoggedIn"] });

@@ -13,8 +13,8 @@ export async function POST() {
         {
             status: 200,
             headers: [
-                ["Set-Cookie", "token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"],
-                ["Set-Cookie", "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"],
+                ["Set-Cookie", "token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"],
+                ["Set-Cookie", "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"],
             ],
         }
     );

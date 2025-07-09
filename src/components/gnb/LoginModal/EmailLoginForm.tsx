@@ -65,7 +65,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             console.log("현재 모든 쿠키:", document.cookie);
 
             // 쿠키 설정 후 잠시 대기하여 브라우저가 쿠키를 처리할 시간 확보
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 500));
 
             console.log("캐시 무효화 직전");
             // 캐시를 완전히 제거하고 새로 요청

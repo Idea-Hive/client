@@ -3,7 +3,7 @@
 import { getNotificationsApi } from "@/apis/notifications/notificationApis";
 import { getUserInfoApi, User } from "@/apis/user/userApis";
 import { useClickOutside } from "@/hooks/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -64,6 +64,7 @@ export default function Nav() {
 
 const NavRightSectionForLoggedInUser = ({ user }: { user: User }) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [showDropdown, setShowDropdown] = useState(false);
     const [showFindPwModal, setShowFindPwModal] = useState(false);
 
@@ -111,7 +112,12 @@ const NavRightSectionForLoggedInUser = ({ user }: { user: User }) => {
                                         method: "POST",
                                         credentials: "include", // 쿠키를 포함하여 요청
                                     });
-                                    window.location.reload(); // 페이지 리로드하여 쿼리 초기화
+
+                                    // React Query 캐시 무효화
+                                    queryClient.removeQueries({ queryKey: ["isLoggedIn"] });
+                                    queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
+
+                                    window.location.reload();
                                     setShowDropdown(false);
                                 } catch (error) {
                                     console.error("로그아웃 실패:", error);

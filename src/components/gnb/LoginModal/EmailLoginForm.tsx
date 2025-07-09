@@ -66,6 +66,8 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             await new Promise((resolve) => setTimeout(resolve, 100));
 
             console.log("캐시 무효화 직전");
+            // 캐시를 완전히 제거하고 새로 요청
+            queryClient.removeQueries({ queryKey: ["isLoggedIn"] });
             queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
             queryClient.refetchQueries({ queryKey: ["isLoggedIn"] });
             onClose();

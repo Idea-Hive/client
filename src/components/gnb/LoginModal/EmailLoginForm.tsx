@@ -81,7 +81,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             console.log("캐시 무효화 완료");
 
             // 강제로 페이지 리렌더링
-            // window.location.reload();
+            window.location.reload();
 
             onClose();
         },

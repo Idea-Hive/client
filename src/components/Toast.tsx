@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 
+export type ToastType = "success" | "warning" | "error" | "info";
+
 interface ToastProps {
-    type?: "success" | "warning" | "error" | "info";
+    type?: ToastType;
     message: string;
     duration?: number;
     onClose?: () => void;

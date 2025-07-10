@@ -10,17 +10,13 @@ export default function FinishSignup() {
     const [isShowLoginModal, setIsShowLoginModal] = useState(false);
     const [isShowFindPwModal, setIsShowFindPwModal] = useState(false);
 
+    // 로그인 모달을 통해 로그인이 됐을 경우, 메인페이지로 redirect
     const { user } = useUserInfo();
-
     useEffect(() => {
         if (user) {
             redirect("/");
         }
     }, [user]);
-
-    const onClickMainPage = () => {
-        redirect("/");
-    };
 
     return (
         <div className="w-full p-10 my-[66px]">
@@ -43,7 +39,7 @@ export default function FinishSignup() {
             </div>
 
             <div className="w-full h-12 flex justify-center gap-2">
-                <button type="button" className="flex-1 h-full border border-[#c1c4d6] text-base font-medium text-[#474d66] rounded-md" onClick={onClickMainPage}>
+                <button type="button" className="flex-1 h-full border border-[#c1c4d6] text-base font-medium text-[#474d66] rounded-md" onClick={() => redirect("/")}>
                     메인으로 이동
                 </button>
                 <button className="flex-1 h-full bg-[#ff6363] text-white rounded-md text-base font-medium" onClick={() => setIsShowLoginModal(true)}>

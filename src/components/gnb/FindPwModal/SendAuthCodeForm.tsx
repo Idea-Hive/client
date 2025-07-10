@@ -1,7 +1,7 @@
 import { onSendAuthCodeForFindPwApi } from "@/apis/user/userApis";
-import { validateEmail } from "@/app/(beforeLogin)/signup/_component/EmailSignup/utils/utils";
 import Input from "@/components/Input";
 import { useInput } from "@/hooks/hooks";
+import { validateEmail } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
 import Button from "../../Button";

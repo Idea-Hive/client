@@ -1,34 +1,31 @@
 import Input from "@/components/Input";
-import { Dispatch, SetStateAction } from "react";
-import { InputHookType, SignupFormData } from "../utils/types";
+import useSignupStore from "../../../store/signupStore";
 import EmailVerification from "./EmailVerification";
 
-interface RequiredInfoSectionProps {
-    email: InputHookType;
-    password: InputHookType;
-    passwordConfirm: InputHookType;
-    name: InputHookType;
-    verificationCode: InputHookType;
-    errors: Partial<SignupFormData>;
-    setErrors: (errors: Partial<SignupFormData>) => void;
-    isEmailVerified: boolean;
-    setIsEmailVerified: Dispatch<SetStateAction<boolean>>;
-}
+export default function RequiredInfoSection() {
+    const { formData, setFormData, errors, setErrors } = useSignupStore();
 
-export default function RequiredInfoSection({ email, password, passwordConfirm, name, verificationCode, errors, setErrors, isEmailVerified, setIsEmailVerified }: RequiredInfoSectionProps) {
+    const handleInputChange = (field: keyof typeof formData, value: string) => {
+        setFormData(field, value);
+        // 에러가 있으면 클리어
+        if (errors[field]) {
+            setErrors({ ...errors, [field]: undefined });
+        }
+    };
+
     return (
         <div className="p-10 rounded-lg border border-[#d8dae5]">
             <h3 className="text-base font-medium mb-5">필수사항</h3>
             <div>
-                <EmailVerification email={email} verificationCode={verificationCode} errors={errors} setErrors={setErrors} isEmailVerified={isEmailVerified} setIsEmailVerified={setIsEmailVerified} />
+                {/** 이메일 인증 */}
+                <EmailVerification />
 
                 <div className="my-5 flex flex-col gap-2">
                     <Input
                         label="비밀번호"
-                        {...password}
+                        value={formData.password}
                         onChange={(e) => {
-                            password.onChange(e);
-                            setErrors({ ...errors, password: undefined });
+                            handleInputChange("password", e.target.value);
                         }}
                         placeholder="비밀번호를 입력해주세요"
                         type="password"
@@ -38,14 +35,13 @@ export default function RequiredInfoSection({ email, password, passwordConfirm, 
                     />
 
                     <Input
-                        {...passwordConfirm}
+                        value={formData.passwordConfirm}
                         onChange={(e) => {
-                            passwordConfirm.onChange(e);
-                            setErrors({ ...errors, passwordConfirm: undefined });
+                            handleInputChange("passwordConfirm", e.target.value);
                         }}
                         placeholder="비밀번호를 다시 입력해주세요"
                         type="password"
-                        disabled={!password.value}
+                        disabled={!formData.password}
                         isRequired={true}
                         isErr={!!errors.passwordConfirm}
                         errMsg={errors.passwordConfirm}
@@ -53,17 +49,16 @@ export default function RequiredInfoSection({ email, password, passwordConfirm, 
                 </div>
 
                 <Input
-                    label="이름"
-                    {...name}
+                    label="닉네임"
+                    value={formData.nickname}
                     onChange={(e) => {
-                        name.onChange(e);
-                        setErrors({ ...errors, name: undefined });
+                        handleInputChange("nickname", e.target.value);
                     }}
-                    placeholder="이름을 입력해주세요"
+                    placeholder="닉네임을 입력해주세요"
                     type="text"
                     isRequired={true}
-                    isErr={!!errors.name}
-                    errMsg={errors.name}
+                    isErr={!!errors.nickname}
+                    errMsg={errors.nickname}
                 />
             </div>
         </div>

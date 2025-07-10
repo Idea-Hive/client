@@ -113,23 +113,17 @@ export const getUserInfoApi: QueryFunction<User, [_1: string]> = async ({ queryK
     // 더 안전한 토큰 파싱
     const getToken = () => {
         try {
-            console.log("전체 쿠키:", document.cookie);
             const cookies = document.cookie.split("; ");
-            console.log("분리된 쿠키들:", cookies);
 
             const tokenCookie = cookies.find((row) => row.trim().startsWith("token="));
-            console.log("찾은 토큰 쿠키:", tokenCookie);
 
             if (!tokenCookie) {
-                console.log("토큰 쿠키를 찾을 수 없음");
                 return null;
             }
 
             const token = tokenCookie.split("=")[1];
-            console.log("파싱된 토큰:", token);
 
             const result = token && token.trim() !== "" ? token : null;
-            console.log("최종 토큰 결과:", result);
             return result;
         } catch (error) {
             console.error("토큰 파싱 에러:", error);
@@ -138,7 +132,6 @@ export const getUserInfoApi: QueryFunction<User, [_1: string]> = async ({ queryK
     };
 
     const token = getToken();
-    console.log("getUserInfoApi - 최종 token:::", token);
     // 토큰이 없으면 api 태우지 않음
     if (!token) {
         console.log("토큰이 없어서 API 호출하지 않음");

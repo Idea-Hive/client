@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import { useState } from "react";
 import EmailSignup from "./_component/EmailSignup/index";
 import FinishSignup from "./_component/FinishSignup";
@@ -20,10 +20,10 @@ const steps = [
 export default function Signup() {
     const [step, setStep] = useState(1);
 
-    const user = false;
-
+    // 이미 로그인 된 상태라면 메인 페이지로 이동
+    const { user } = useUserInfo();
     if (user) {
-        redirect("/");
+        window.location.href = "/";
     }
 
     return (

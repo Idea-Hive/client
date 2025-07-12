@@ -1,45 +1,13 @@
 "use client";
 
 import { onCheckEmailVerificationCodeApi, onSendEmailVerificationCodeApi, onSignupApi, SignupRequest } from "@/apis/user/userApis";
-import { useSpinner } from "@/components/Spinner";
-import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useMutationWithSpinner } from "./hooks";
 import { UseMutationProps } from "./type";
 
 interface UseSignupMutationProps extends UseMutationProps {
     onSuccess?: (data: any, variables: SignupRequest, context: any) => void;
 }
-
-// spinner가 포함된 mutation wrapper
-const useMutationWithSpinner = <TData, TVariables>(
-    mutationFn: (variables: TVariables) => Promise<TData>,
-    options: {
-        onMutate?: (variables: TVariables) => void;
-        onSuccess?: (data: TData, variables: TVariables, context: any) => void;
-        onError?: (error: any, variables: TVariables, context: any) => void;
-        onSettled?: (data: TData | undefined, error: any, variables: TVariables, context: any) => void;
-    } = {}
-) => {
-    const { open: openSpinner, close: closeSpinner } = useSpinner();
-
-    return useMutation({
-        mutationFn,
-        onMutate: (variables) => {
-            openSpinner();
-            options.onMutate?.(variables);
-        },
-        onSuccess: (data, variables, context) => {
-            options.onSuccess?.(data, variables, context);
-        },
-        onError: (error, variables, context) => {
-            options.onError?.(error, variables, context);
-        },
-        onSettled: (data, error, variables, context) => {
-            closeSpinner();
-            options.onSettled?.(data, error, variables, context);
-        },
-    });
-};
 
 // 회원가입 mutation
 export const useSignupMutation = ({ onSuccess, onError, onSettled }: UseSignupMutationProps = {}) => {

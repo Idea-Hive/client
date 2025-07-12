@@ -16,8 +16,7 @@ export interface SaveProjectRequest {
     hashtags: string[];
     isSave: boolean;
 }
-
-export const onSaveProjectApi = async (body: SaveProjectRequest) => {
+export const onSaveProjectApi = async (body: SaveProjectRequest): Promise<number> => {
     try {
         const token = document.cookie
             .split("; ")

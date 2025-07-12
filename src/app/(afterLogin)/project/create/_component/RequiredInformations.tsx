@@ -8,26 +8,17 @@ import Spinner from "@/components/Spinner";
 import { format } from "date-fns";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LooseValue } from "react-calendar/dist/shared/types.js";
-import { RequiredValues } from "../_types/type";
+import useCreateProjectStore from "../store/createProjectStore";
 
 const ToastEditor = dynamic(() => import("@/components/editor/ToastEditorWrapper"), {
     ssr: false,
     loading: () => <Spinner />,
 });
 
-const RequiredInformations = ({
-    requiredValues,
-    setRequiredValues,
-    errors,
-    setErrors,
-}: {
-    requiredValues: RequiredValues;
-    setRequiredValues: Dispatch<SetStateAction<RequiredValues>>;
-    errors: { title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string };
-    setErrors: Dispatch<SetStateAction<{ title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string }>>;
-}) => {
+const RequiredInformations = () => {
+    const { requiredFormData, setRequiredFormData, errors, setErrors } = useCreateProjectStore();
     const editorRef = useRef<any>(null);
 
     return (
@@ -37,15 +28,15 @@ const RequiredInformations = ({
             <div className="space-y-5">
                 <Input
                     label="프로젝트명"
-                    value={requiredValues.title}
+                    value={requiredFormData.title}
                     onChange={(e) => {
-                        setRequiredValues((prev) => ({ ...prev, title: e.target.value }));
-                        setErrors((prev) => ({ ...prev, title: "" }));
+                        setRequiredFormData("title", e.target.value);
+                        setErrors("title", "");
                     }}
                     placeholder="프로젝트명을 입력해주세요"
                     type="text"
                     isRequired={true}
-                    children={<div className="text-xs text-n700">{requiredValues.title.length}/20</div>}
+                    children={<div className="text-xs text-n700">{requiredFormData.title.length}/20</div>}
                     maxLength={20}
                     isErr={errors.title !== ""}
                     errMsg={errors.title}
@@ -56,10 +47,10 @@ const RequiredInformations = ({
                     label="프로젝트 설명"
                     isRequired={true}
                     placeholder="프로젝트 설명을 입력해주세요"
-                    initialValue={requiredValues.description}
+                    initialValue={requiredFormData.description}
                     onChange={(value) => {
-                        setRequiredValues((prev) => ({ ...prev, description: value }));
-                        setErrors((prev) => ({ ...prev, description: "" }));
+                        setRequiredFormData("description", value);
+                        setErrors("description", "");
                     }}
                     isErr={errors.description !== ""}
                     errMsg={errors.description}
@@ -80,10 +71,10 @@ const RequiredInformations = ({
 
                 <Input
                     label="연락수단"
-                    value={requiredValues.contact}
+                    value={requiredFormData.contact}
                     onChange={(e) => {
-                        setRequiredValues((prev) => ({ ...prev, contact: e.target.value }));
-                        setErrors((prev) => ({ ...prev, contact: "" }));
+                        setRequiredFormData("contact", e.target.value);
+                        setErrors("contact", "");
                     }}
                     placeholder="연락수단을 입력해주세요"
                     type="text"
@@ -106,33 +97,24 @@ const RequiredInformations = ({
                                 { value: "5", label: "5" },
                             ]}
                             onChange={(value) => {
-                                setRequiredValues((prev) => ({ ...prev, maxMembers: parseInt(value) }));
-                                setErrors((prev) => ({ ...prev, maxMembers: "" }));
+                                setRequiredFormData("maxMembers", parseInt(value));
+                                setErrors("maxMembers", "");
                             }}
-                            initialValue={requiredValues.maxMembers.toString()}
+                            initialValue={requiredFormData.maxMembers.toString()}
                             isErr={errors.maxMembers !== ""}
                             errMsg={errors.maxMembers}
                         />
                     </div>
 
-                    <PredictDate requiredValues={requiredValues} setRequiredValues={setRequiredValues} errors={errors} setErrors={setErrors} />
+                    <PredictDate />
                 </div>
             </div>
         </div>
     );
 };
 
-const PredictDate = ({
-    requiredValues,
-    setRequiredValues,
-    errors,
-    setErrors,
-}: {
-    requiredValues: RequiredValues;
-    setRequiredValues: Dispatch<SetStateAction<RequiredValues>>;
-    errors: { dueDateFrom: string; dueDateTo: string };
-    setErrors: Dispatch<SetStateAction<{ title: string; description: string; idea: string; maxMembers: string; dueDateFrom: string; dueDateTo: string; contact: string }>>;
-}) => {
+const PredictDate = () => {
+    const { requiredFormData, setRequiredFormData, errors, setErrors, setMultipleErrors } = useCreateProjectStore();
     const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
     const [isUndefinedDate, setIsUndefinedDate] = useState(false);
     const [date, setDate] = useState<{ start: string; end: string }>({
@@ -143,10 +125,10 @@ const PredictDate = ({
     useEffect(() => {
         if (isUndefinedDate) return;
         setDate({
-            start: requiredValues.dueDateFrom || "",
-            end: requiredValues.dueDateTo || "",
+            start: requiredFormData.dueDateFrom || "",
+            end: requiredFormData.dueDateTo || "",
         });
-    }, [requiredValues.dueDateFrom, requiredValues.dueDateTo]);
+    }, [requiredFormData.dueDateFrom, requiredFormData.dueDateTo]);
 
     const handleDatePicker = (value: LooseValue) => {
         if (value === null) return;
@@ -158,17 +140,19 @@ const PredictDate = ({
         if (!(startDate instanceof Date) || !(endDate instanceof Date)) return;
 
         setDate((prev) => ({ ...prev, start: format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"), end: format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }));
-        setRequiredValues((prev) => ({ ...prev, dueDateFrom: format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"), dueDateTo: format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }));
+        setRequiredFormData("dueDateFrom", format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"));
+        setRequiredFormData("dueDateTo", format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"));
         setIsOpenDatePicker(false);
-        setErrors((prev) => ({ ...prev, dueDateFrom: "", dueDateTo: "" }));
+        setMultipleErrors({ dueDateFrom: "", dueDateTo: "" });
     };
 
     const handleUnderfinedDate = () => {
         // 미정 체크 시, 날짜 미입력
         // useState 위에 넣는 이유는 useState가 비동기처럼 동작하기 때문에 미정 체크 시, 날짜 미입력 처리가 안되는 문제 발생
-        setRequiredValues((prev) => ({ ...prev, dueDateFrom: !isUndefinedDate ? null : requiredValues.dueDateFrom || "", dueDateTo: !isUndefinedDate ? null : requiredValues.dueDateTo || "" }));
+        setRequiredFormData("dueDateFrom", !isUndefinedDate ? null : requiredFormData.dueDateFrom || "");
+        setRequiredFormData("dueDateTo", !isUndefinedDate ? null : requiredFormData.dueDateTo || "");
         setIsUndefinedDate(!isUndefinedDate);
-        setErrors((prev) => ({ ...prev, dueDateFrom: "", dueDateTo: "" }));
+        setMultipleErrors({ dueDateFrom: "", dueDateTo: "" });
     };
 
     return (

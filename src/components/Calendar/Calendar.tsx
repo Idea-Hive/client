@@ -62,17 +62,17 @@ function getDaysArray(year: number, month: number): CalendarCell[] {
 function getEventColor(type?: CalendarTaskType) {
     switch (type) {
         case "PLANNING":
-            return "bg-blue-100 text-blue-500";
+            return "bg-[#FDEEF9] text-[#ED55C2]";
         case "DESIGN":
             return "bg-[#0085FF]/10 text-[#0085FF]";
         case "DEVELOP":
             return "bg-[#FFF4E8] text-[#FF9F2D]";
         case "DEPLOY":
-            return "bg-purple-100 text-purple-500";
+            return "bg-[#F4EEFD] text-[#8F59EF]";
         case "COMPLETE":
-            return "bg-gray-100 text-gray-700";
+            return "bg-[#E1F8EF] text-[#43B286]";
         default:
-            return "bg-gray-100 text-gray-700";
+            return "bg-[#E1F8EF] text-[#43B286]";
     }
 }
 
@@ -123,7 +123,6 @@ export default function Calendar({ year: initialYear, month: initialMonth, event
         { label: "완료", value: "COMPLETE" },
     ];
     const handleFilterChange = (value: CalendarTaskType | "all") => {
-        console.log("value:::", value);
         setFilter(value);
     };
 

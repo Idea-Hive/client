@@ -171,7 +171,6 @@ export const getTeamMemberList: QueryFunction<MemberResponse[], [_1: string, Mem
     }
 };
 
-
 //담당자 수정 API
 export interface UpdateTaskManagerRequest {
     taskId: number;
@@ -234,7 +233,7 @@ export const onUploadFile = async (request: FileUploadRequest) => {
             ?.split("=")[1];
         const formData = new FormData();
 
-        if(request.file != null) {
+        if (request.file != null) {
             formData.append("file", request.file);
         }
         formData.append("taskInfo", new Blob([JSON.stringify({ taskId: request.taskId })], { type: "application/json" }));
@@ -265,7 +264,7 @@ export interface CreateCustomTaskRequest {
 
 //과제 추가 api
 export const onCreateCustomTask = async (body: CreateCustomTaskRequest) => {
-     try {
+    try {
         const token = document.cookie
             .split("; ")
             .find((row) => row.startsWith("token="))
@@ -276,10 +275,35 @@ export const onCreateCustomTask = async (body: CreateCustomTaskRequest) => {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        })
+        });
         return response.data;
     } catch (error) {
         console.error("과제 추가 API 중 오류 발생:", error);
         throw error;
     }
+};
+
+// 프로젝트 탈퇴 API
+export interface WithdrawProjectRequest {
+    projectId: number;
+    memberId: number;
 }
+export const onWithdrawProjectApi = async (body: WithdrawProjectRequest) => {
+    try {
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        const response = await Apis.delete(`/project/leave`, body, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("프로젝트 탈퇴 중 오류 발생:", error);
+        throw error;
+    }
+};

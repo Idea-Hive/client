@@ -3,6 +3,7 @@ import MemberCard from "../../MemberCard";
 
 const Team = () => {
     const { members } = useTeamStore();
+    console.log(members);
     return (
         <div className="p-10">
             <div className="text-h2 text-n900 left-0 pb-[16px]">팀</div>
@@ -13,6 +14,6 @@ const Team = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Team;

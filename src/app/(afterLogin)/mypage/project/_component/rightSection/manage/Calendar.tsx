@@ -52,8 +52,6 @@ export default function CalendarContent() {
             }));
     }, [calendarTasksResponse, currentYear, currentMonth]);
 
-    console.log("calendarTasksResponse:::", calendarTasksResponse);
-    console.log("calendarEvents:::", calendarEvents);
     return (
         <div className="p-10">
             <div className="border-b border-n400 pb-4 text-h2 text-n900 mb-6">캘린더</div>

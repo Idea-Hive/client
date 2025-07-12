@@ -1,8 +1,7 @@
-import React, { useState, useRef } from "react";
 import { MemberResponse } from "@/apis/project/manageApis";
-import Button from "@/components/Button";
-import { ProfileLargerIcon, CTAButton } from "@/components/icons/icons";
+import { CTAButton, ProfileLargerIcon } from "@/components/icons/icons";
 import { useClickOutside } from "@/hooks/hooks";
+import { useRef, useState } from "react";
 import Dropbox from "./Dropbox";
 
 interface MemberCardProps {
@@ -10,11 +9,8 @@ interface MemberCardProps {
 }
 
 const MemberCard = ({ member }: MemberCardProps) => {
-    /* TODO */
-    const handleGoToDetail = () => {};
-
     return (
-        <div className="w-[270px] h-[232px] border border-n400 bg-n0 rounded-lg hover:shadow-floatingCard ">
+        <div className="w-[270px] h-[180px] border border-n400 bg-n0 rounded-lg hover:shadow-floatingCard ">
             <div className="p-6">
                 <div className="flex flex-col">
                     <div className="flex justify-between w-full">
@@ -28,7 +24,6 @@ const MemberCard = ({ member }: MemberCardProps) => {
                         </div>
                     </div>
                     <p className="mt-2 text-n900">{member?.job ? member?.job : "-"}</p>
-                    <Button className="mt-5" label="프로필" onClick={handleGoToDetail} size="small" btnType="line" />
                 </div>
             </div>
         </div>

@@ -1,21 +1,26 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import Selectbox from "@/components/Selectbox";
-import Menu from "./Menu";
-import { FolderIcon, SquaresFourIcon, GearSixIcon } from "@/components/icons/icons";
 import Button from "@/components/Button";
+import { FolderIcon, GearSixIcon, SquaresFourIcon } from "@/components/icons/icons";
+import Selectbox from "@/components/Selectbox";
 import { useClickOutside } from "@/hooks/hooks";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Menu from "./Menu";
 
-import { useParams, useRouter } from "next/navigation";
-import { onSubmitProjectApi } from "@/apis/project/manageApis";
+import { onSubmitProjectApi, onWithdrawProjectApi } from "@/apis/project/manageApis";
 import { useMutation } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
 
 interface SideMenuProps {
     selectedMenu: string;
     setSelectedMenu: (menu: string) => void;
 }
 
+import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
+import Modal from "@/components/Modal";
+import { useSpinner } from "@/components/Spinner";
+import Toast from "@/components/Toast";
+import { AxiosError } from "axios";
 import { useProjectWithTeam } from "../_hook/hook";
 import Dropbox from "./Dropbox";
 
@@ -45,7 +50,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
         if (value) {
             router.push(`/mypage/project/${value}/manage`);
         }
-    }
+    };
 
     return (
         <div className="flex flex-col px-6 pt-10 md-25">
@@ -75,20 +80,53 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
                 </div>
             </div>
 
-            <div className="flex flex-col">
-                <ProjectSettingDropDown />
+            <div className="flex flex-col mt-[200px]">
+                <ProjectSettingDropDown projectId={projectId} />
                 <ProjectSubmitButton projectId={selectedProjectId} />
             </div>
         </div>
     );
 };
 
-const ProjectSettingDropDown = () => {
+const ProjectSettingDropDown = ({ projectId }: { projectId: string }) => {
+    const { user } = useUserInfo();
+    const router = useRouter();
+    const spinner = useSpinner();
+
+    const [isToast, setIsToast] = useState(false);
+    const [isModal, setIsModal] = useState(false);
+
     const [isOpen, setIsOpen] = useState(false);
     const dropBoxRef = useRef<HTMLDivElement | null>(null);
     useClickOutside(dropBoxRef, () => {
         if (isOpen) setIsOpen(false);
     });
+
+    const handleDeleteProject = () => {
+        console.log("삭제");
+    };
+
+    const withdrawProjectMutation = useMutation({
+        mutationFn: onWithdrawProjectApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: () => {
+            setIsModal(true);
+        },
+        onError: (err: AxiosError) => {
+            setIsToast(true);
+            console.error("탈퇴 오류:", err);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
+    const handleWithdrawProject = () => {
+        withdrawProjectMutation.mutate({ projectId: Number(projectId), memberId: Number(user!.id) });
+    };
+
     return (
         <div className="relative">
             <div className="flex items-center justify-end text-sm mb-3">
@@ -104,20 +142,34 @@ const ProjectSettingDropDown = () => {
                     items={[
                         {
                             label: "프로젝트 탈퇴",
-                            onClick: () => {
-                                console.log("탈퇴");
-                            },
+                            onClick: handleWithdrawProject,
                         },
                         {
                             label: "프로젝트 삭제",
-                            onClick: () => {
-                                console.log("삭제");
-                            },
+                            onClick: handleDeleteProject,
                         },
                     ]}
                     dropBoxRef={dropBoxRef}
                 />
             )}
+            {isToast && (
+                <Toast
+                    message={"알 수 없는 이유로 탈퇴에 실패했습니다."}
+                    type={"error"}
+                    onClose={() => {
+                        setIsToast(false);
+                    }}
+                />
+            )}
+            <Modal
+                isOpen={isModal}
+                title={"탈퇴 완료"}
+                children="탈퇴가 완료되었습니다."
+                onConfirm={() => {
+                    setIsModal(false);
+                    router.push("/mypage/profile");
+                }}
+            ></Modal>
         </div>
     );
 };
@@ -135,20 +187,14 @@ const ProjectSubmitButton = ({ projectId }: { projectId: string }) => {
     });
 
     const handleSubmit = () => {
-        if(!projectId) {
+        if (!projectId) {
             alert("프로젝트를 선택해주세요.");
             return;
         }
-        mutate({projectId: Number(projectId)});
-    }
+        mutate({ projectId: Number(projectId) });
+    };
 
-    return (
-        <Button label="프로젝트 제출" 
-            onClick={handleSubmit} 
-            size="large" 
-            btnType="primary" 
-        />
-    );
+    return <Button label="프로젝트 제출" onClick={handleSubmit} size="large" btnType="primary" />;
 };
 
 export default SideMenu;

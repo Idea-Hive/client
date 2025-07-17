@@ -7,7 +7,7 @@ import { useClickOutside } from "@/hooks/hooks";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Menu from "./Menu";
 
-import { onSubmitProjectApi, onWithdrawProjectApi } from "@/apis/project/manageApis";
+import { onDeleteProjectApi, onSubmitProjectApi, onWithdrawProjectApi } from "@/apis/project/manageApis";
 import { useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 
@@ -33,7 +33,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
     const projectOptions = useMemo(() => {
         return (
             myProjects?.projects?.map((item) => ({
-                label: item.title,
+                label: item.name,
                 value: String(item.id),
             })) || []
         );
@@ -95,6 +95,8 @@ const ProjectSettingDropDown = ({ projectId }: { projectId: string }) => {
 
     const [isToast, setIsToast] = useState(false);
     const [isModal, setIsModal] = useState(false);
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalMessage, setModalMessage] = useState("");
 
     const [isOpen, setIsOpen] = useState(false);
     const dropBoxRef = useRef<HTMLDivElement | null>(null);
@@ -102,8 +104,28 @@ const ProjectSettingDropDown = ({ projectId }: { projectId: string }) => {
         if (isOpen) setIsOpen(false);
     });
 
+    const deleteProjectMutation = useMutation({
+        mutationFn: onDeleteProjectApi,
+        onMutate: () => {
+            spinner.open();
+        },
+        onSuccess: () => {
+            console.log("삭제 성공");
+            setIsModal(true);
+            setModalTitle("프로젝트 삭제");
+            setModalMessage("프로젝트가 삭제되었습니다.");
+        },
+        onError: (err: AxiosError) => {
+            setIsToast(true);
+            console.error("삭제 오류:", err);
+        },
+        onSettled: () => {
+            spinner.close();
+        },
+    });
+
     const handleDeleteProject = () => {
-        console.log("삭제");
+        deleteProjectMutation.mutate({ projectId: Number(projectId), memberId: Number(user!.id) });
     };
 
     const withdrawProjectMutation = useMutation({
@@ -113,6 +135,8 @@ const ProjectSettingDropDown = ({ projectId }: { projectId: string }) => {
         },
         onSuccess: () => {
             setIsModal(true);
+            setModalTitle("프로젝트 탈퇴");
+            setModalMessage("프로젝트 탈퇴가 완료되었습니다.");
         },
         onError: (err: AxiosError) => {
             setIsToast(true);
@@ -163,8 +187,8 @@ const ProjectSettingDropDown = ({ projectId }: { projectId: string }) => {
             )}
             <Modal
                 isOpen={isModal}
-                title={"탈퇴 완료"}
-                children="탈퇴가 완료되었습니다."
+                title={modalTitle}
+                children={modalMessage}
                 onConfirm={() => {
                     setIsModal(false);
                     router.push("/mypage/profile");

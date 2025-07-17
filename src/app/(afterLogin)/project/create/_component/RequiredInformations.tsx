@@ -28,12 +28,28 @@ const RequiredInformations = () => {
             <div className="space-y-5">
                 <Input
                     label="프로젝트명"
+                    value={requiredFormData.name}
+                    onChange={(e) => {
+                        setRequiredFormData("name", e.target.value);
+                        setErrors("name", "");
+                    }}
+                    placeholder="프로젝트명을 입력해주세요"
+                    type="text"
+                    isRequired={true}
+                    children={<div className="text-xs text-n700">{requiredFormData.name.length}/20</div>}
+                    maxLength={20}
+                    isErr={errors.name !== ""}
+                    errMsg={errors.name}
+                />
+
+                <Input
+                    label="프로젝트 제목"
                     value={requiredFormData.title}
                     onChange={(e) => {
                         setRequiredFormData("title", e.target.value);
                         setErrors("title", "");
                     }}
-                    placeholder="프로젝트명을 입력해주세요"
+                    placeholder="프로젝트 제목을 입력해주세요"
                     type="text"
                     isRequired={true}
                     children={<div className="text-xs text-n700">{requiredFormData.title.length}/20</div>}
@@ -114,7 +130,7 @@ const RequiredInformations = () => {
 };
 
 const PredictDate = () => {
-    const { requiredFormData, setRequiredFormData, errors, setErrors, setMultipleErrors } = useCreateProjectStore();
+    const { requiredFormData, setRequiredFormData, errors, setMultipleErrors } = useCreateProjectStore();
     const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
     const [isUndefinedDate, setIsUndefinedDate] = useState(false);
     const [date, setDate] = useState<{ start: string; end: string }>({

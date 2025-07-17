@@ -13,7 +13,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { InputHookType } from "../(beforeLogin)/signup/_component/EmailSignup/utils/types";
 
 const ProjectListComponent = () => {
     const params = useSearchParams();
@@ -21,7 +20,6 @@ const ProjectListComponent = () => {
 
     const [selectedTab, setSelectedTab] = useState<string>(tab);
     const [searchTerm, setSearchTerm] = useState("");
-    const search = useInput("");
     const [page, setPage] = useState(1);
     const [sortType, setSortType] = useState<"RECENT" | "DEADLINE">("RECENT");
 
@@ -44,8 +42,6 @@ const ProjectListComponent = () => {
         ],
         queryFn: onSearchProjectsApi,
     });
-
-    console.log("data:::", data);
 
     // 검색어, 탭, 정렬 변경 시 페이지 초기화
     useEffect(() => {
@@ -86,7 +82,7 @@ const ProjectListComponent = () => {
                 />
 
                 {/* 검색 및 정렬 */}
-                <SearchAndSort search={search} setSearchTerm={setSearchTerm} sortType={sortType} setSortType={setSortType} />
+                <SearchAndSort setSearchTerm={setSearchTerm} sortType={sortType} setSortType={setSortType} />
 
                 {/* 프로젝트 리스트 */}
                 <ProjectGrid projects={data?.projects} isPending={isPending} />
@@ -104,17 +100,9 @@ const ProjectListComponent = () => {
     );
 };
 
-const SearchAndSort = ({
-    search,
-    setSearchTerm,
-    sortType,
-    setSortType,
-}: {
-    search: InputHookType;
-    setSearchTerm: (value: string) => void;
-    sortType: "RECENT" | "DEADLINE";
-    setSortType: (value: "RECENT" | "DEADLINE") => void;
-}) => {
+const SearchAndSort = ({ setSearchTerm, sortType, setSortType }: { setSearchTerm: (value: string) => void; sortType: "RECENT" | "DEADLINE"; setSortType: (value: "RECENT" | "DEADLINE") => void }) => {
+    const search = useInput("");
+
     return (
         <div className="mb-4 mt-[26px] flex justify-between items-center">
             <div className="w-[384px]">
@@ -261,7 +249,7 @@ const TemporarySavedProjectsModal = ({ projects, onClose }: { projects: Temporar
                                     router.push(`/project/create?id=${project.projectId}`);
                                 }}
                             >
-                                {project.title}
+                                {project.name}
                             </div>
                         );
                     })}

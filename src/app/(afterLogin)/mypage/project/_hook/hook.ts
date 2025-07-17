@@ -1,10 +1,10 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { getTaskInfoByType, getMyProjectInfo, getTeamMemberList, onUpdateManager} from "@/apis/project/manageApis";
-import { useEffect, useState } from "react";
-import type { Task, AssigneeOption } from "../_types/Task";
+import { getMyProjectInfo, getTaskInfoByType, getTeamMemberList, onUpdateManager } from "@/apis/project/manageApis";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-type TaskType = "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
+import { useEffect, useState } from "react";
 import { useTeamStore } from "../_store/teamStore";
+import type { AssigneeOption, Task } from "../_types/Task";
+type TaskType = "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
 
 export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
     const projectId = (useParams()?.projectId as string) || "";
@@ -51,7 +51,7 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
                 file: task.filePath ?? undefined,
                 isSelectedAssignee: task.picId != null,
                 isSelectedDate: task.dueDate != null,
-                isSubmittedContent: (!!task.filePath || !!task.attachedLink),
+                isSubmittedContent: !!task.filePath || !!task.attachedLink,
                 isRequired: task.isRequired,
             }));
 
@@ -80,7 +80,7 @@ export const useInitialProjectWithTeam = () => {
         isPending: projectPending,
         isError: projectError,
     } = useQuery({
-        queryKey: ["getMyProjects", { status: "IN_PROGRESS", page: 0 }],
+        queryKey: ["getMyProjects", { page: 1 }],
         queryFn: getMyProjectInfo,
     });
 
@@ -125,7 +125,7 @@ export const useProjectWithTeam = (projectId?: string) => {
         isPending: projectPending,
         isError: projectError,
     } = useQuery({
-        queryKey: ["getMyProjects", { status: "IN_PROGRESS", page: 0 }],
+        queryKey: ["getMyProjects", { page: 1 }],
         queryFn: getMyProjectInfo,
     });
 

@@ -6,11 +6,11 @@ import Input from "@/components/Input";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useInput } from "@/hooks/hooks";
+import { validatePassword } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
-import { validatePassword } from "../../signup/_component/EmailSignup/utils/utils";
 
 export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetStateAction<boolean>> }) {
     const spinner = useSpinner();

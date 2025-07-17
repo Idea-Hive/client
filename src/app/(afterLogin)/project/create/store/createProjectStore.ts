@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 // Required Form Data
 export interface CreateProjectRequiredFormData {
+    name: string;
     title: string;
     description: string;
     idea: string;
@@ -20,6 +21,7 @@ export interface CreateProjectOptionalFormData {
 
 // Error
 export interface CreateProjectError {
+    name: string;
     title: string;
     description: string;
     maxMembers: string;
@@ -33,10 +35,14 @@ interface CreateProjectStore {
     requiredFormData: CreateProjectRequiredFormData;
     optionalFormData: CreateProjectOptionalFormData;
     setRequiredFormData: (field: keyof CreateProjectRequiredFormData, value: string | number | null) => void;
-    setOptionalFormData: (field: keyof CreateProjectOptionalFormData, value: string | number) => void;
+    setOptionalFormData: (field: keyof CreateProjectOptionalFormData, value: string[] | number[]) => void;
 
     setMultipleRequiredFormData: (data: Partial<CreateProjectRequiredFormData>) => void;
     setMultipleOptionalFormData: (data: Partial<CreateProjectOptionalFormData>) => void;
+
+    // ids
+    projectId: number;
+    setProjectId: (projectId: number) => void;
 
     // Error 처리
     errors: CreateProjectError;
@@ -54,6 +60,7 @@ const initialState: {
     errors: CreateProjectError;
 } = {
     requiredFormData: {
+        name: "",
         title: "",
         description: "",
         idea: "",
@@ -67,6 +74,7 @@ const initialState: {
         skills: [],
     },
     errors: {
+        name: "",
         title: "",
         description: "",
         maxMembers: "",
@@ -113,6 +121,12 @@ const useCreateProjectStore = create<CreateProjectStore>((set, get) => ({
         }));
     },
 
+    // ids
+    projectId: 0,
+    setProjectId: (projectId: number) => {
+        set({ projectId });
+    },
+
     // Error 처리
     errors: initialState.errors,
     setErrors: (field, value) => {
@@ -137,7 +151,8 @@ const useCreateProjectStore = create<CreateProjectStore>((set, get) => ({
         const { requiredFormData, errors, setMultipleErrors } = get();
 
         const validations = {
-            title: "프로젝트명을 입력해주세요.",
+            name: "프로젝트명을 입력해주세요.",
+            title: "프로젝트 제목을 입력해주세요.",
             description: "프로젝트 설명을 입력해주세요.",
             // idea: "프로젝트 아이디어를 입력해주세요.",
             maxMembers: "모집 인원을 입력해주세요.",
@@ -168,12 +183,13 @@ const useCreateProjectStore = create<CreateProjectStore>((set, get) => ({
 
     getRequestBody: (userId: number, projectId: number) => {
         const { requiredFormData, optionalFormData } = get();
-        const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = requiredFormData;
+        const { name, title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact } = requiredFormData;
         const { hashTags, skills } = optionalFormData;
 
         const requestBody: SaveProjectRequest = {
-            projectId,
+            projectId: projectId === 0 ? null : projectId,
             userId,
+            name,
             title,
             description,
             idea,

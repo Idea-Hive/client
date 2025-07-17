@@ -16,7 +16,9 @@ export default function SocialAuthPage() {
 
                 // 배포 환경과 로컬 환경에 따른 쿠키 설정
                 const isProduction = process.env.NODE_ENV === "production";
-                const cookieOptions = isProduction ? `token=${authResponse.accessToken}; path=/; SameSite=Lax; Secure` : `token=${authResponse.accessToken}; path=/; SameSite=Lax`;
+                const cookieOptions = isProduction
+                    ? `token=${authResponse.accessToken}; path=/; SameSite=None; Secure; domain=${window.location.hostname}`
+                    : `token=${authResponse.accessToken}; path=/; SameSite=Lax`;
 
                 document.cookie = cookieOptions;
 

@@ -3,42 +3,44 @@
 import Input from "@/components/Input";
 import { useInput } from "@/hooks/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { getSkillStackApi } from "../_api/api";
+import { useCallback, useEffect, useState } from "react";
+import { getSkillStackApi, SkillStack } from "../_api/api";
 import { skillCategories } from "../_data/skills";
+import useCreateProjectStore from "../store/createProjectStore";
 
-interface OptionalInformationsProps {
-    hashTags: string[];
-    setHashTags: Dispatch<SetStateAction<string[]>>;
-    skills: string[];
-    setSkills: Dispatch<SetStateAction<number[]>>;
-}
-
-const OptionalInformations = ({ hashTags, setHashTags, skills, setSkills }: OptionalInformationsProps) => {
+const OptionalInformations = () => {
+    const { setOptionalFormData, optionalFormData } = useCreateProjectStore();
     const { data: rawSkillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
+
     const [selectedSkills, setSelectedSkills] = useState<{ id: number; name: string }[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<keyof typeof skillCategories>("frontend");
 
-    useEffect(() => {
+    const setDefaultCategoryAndSkills = useCallback(() => {
+        const { skills } = optionalFormData;
+
         if (skills.length > 0 && rawSkillStacks) {
-            const firstSkill = rawSkillStacks.find((s) => s.name === skills[0]);
+            const firstSkill = rawSkillStacks.find((s) => s.id === skills[0]);
             if (firstSkill) {
                 setSelectedCategory(firstSkill.category as keyof typeof skillCategories);
             }
-            setSelectedSkills(skills.map((skill) => ({ id: rawSkillStacks?.find((s) => s.name === skill)?.id || 0, name: skill })));
-            setSkills(skills.map((skill) => rawSkillStacks?.find((s) => s.name === skill)?.id || 0));
+            setSelectedSkills(skills.map((skill) => ({ id: skill, name: rawSkillStacks?.find((s) => s.id === skill)?.name || "" })));
         }
-    }, [rawSkillStacks, skills]);
+    }, [rawSkillStacks, optionalFormData.skills]);
+
+    // rawSkillStacks가 로드될 때만 실행
+    useEffect(() => {
+        setDefaultCategoryAndSkills();
+    }, [setDefaultCategoryAndSkills]);
 
     // 스킬스택 데이터를 카테고리별로 그룹화
-    const skillStacks = rawSkillStacks?.reduce((acc: { [key: string]: any[] }, curr: any) => {
+    const skillStacks = rawSkillStacks?.reduce((acc: { [key: string]: SkillStack[] }, curr: SkillStack) => {
         const category = curr.category;
         if (!acc[category]) {
             acc[category] = [];
         }
         acc[category].push(curr);
         return acc;
-    }, {});
+    }, {} as { [key: string]: SkillStack[] });
 
     // 그룹화된 데이터를 배열로 변환
     const groupedSkillStacks = skillStacks
@@ -50,28 +52,37 @@ const OptionalInformations = ({ hashTags, setHashTags, skills, setSkills }: Opti
 
     const hashTag = useInput("");
 
+    // 해시태그 추가
     const handleHashTagSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && hashTag.value.trim()) {
             e.preventDefault();
-            if (!hashTags.includes(hashTag.value.trim())) {
-                setHashTags([...hashTags, hashTag.value.trim()]);
+            if (!optionalFormData.hashTags.includes(hashTag.value.trim())) {
+                setOptionalFormData("hashTags", [...optionalFormData.hashTags, hashTag.value.trim()]);
                 hashTag.reset();
             }
         }
     };
 
+    // 해시태그 삭제
     const removeHashTag = (tagToRemove: string) => {
-        setHashTags(hashTags.filter((tag) => tag !== tagToRemove));
+        setOptionalFormData(
+            "hashTags",
+            optionalFormData.hashTags.filter((tag) => tag !== tagToRemove)
+        );
     };
 
+    // 스킬 선택
     const handleSkillSelect = (skillId: number, skillName: string) => {
         if (selectedSkills.filter((s) => s.id === skillId).length > 0) {
             setSelectedSkills(selectedSkills.filter((s) => s.id !== skillId));
-            setSkills((prev) => prev.filter((id) => id !== skillId));
+            setOptionalFormData(
+                "skills",
+                optionalFormData.skills.filter((id) => id !== skillId)
+            );
         } else {
             if (selectedSkills.length < 20) {
                 setSelectedSkills([...selectedSkills, { id: skillId, name: skillName }]);
-                setSkills((prev) => [...prev, skillId]);
+                setOptionalFormData("skills", [...optionalFormData.skills, skillId]);
             }
         }
     };
@@ -92,9 +103,9 @@ const OptionalInformations = ({ hashTags, setHashTags, skills, setSkills }: Opti
                         placeholder="해시태그를 입력해주세요"
                         type="text"
                     />
-                    {hashTags.length > 0 && (
+                    {optionalFormData.hashTags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-3">
-                            {hashTags.map((tag) => (
+                            {optionalFormData.hashTags.map((tag) => (
                                 <div key={tag} className="flex items-center gap-1 px-3 h-8 rounded-md bg-n200">
                                     <div className="text-xs text-n800">{tag}</div>
                                     <svg className="cursor-pointer" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => removeHashTag(tag)}>
@@ -136,7 +147,7 @@ const OptionalInformations = ({ hashTags, setHashTags, skills, setSkills }: Opti
                                 <div key={skill.id} className={`h-9 px-2.5 py-0.5`}>
                                     <button
                                         type="button"
-                                        title={skill}
+                                        title={skill.name}
                                         className={`h-8 px-3 rounded-full text-sm text-n800 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px] ${
                                             selectedSkills.some((selected) => selected.name === skill.name)
                                                 ? "bg-taskmateRed bg-opacity-10 border border-taskmateRed text-taskmateRed"

@@ -1,6 +1,11 @@
 import { Apis } from "@/utils/api";
 import { QueryFunction } from "@tanstack/react-query";
-import { SkillStack } from "../_types/type";
+
+export interface SkillStack {
+    id: number;
+    name: string;
+    category: string;
+}
 
 export const getSkillStackApi: QueryFunction<SkillStack[], [_1: string]> = async ({ queryKey }) => {
     try {

@@ -58,7 +58,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
         onSuccess: async (data) => {
             // 배포 환경과 로컬 환경에 따른 쿠키 설정
             const isProduction = process.env.NODE_ENV === "production";
-            const cookieOptions = isProduction ? `token=${data.accessToken}; path=/; SameSite=Lax; Secure; domain=${window.location.hostname}` : `token=${data.accessToken}; path=/; SameSite=Lax`;
+            const cookieOptions = isProduction ? `token=${data.accessToken}; path=/; SameSite=None; Secure; domain=${window.location.hostname}` : `token=${data.accessToken}; path=/; SameSite=Lax`;
 
             document.cookie = cookieOptions;
             console.log("쿠키 설정됨:", cookieOptions);

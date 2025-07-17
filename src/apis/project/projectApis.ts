@@ -5,6 +5,7 @@ import { QueryFunction } from "@tanstack/react-query";
 export interface SaveProjectRequest {
     projectId: number | null;
     userId: number;
+    name: string;
     title: string;
     description: string;
     idea: string;
@@ -16,8 +17,7 @@ export interface SaveProjectRequest {
     hashtags: string[];
     isSave: boolean;
 }
-
-export const onSaveProjectApi = async (body: SaveProjectRequest) => {
+export const onSaveProjectApi = async (body: SaveProjectRequest): Promise<number> => {
     try {
         const token = document.cookie
             .split("; ")
@@ -301,8 +301,7 @@ export const onLikeProjectApi = async (body: LikeProjectRequest) => {
 // 임시저장 프로젝트 목록 조회
 export interface TemporarySavedProject {
     projectId: number;
-    title: string;
-    tempSavedDate: string;
+    name: string;
 }
 export const getTemporarySavedProjectApi = async (userId: number): Promise<TemporarySavedProject[]> => {
     try {
@@ -310,6 +309,7 @@ export const getTemporarySavedProjectApi = async (userId: number): Promise<Tempo
             .split("; ")
             .find((row) => row.startsWith("token="))
             ?.split("=")[1];
+
         return await Apis.get("/project/tempsaved", {
             params: {
                 userId,

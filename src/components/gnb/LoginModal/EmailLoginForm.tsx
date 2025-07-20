@@ -61,24 +61,6 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             const cookieOptions = isProduction ? `token=${data.accessToken}; path=/; SameSite=None; Secure; domain=${window.location.hostname}` : `token=${data.accessToken}; path=/; SameSite=Lax`;
 
             document.cookie = cookieOptions;
-            console.log("쿠키 설정됨:", cookieOptions);
-            console.log("현재 모든 쿠키:", document.cookie);
-
-            // 쿠키 설정 후 잠시 대기하여 브라우저가 쿠키를 처리할 시간 확보
-            await new Promise((resolve) => setTimeout(resolve, 500));
-
-            console.log("캐시 무효화 직전");
-            // 캐시를 완전히 제거하고 새로 요청
-            queryClient.removeQueries({ queryKey: ["isLoggedIn"] });
-            queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
-
-            // 모든 쿼리 캐시를 무효화
-            queryClient.clear();
-
-            // 강제로 새로 요청
-            await queryClient.refetchQueries({ queryKey: ["isLoggedIn"] });
-
-            console.log("캐시 무효화 완료");
 
             // 강제로 페이지 리렌더링
             window.location.reload();

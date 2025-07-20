@@ -11,7 +11,6 @@ import RequiredInfoSection from "./_component/RequiredInfoSection";
 
 export default function EmailSignup({ setStep }: { setStep: (step: number) => void }) {
     const { formData, validate, showToast, toastMessage, toastType, setShowToast, setToastMessage, setToastType } = useSignupStore();
-
     // 회원가입 API 호출
     const signupMutation = useSignupMutation({
         onError: (error: AxiosError) => {

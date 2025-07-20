@@ -20,8 +20,8 @@ export async function POST(request: Request) {
             status: 200,
             headers: [
                 ["Set-Cookie", `token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax${domainOption}`],
-                ["Set-Cookie", `refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Domain=.task-mate.co.kr`],
-                ["Set-Cookie", `refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Domain=api.task-mate.co.kr`],
+                ["Set-Cookie", `refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; HttpOnly; Domain=.task-mate.co.kr`],
+                ["Set-Cookie", `refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; HttpOnly; Domain=api.task-mate.co.kr`],
             ],
         }
     );

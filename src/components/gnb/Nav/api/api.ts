@@ -9,7 +9,7 @@ export const logoutApi = async () => {
 
         if (!token) throw new Error("토큰이 없습니다.");
 
-        const response = await Apis.get("/api/auth/logout", {
+        const response = await Apis.get("/auth/logout", {
             withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,

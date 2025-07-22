@@ -33,7 +33,7 @@ export default function NavRightSectionForLoggedInUser() {
         queryClient.removeQueries({ queryKey: ["isLoggedIn"] });
         queryClient.invalidateQueries({ queryKey: ["isLoggedIn"] });
 
-        // window.location.reload();
+        window.location.reload();
         setShowDropdown(false);
     };
 

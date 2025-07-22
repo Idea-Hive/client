@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import RightSection from "../../_component/RightSection";
-import SideMenu from "../../_component/SideMenu";
+import SideMenu from "../../_component/SideMenu/SideMenu";
 
 export default function ManageProjects() {
     const [selectedMenu, setSelectedMenu] = useState("캘린더");

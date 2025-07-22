@@ -153,8 +153,6 @@ const MyProject = () => {
         refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
     });
 
-    console.log(projectData);
-
     // 탭별 프로젝트 개수 계산
     const updatedTabs = tabs.map((tab) => ({
         ...tab,
@@ -199,7 +197,7 @@ const MyProject = () => {
                                     router.push(`/project/${project.projectId}`);
                                 }}
                             >
-                                {project.title}
+                                {project.name}
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button

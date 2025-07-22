@@ -14,10 +14,10 @@ import { useIdsForApplicant } from "./store/store";
 export default function ProjectDetail() {
     const { projectId } = useParams();
 
-    const { user, userIsPending } = useUserInfo();
-    const { viewCntMutate, viewCntIsPending } = useProjectViewCnt(Number(projectId));
-    const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
-    const { applicantData, applicantIsPending } = useApplicantInfo(Number(projectId));
+    const { user } = useUserInfo(); // 로그인 유저 정보
+    const { viewCntMutate } = useProjectViewCnt(Number(projectId)); // 조회수 증가 Mutation
+    const { project, projectIsPending } = useProjectDetail(Number(projectId), user); // 프로젝트 상세 정보
+    const { applicantData, applicantIsPending } = useApplicantInfo(Number(projectId)); // 지원자 정보
 
     const { setProjectId, setLoginUserId, setProjectCreatorId } = useIdsForApplicant();
     const viewCountRef = useRef(false);
@@ -30,6 +30,7 @@ export default function ProjectDetail() {
         }
     }, []);
 
+    // 프로젝트 상세 정보 설정
     useEffect(() => {
         if (project) {
             setProjectId(Number(projectId));
@@ -38,6 +39,7 @@ export default function ProjectDetail() {
         }
     }, [project, setProjectId, setLoginUserId, setProjectCreatorId, projectId, user]);
 
+    // Tab Items
     const tabItems = [
         { value: "baseInfo", label: "기본정보" },
         // { value: "idea", label: "아이디어" },
@@ -53,8 +55,11 @@ export default function ProjectDetail() {
         },
     ];
 
+    // Tab Click Handler
     const handleTab = (value: string) => {
         const element = document.getElementById(value);
+
+        // 탭 클릭 시 해당 탭으로 이동
         if (element) {
             const elementPosition = element.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - 100; // 상단에 100px 여유 공간

@@ -1,5 +1,5 @@
 import { montserrat, pretendard } from "@/assets/fonts/fonts";
-import Nav from "@/components/gnb/Nav";
+import Nav from "@/components/gnb/Nav/Nav";
 import { SpinnerProvider } from "@/components/Spinner";
 import QueryProviderWrapper from "@/components/wrappers/QueryProviderWrapper";
 import "./globals.css";

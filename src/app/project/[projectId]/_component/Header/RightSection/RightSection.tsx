@@ -18,7 +18,6 @@ export default function RightSection() {
     const { projectId } = useParams();
     const { user } = useUserInfo();
     const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
-    console.log("project:::", project);
 
     const [isCopied, setIsCopied] = useState<boolean>(false);
 

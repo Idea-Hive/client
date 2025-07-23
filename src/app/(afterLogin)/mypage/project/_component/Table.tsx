@@ -1,13 +1,14 @@
-import { useState } from "react";
-import { TaskTableProps } from "../_types/Task";
-import { FolderIcon, UploadSimpleIcon } from "@/components/icons/icons";
 import Checkbox from "@/components/Checkbox";
-import Dropbox from "./TableDropbox";
-import FileModal from "./FileModal";
+import { FolderIcon, UploadSimpleIcon } from "@/components/icons/icons";
+import { useState } from "react";
 import { useTeamStore } from "../_store/teamStore";
+import { TaskTableProps } from "../_types/Task";
+import FileModal from "./FileModal";
 import TableDatePicker from "./TableDatePicker";
+import Dropbox from "./TableDropbox";
 
 const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate, onSubmitLink, checkedIds = [], onCheck }) => {
+    console.log("tasks :: ", tasks);
     //담당자
     const { members } = useTeamStore();
 
@@ -17,7 +18,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
         onCheck(next);
     };
     const handleCheckAll = () => {
-        //필수, 선택 2개의 테이블이 한 화면에서 나타나기 때문에 taskKey들을 확인해야 함. 
+        //필수, 선택 2개의 테이블이 한 화면에서 나타나기 때문에 taskKey들을 확인해야 함.
         const taskKeys = tasks.map((task) => task.key);
         const isAllChecked = taskKeys.every((key) => checkedIds.includes(key));
 
@@ -40,10 +41,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                 <thead className="bg-n50 text-center text-xsEmphasis">
                     <tr className="h-[42px]">
                         <th className="border-b pt-3 pb-3 rounded-tl-xl w-[64px]">
-                            <Checkbox checked={
-                                tasks.length > 0 &&
-                                tasks.every((task) => checkedIds.includes(task.key))
-                            } value="all" onClick={handleCheckAll} inTable={true} />
+                            <Checkbox checked={tasks.length > 0 && tasks.every((task) => checkedIds.includes(task.key))} value="all" onClick={handleCheckAll} inTable={true} />
                         </th>
                         <th className="border-b pt-3 pb-3 w-[74px]">Key</th>
                         <th className="border-b pt-3 pb-3 w-[243px]">과제</th>
@@ -61,7 +59,15 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.key}</td>
                             <td className={`p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>{task.title}</td>
                             <td className={`relative p-3 border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>
-                                <Dropbox task={task} index={task.id} assigneeList={[{ label: "선택 없음", value: "", profileUrl: ""}, ...(members?.map((item) => ({label: item.name, value: String(item.id), profileUrl: item.profileUrl})) ?? [])]} onSelectAssignee={onSelectAssignee} />
+                                <Dropbox
+                                    task={task}
+                                    index={task.id}
+                                    assigneeList={[
+                                        { label: "선택 없음", value: "", profileUrl: "" },
+                                        ...(members?.map((item) => ({ label: item.name, value: String(item.id), profileUrl: item.profileUrl })) ?? []),
+                                    ]}
+                                    onSelectAssignee={onSelectAssignee}
+                                />
                             </td>
                             <td className={`p-3 text-center border-l ${index === tasks.length - 1 ? "" : "border-b"}`}>
                                 <TableDatePicker task={task} index={task.id} onSelectDate={onSelectDate}></TableDatePicker>
@@ -84,7 +90,7 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                 </tbody>
             </table>
             {/* 모달 렌더링 부분 */}
-            {openFileModalIndex !== null && 
+            {openFileModalIndex !== null && (
                 <FileModal
                     isOpen={true}
                     onClose={() => setOpenFileModalIndex(null)}
@@ -92,7 +98,8 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                     onSuccess={onSubmitLink}
                     originLink={tasks[openFileModalIndex].attachedLink}
                     originFileName={tasks[openFileModalIndex].file}
-                />}
+                />
+            )}
         </div>
     );
 };

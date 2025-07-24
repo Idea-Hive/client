@@ -37,6 +37,8 @@ const ProjectListComponent = () => {
         queryFn: onSearchProjectsApi,
     });
 
+    console.log("data:::", data);
+
     // 검색어, 탭, 정렬 변경 시 페이지 초기화
     useEffect(() => {
         setPage(1);

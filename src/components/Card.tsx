@@ -7,7 +7,7 @@ const Card = ({ item }: { item: Project }) => {
         <Link href={`/project/${item.id}`}>
             <div className="w-full h-[212px] border border-n400 bg-n0 p-6 rounded-lg flex flex-col justify-between cursor-pointer hover:shadow-floatingCard transition-all ease-in-out duration-300">
                 <div>
-                    <div className="mb-2 text-n900 text-lg leading-6 font-medium">{item.title}</div>
+                    <div className="mb-2 text-n900 text-lg leading-6 font-medium">{item.name}</div>
                     <div className="mb-4 text-n800 text-sm truncate">{item.description}</div>
                     <div className="flex gap-2">
                         {item.hashtagNames.map((tag) => {

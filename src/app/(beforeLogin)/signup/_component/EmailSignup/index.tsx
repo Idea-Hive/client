@@ -29,7 +29,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
         (e: React.FormEvent) => {
             e.preventDefault();
 
-            const { email, password, passwordConfirm, nickname, terms1, terms2 } = formData;
+            const { email, password, nickname, terms1, terms2, terms3 } = formData;
             if (validate()) {
                 // validate에 포함되면 좋겠지만 toast message 중복 처리 때문에 따로 처리(이용약관 동의가 후순위)
                 if (!terms1 || !terms2) {
@@ -42,8 +42,10 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
                 const request: SignupRequest = {
                     email,
                     password,
-                    passwordCheck: passwordConfirm,
                     name: nickname,
+                    isServiceAgreed: terms1,
+                    isPrivacyAgreed: terms2,
+                    isMarketingAgreed: terms3,
                 };
 
                 signupMutation.mutate(request);

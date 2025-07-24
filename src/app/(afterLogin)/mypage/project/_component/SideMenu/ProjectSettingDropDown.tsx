@@ -17,6 +17,7 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
     const spinner = useSpinner();
 
     const [isToast, setIsToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
     const [isModal, setIsModal] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
     const [modalMessage, setModalMessage] = useState("");
@@ -39,7 +40,7 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
         },
         onError: (err: AxiosError) => {
             setIsToast(true);
-            console.error("삭제 오류:", err);
+            setToastMessage(err.response?.data as string);
         },
         onSettled: () => {
             spinner.close();
@@ -62,7 +63,7 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
         },
         onError: (err: AxiosError) => {
             setIsToast(true);
-            console.error("탈퇴 오류:", err);
+            setToastMessage(err.response?.data as string);
         },
         onSettled: () => {
             spinner.close();
@@ -100,8 +101,8 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
             )}
             {isToast && (
                 <Toast
-                    message={"알 수 없는 이유로 탈퇴에 실패했습니다."}
-                    type={"error"}
+                    message={toastMessage}
+                    type="error"
                     onClose={() => {
                         setIsToast(false);
                     }}

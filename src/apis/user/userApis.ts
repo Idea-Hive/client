@@ -47,20 +47,20 @@ export const onResetPwApi = async (body: ResetPwRequest) => {
 // 회원가입
 export interface SignupRequest {
     email: string;
-    password: string;
-    passwordCheck: string;
     name: string;
+    password: string;
+    isServiceAgreed: boolean;
+    isPrivacyAgreed: boolean;
+    isMarketingAgreed: boolean;
 }
 
 export const onSignupApi = async (body: SignupRequest) => {
-    const requestBody = {
-        ...body,
-        career: 3,
-        type: "email",
-        skillstackIds: [0, 1, 2],
-    };
-
-    return await Apis.post("/member/signup", requestBody);
+    try {
+        return await Apis.post("/member/signup", body);
+    } catch (error) {
+        console.error("signup error :: ", error);
+        throw error;
+    }
 };
 
 export interface EditUserInfoRequest {

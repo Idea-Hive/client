@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useClickOutside } from "@/hooks/hooks";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRef, useState } from "react";
 import Dropbox from "./Dropbox";
@@ -23,7 +23,6 @@ const memberRole = {
 };
 
 const MemberCard = ({ userId, member, currentLeaderId, projectId }: MemberCardProps) => {
-    console.log("member:::", member);
     return (
         <div className="w-[270px] h-[180px] border border-n400 bg-n0 rounded-lg hover:shadow-floatingCard ">
             <div className="p-6">
@@ -47,6 +46,7 @@ const MemberCard = ({ userId, member, currentLeaderId, projectId }: MemberCardPr
 
 const MemberSettingDropDown = ({ beforeLeaderId, afterLeaderId, projectId }: { beforeLeaderId: number; afterLeaderId: number; projectId: number }) => {
     const spinner = useSpinner();
+    const queryClient = useQueryClient();
 
     const [isOpen, setIsOpen] = useState(false);
     const dropBoxRef = useRef<HTMLDivElement | null>(null);
@@ -85,6 +85,9 @@ const MemberSettingDropDown = ({ beforeLeaderId, afterLeaderId, projectId }: { b
             setIsModal(true);
             setModalTitle("팀장 변경");
             setModalMessage("팀장 변경이 완료되었습니다.");
+
+            // 팀장 변경 후, 팀 멤버 query refresh
+            queryClient.invalidateQueries({ queryKey: ["getTeamMembers", { id: projectId }] });
         },
         onError: (err: AxiosError) => {
             console.error("팀장 변경 오류:", err);

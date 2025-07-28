@@ -6,9 +6,9 @@
 
 1. Next.js (v15)
 2. TypeScript (v5)
-3. Tanstack-Query (미정)
+3. Tanstack-Query (v5)
 4. TailwindCss (v3.4)
 
 ## Getting Started
 
-Click this [URL]()!! - 오픈 전입니다.
+Click this [URL](https://www.task-mate.co.kr/)!!

@@ -1,27 +1,25 @@
 "use client";
 
-import { onEditUserInfoApi } from "@/apis/user/userApis";
 import { getSkillStackApi } from "@/app/(afterLogin)/project/create/_api/api";
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Modal from "@/components/Modal";
 import Selectbox from "@/components/Selectbox";
-import Spinner, { useSpinner } from "@/components/Spinner";
+import Spinner from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useInput } from "@/hooks/hooks";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
+import { useUserInfo } from "@/hooks/queries";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { onEditUserInfoApi } from "./apis/apis";
 
 export default function EditProfile() {
-    const spinner = useSpinner();
     const router = useRouter();
 
     const { user, userIsPending } = useUserInfo();
     const { data: rawSkillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
-
-    console.log("user:::", user);
 
     const nickname = useInput(""); // 닉네임
     const email = useInput(""); // 이메일
@@ -84,11 +82,7 @@ export default function EditProfile() {
         }
     };
 
-    const editProfileMutation = useMutation({
-        mutationFn: onEditUserInfoApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const editProfileMutation = useCreateMutation(onEditUserInfoApi, "editProfile", {
         onSuccess: () => {
             setShowModal(true);
         },
@@ -97,17 +91,9 @@ export default function EditProfile() {
             setShowToast(true);
             setToastMessage("프로필 수정에 실패했습니다.");
         },
-        onSettled: () => {
-            spinner.close();
-        },
     });
 
     const handleSubmit = () => {
-        console.log(
-            "skillstackIds:::",
-            selectedSkills.map((skill) => skill.id)
-        );
-
         editProfileMutation.mutate({
             name: nickname.value,
             job: job.value,

@@ -1,16 +1,7 @@
-import { getUserInfoApi } from "@/apis/user/userApis";
-
 import { getApplicantInfoApi, getProjectDetailApi, getProjectViewCntApi } from "@/apis/project/projectApis";
-import { User } from "@/apis/user/userApis";
+import { useUserInfo } from "@/hooks/queries";
+import { User } from "@/types/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-export const useUserInfo = () => {
-    const { data: user, isPending: userIsPending } = useQuery({
-        queryKey: ["isLoggedIn"],
-        queryFn: getUserInfoApi,
-    });
-    return { user, userIsPending };
-};
 
 export const useProjectDetail = (projectId: number, user: User | undefined) => {
     const { data: project, isPending: projectIsPending } = useQuery({

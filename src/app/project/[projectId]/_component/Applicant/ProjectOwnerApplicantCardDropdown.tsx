@@ -1,10 +1,10 @@
-import { handleApplicantDecisionApi } from "@/apis/applicant/applicantApis";
 import Modal from "@/components/Modal";
-import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useIdsForApplicant } from "../../store/store";
+import { handleApplicantDecisionApi } from "./_api/apis";
 
 export default function ProjectOwnerApplicantCardDropdown({
     setIsDotsThreeVerticalOpen,
@@ -15,9 +15,8 @@ export default function ProjectOwnerApplicantCardDropdown({
     applicantMemberId: number;
     applyId: number;
 }) {
-    const { projectId, loginUserId } = useIdsForApplicant();
+    const { projectId } = useIdsForApplicant();
 
-    const spinner = useSpinner();
     const queryClient = useQueryClient();
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -25,11 +24,7 @@ export default function ProjectOwnerApplicantCardDropdown({
     const [isErrorToastOpen, setIsErrorToastOpen] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    const handleApplicantDecisionMutation = useMutation({
-        mutationFn: handleApplicantDecisionApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const handleApplicantDecisionMutation = useCreateMutation(handleApplicantDecisionApi, "handleApplicantDecision", {
         onSuccess: (response) => {
             console.log("handleApplicantDecisionMutation Success:::", response);
             setIsSuccessModalOpen(true);
@@ -38,10 +33,6 @@ export default function ProjectOwnerApplicantCardDropdown({
             console.error("handleApplicantDecisionMutation Error:::", error);
             setErrorMessage("확정 취소 중 오류가 발생했습니다.");
             setIsErrorToastOpen(true);
-        },
-        onSettled: () => {
-            spinner.close();
-            setIsModalOpen(false);
         },
     });
 

@@ -7,7 +7,7 @@ import { useCallback, useRef, useState } from "react";
 import { FolderIcon, HomeIcon } from "../../icons/icons";
 import FindPwModal from "../FindPwModal/FindPwModal";
 import Notification from "./Notification";
-import { logoutApi } from "./api/api";
+import { logoutApi } from "./_api/api";
 
 export default function NavRightSectionForLoggedInUser() {
     const router = useRouter();

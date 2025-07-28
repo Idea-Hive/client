@@ -1,4 +1,5 @@
 import { Apis } from "@/utils/api";
+import { getToken } from "@/utils/utils";
 
 interface HandleApplicantDecisionRequest {
     projectId: number;
@@ -10,11 +11,8 @@ interface HandleApplicantDecisionRequest {
 
 export const handleApplicantDecisionApi = async (body: HandleApplicantDecisionRequest) => {
     try {
-        console.log("handleApplicantDecisionApi body:::", body);
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
+
         return await Apis.post("/project/apply/decision", body, {
             withCredentials: true,
             headers: {
@@ -37,10 +35,7 @@ interface UpdateApplicantApplicationMessageRequest {
 
 export const updateApplicantApplicationMessageApi = async (body: UpdateApplicantApplicationMessageRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.post("/project/apply/update", body, {
             withCredentials: true,
             headers: {

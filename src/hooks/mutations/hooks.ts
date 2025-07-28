@@ -34,7 +34,7 @@ export const useMutationWithSpinner = <TData, TVariables>(
 };
 
 // 공통 mutation 생성 함수
-export const createMutation = <TData, TVariables>(
+export const useCreateMutation = <TData, TVariables>(
     mutationFn: (variables: TVariables) => Promise<TData>,
     mutationName: string,
     options: {
@@ -54,7 +54,7 @@ export const createMutation = <TData, TVariables>(
             options.onSuccess?.(data, variables, context);
         },
         onError: (error: AxiosError) => {
-            console.log(`${mutationName}Error`, error.response?.data);
+            console.error(`${mutationName}Error`, error);
             options.onError?.(error);
         },
         onSettled: () => {

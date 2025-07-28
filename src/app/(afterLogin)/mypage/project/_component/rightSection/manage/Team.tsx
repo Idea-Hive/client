@@ -1,4 +1,4 @@
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
+import { useUserInfo } from "@/hooks/queries";
 import { useParams } from "next/navigation";
 import { useTeamStore } from "../../../_store/teamStore";
 import MemberCard from "../../MemberCard";

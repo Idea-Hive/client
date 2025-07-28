@@ -1,11 +1,10 @@
 import { onDeleteProjectApi, onWithdrawProjectApi } from "@/apis/project/manageApis";
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import { GearSixIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
-import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useClickOutside } from "@/hooks/hooks";
-import { useMutation } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
+import { useUserInfo } from "@/hooks/queries";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -14,7 +13,6 @@ import Dropbox from "../Dropbox";
 export default function ProjectSettingDropDown({ projectId }: { projectId: string }) {
     const { user } = useUserInfo();
     const router = useRouter();
-    const spinner = useSpinner();
 
     const [isToast, setIsToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
@@ -28,11 +26,7 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
         if (isOpen) setIsOpen(false);
     });
 
-    const deleteProjectMutation = useMutation({
-        mutationFn: onDeleteProjectApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const deleteProjectMutation = useCreateMutation(onDeleteProjectApi, "deleteProject", {
         onSuccess: () => {
             setIsModal(true);
             setModalTitle("프로젝트 삭제");
@@ -42,20 +36,13 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
             setIsToast(true);
             setToastMessage(err.response?.data as string);
         },
-        onSettled: () => {
-            spinner.close();
-        },
     });
 
     const handleDeleteProject = () => {
         deleteProjectMutation.mutate({ projectId: Number(projectId), memberId: Number(user!.id) });
     };
 
-    const withdrawProjectMutation = useMutation({
-        mutationFn: onWithdrawProjectApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const withdrawProjectMutation = useCreateMutation(onWithdrawProjectApi, "withdrawProject", {
         onSuccess: () => {
             setIsModal(true);
             setModalTitle("프로젝트 탈퇴");
@@ -64,9 +51,6 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
         onError: (err: AxiosError) => {
             setIsToast(true);
             setToastMessage(err.response?.data as string);
-        },
-        onSettled: () => {
-            spinner.close();
         },
     });
 

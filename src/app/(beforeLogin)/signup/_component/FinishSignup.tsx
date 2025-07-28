@@ -1,8 +1,8 @@
 "use client";
 
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import FindPwModal from "@/components/gnb/FindPwModal/FindPwModal";
 import LoginModal from "@/components/gnb/LoginModal/LoginModal";
+import { useUserInfo } from "@/hooks/queries";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 

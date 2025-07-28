@@ -1,89 +1,6 @@
 import { Apis } from "@/utils/api";
+import { getToken } from "@/utils/utils";
 import { QueryFunction } from "@tanstack/react-query";
-
-// Project 저장
-export interface SaveProjectRequest {
-    projectId: number | null;
-    userId: number;
-    name: string;
-    title: string;
-    description: string;
-    idea: string;
-    contact: string;
-    maxMembers: number;
-    dueDateFrom: string | null;
-    dueDateTo: string | null;
-    skillStackIds: number[];
-    hashtags: string[];
-    isSave: boolean;
-}
-export const onSaveProjectApi = async (body: SaveProjectRequest): Promise<number> => {
-    try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
-        return await Apis.post("/project/create", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    } catch (error) {
-        console.error("프로젝트 저장 중 오류 발생:", error);
-        throw error;
-    }
-};
-
-export const onTemporarySaveProjectApi = async (body: SaveProjectRequest) => {
-    try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
-        return await Apis.post("/project/create", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    } catch (error) {
-        console.error("프로젝트 임시저장 중 오류 발생:", error);
-        throw error;
-    }
-};
-
-export interface EditProjectRequest {
-    projectId: number | null;
-    title: string;
-    description: string;
-    idea: string;
-    contact: string;
-    maxMembers: number;
-    dueDateFrom: string | null;
-    dueDateTo: string | null;
-    skillStackIds: number[];
-    hashtags: string[];
-}
-
-export const onEditProjectApi = async (body: EditProjectRequest) => {
-    try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
-
-        return await Apis.post("/project/update", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    } catch (error) {
-        console.error("프로젝트 수정 중 오류 발생:", error);
-        throw error;
-    }
-};
 
 // 프로젝트 검색
 export interface SearchProjectsRequest {
@@ -235,10 +152,7 @@ export interface StartProjectRequest {
 
 export const onStartProjectApi = async (body: StartProjectRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.post("/project/start", body, {
             withCredentials: true,
             headers: {
@@ -258,10 +172,7 @@ export interface RecruitAdditionalMemberRequest {
 
 export const onRecruitAdditionalMemberApi = async (body: RecruitAdditionalMemberRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.post("/project/recruit", body, {
             withCredentials: true,
             headers: {
@@ -283,10 +194,7 @@ export interface LikeProjectRequest {
 
 export const onLikeProjectApi = async (body: LikeProjectRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.post("/project/like", body, {
             withCredentials: true,
             headers: {
@@ -306,10 +214,7 @@ export interface TemporarySavedProject {
 }
 export const getTemporarySavedProjectApi = async (userId: number): Promise<TemporarySavedProject[]> => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         return await Apis.get("/project/tempsaved", {
             params: {
@@ -326,38 +231,6 @@ export const getTemporarySavedProjectApi = async (userId: number): Promise<Tempo
     }
 };
 
-// 임시저장 프로젝트 상세 정보 조회
-export interface TemporarySavedProjectInfo {
-    title: string;
-    description: string;
-    idea: string;
-    contact: string;
-    maxMembers: number;
-    dueDateFrom: string;
-    dueDateTo: string;
-    hashtagNames: string[];
-    projectSkillStacks: string[];
-}
-export const getTemporarySavedProjectInfoApi = async (projectId: number): Promise<TemporarySavedProjectInfo> => {
-    try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
-
-        return await Apis.get("/project/tempsaved/info", {
-            params: { projectId },
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    } catch (error) {
-        console.error("임시저장 프로젝트 상세 정보 조회 중 오류 발생:", error);
-        throw error;
-    }
-};
-
 // Project 지원하기
 export interface ApplyProjectRequest {
     projectId: number;
@@ -367,10 +240,7 @@ export interface ApplyProjectRequest {
 
 export const onApplyProjectApi = async (body: ApplyProjectRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.post("/project/apply", body, {
             withCredentials: true,
             headers: {
@@ -390,10 +260,7 @@ export interface CancelApplicantRequest {
 
 export const onCancelApplicantApi = async (body: CancelApplicantRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.delete("/project/apply", body, {
             withCredentials: true,
             headers: {
@@ -402,29 +269,6 @@ export const onCancelApplicantApi = async (body: CancelApplicantRequest) => {
         });
     } catch (error) {
         console.error("프로젝트 지원 취소 처리 중 오류 발생:", error);
-        throw error;
-    }
-};
-
-// Project 끌어올리기
-export interface PullUpProjectRequest {
-    projectId: number;
-}
-
-export const onPullUpProjectApi = async (body: PullUpProjectRequest) => {
-    try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
-        return await Apis.post("/project/pushToTop", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    } catch (error) {
-        console.error("프로젝트 끌어올리기 처리 중 오류 발생:", error);
         throw error;
     }
 };
@@ -459,10 +303,7 @@ export const getMyProjectApi: QueryFunction<GetMyProjectResponse, [_1: string, p
     try {
         const [_, page] = queryKey;
 
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         if (!token) {
             throw new Error("토큰이 없습니다.");
@@ -478,67 +319,6 @@ export const getMyProjectApi: QueryFunction<GetMyProjectResponse, [_1: string, p
         });
     } catch (error) {
         console.error("프로젝트 상세 정보 조회 중 오류 발생:", error);
-        throw error;
-    }
-};
-
-// 캘린더 태스크 조회
-export interface GetCalendarTasksRequest {
-    userId: number;
-    projectId: number;
-}
-
-export type CalendarTaskType = "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
-export interface CalendarTask {
-    id: number;
-    isRequired: boolean;
-    isSubmitted: boolean;
-    title: string;
-    taskType: CalendarTaskType;
-    attachedLink: string;
-    filePath: string;
-    pic: string;
-    dueDate: string;
-    uploadDate: string;
-    picId: number;
-}
-
-export interface ProjectTasks {
-    requiredTasks: CalendarTask[];
-    optionalTasks: CalendarTask[];
-}
-
-export interface GetCalendarTasksResponse {
-    [key: string]: ProjectTasks;
-}
-export const getCalendarTasksApi: QueryFunction<GetCalendarTasksResponse, [_1: string, memberId: number | undefined, projectId: number | undefined]> = async ({ queryKey }) => {
-    try {
-        const [_, memberId, projectId] = queryKey;
-
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
-
-        if (!token) {
-            throw new Error("토큰이 없습니다.");
-            return null;
-        }
-
-        if (!memberId || !projectId) {
-            throw new Error("memberId 또는 projectId가 없습니다.");
-            return null;
-        }
-
-        return await Apis.get("/project/calender", {
-            params: { memberId, projectId },
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    } catch (error) {
-        console.error("캘린더 태스크 조회 중 오류 발생:", error);
         throw error;
     }
 };

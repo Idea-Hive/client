@@ -1,11 +1,12 @@
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import Toast from "@/components/Toast";
-import { useSaveProjectMutation } from "@/hooks/mutations/useCreateProjectMutation";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
+import { useUserInfo } from "@/hooks/queries";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { onSaveProjectApi } from "../_api/api";
 import useCreateProjectStore from "../store/createProjectStore";
 
 export default function RegisterButton() {
@@ -22,7 +23,7 @@ export default function RegisterButton() {
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
 
     // 프로젝트 등록 mutation
-    const onSaveMutation = useSaveProjectMutation({
+    const onSaveMutation = useCreateMutation(onSaveProjectApi, "saveProject", {
         onSuccess: (response) => {
             setProjectId(response);
             setIsSuccessModalOpen(true);

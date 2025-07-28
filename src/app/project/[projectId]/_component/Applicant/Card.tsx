@@ -2,7 +2,7 @@ import { Applicant } from "@/apis/project/projectApis";
 import { useState } from "react";
 import { CardState } from "./ApplicantCard";
 import CardBody from "./CardBody";
-import CardHeader from "./CardHeader";
+import CardHeader from "./CardHeader/CardHeader";
 import CardRejectSection from "./CardRejectSection";
 import EditCard from "./EditCard";
 import RejectCard from "./RejectCard";

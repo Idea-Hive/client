@@ -1,14 +1,13 @@
-import { handleApplicantDecisionApi } from "@/apis/applicant/applicantApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useIdsForApplicant } from "../../store/store";
+import { handleApplicantDecisionApi } from "./_api/apis";
 
 export default function RejectCard({ applicantMemberId, applicantId, setIsReject }: { applicantMemberId: number; applicantId: number; setIsReject: Dispatch<SetStateAction<boolean>> }) {
-    const spinner = useSpinner();
     const queryClient = useQueryClient();
     const { projectId } = useIdsForApplicant();
 
@@ -20,11 +19,7 @@ export default function RejectCard({ applicantMemberId, applicantId, setIsReject
     const [isError, setIsError] = useState<boolean>(false); // 에러메세지 토스트 오픈
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false); // 성공 모달 오픈
 
-    const handleApplicantDecisionMutation = useMutation({
-        mutationFn: handleApplicantDecisionApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const handleApplicantDecisionMutation = useCreateMutation(handleApplicantDecisionApi, "handleApplicantDecision", {
         onSuccess: (response) => {
             console.log("handleApplicantDecisionMutation Success:::", response);
             setIsSuccessModalOpen(true);
@@ -34,9 +29,6 @@ export default function RejectCard({ applicantMemberId, applicantId, setIsReject
         onError: (error) => {
             console.error("handleApplicantDecisionMutation Error:::", error);
             setIsError(true);
-        },
-        onSettled: () => {
-            spinner.close();
         },
     });
 

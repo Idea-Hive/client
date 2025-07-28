@@ -1,25 +1,19 @@
-import { onCheckAuthCodeForFindPwApi, onSendAuthCodeForFindPwApi } from "@/apis/user/userApis";
-import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
-import { useMutation } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Button from "../../Button";
+import { onCheckAuthCodeForFindPwApi, onSendAuthCodeForFindPwApi } from "./_api/apis";
 
 export default function AuthCodeInputForm({ onClose, email }: { onClose: () => void; email: string }) {
     const router = useRouter();
-    const spinner = useSpinner();
 
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
     const [toastType, setToastType] = useState<"error" | "success">("error");
 
-    const sendAuthCodeMutation = useMutation({
-        mutationFn: onSendAuthCodeForFindPwApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const sendAuthCodeMutation = useCreateMutation(onSendAuthCodeForFindPwApi, "sendAuthCodeForFindPw", {
         onSuccess: (data, variables, context) => {
             console.log("인증번호 전송 성공:::", data, variables, context);
             setShowToast(true);
@@ -32,9 +26,6 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
             setToastMessage(error.response?.data as string);
             setToastType("error");
         },
-        onSettled: () => {
-            spinner.close();
-        },
     });
 
     const resendAuthCode = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -42,24 +33,17 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
         sendAuthCodeMutation.mutate(email);
     };
 
-    const onCheckAuthCodeMutation = useMutation({
-        mutationFn: onCheckAuthCodeForFindPwApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const onCheckAuthCodeMutation = useCreateMutation(onCheckAuthCodeForFindPwApi, "checkAuthCodeForFindPw", {
         onSuccess: (data) => {
-            console.log("success:::", data);
+            console.log("onCheckAuthCodeMutation success:::", data);
             router.push(`/resetpw?email=${encodeURIComponent(email)}`);
             onClose();
         },
         onError: (error: AxiosError) => {
-            console.log("error:::", error.response?.data);
+            console.log("onCheckAuthCodeMutation error:::", error.response?.data);
             setShowToast(true);
             setToastMessage(error.response?.data as string);
             setToastType("error");
-        },
-        onSettled: () => {
-            spinner.close();
         },
     });
 

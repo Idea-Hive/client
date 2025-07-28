@@ -1,9 +1,9 @@
-import { getCalendarTasksApi, ProjectTasks } from "@/apis/project/projectApis";
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import Calendar from "@/components/Calendar/Calendar";
+import { useUserInfo } from "@/hooks/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
+import { getCalendarTasksApi, ProjectTasks } from "./_api/apis";
 
 export default function CalendarContent() {
     const { user } = useUserInfo();

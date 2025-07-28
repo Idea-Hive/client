@@ -1,21 +1,19 @@
 "use client";
 
-import { EditProjectRequest, getTemporarySavedProjectInfoApi, onEditProjectApi } from "@/apis/project/projectApis";
-import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getTemporarySavedProjectInfoApi } from "../../create/_api/api";
+import { EditProjectRequest, onEditProjectApi } from "./_api/api";
 import OptionalInformations from "./_component/OptionalInformations";
 import RequiredInformations from "./_component/RequiredInformations";
 import { RequiredValues } from "./_types/type";
 
 export default function EditProjectPage() {
-    const spinner = useSpinner();
     const params = useParams();
     const id = params.projectId as string;
 
@@ -25,11 +23,7 @@ export default function EditProjectPage() {
     const router = useRouter();
 
     const [tempSavedSkills, setTempSavedSkills] = useState<string[]>([]);
-    const getProjectMutation = useMutation({
-        mutationFn: getTemporarySavedProjectInfoApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const getProjectMutation = useCreateMutation(getTemporarySavedProjectInfoApi, "getTemporarySavedProjectInfo", {
         onSuccess: (response) => {
             const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact, hashtagNames, projectSkillStacks } = response;
             console.log("project info:::", response);
@@ -57,9 +51,6 @@ export default function EditProjectPage() {
         onError: (error) => {
             console.log(error);
         },
-        onSettled: () => {
-            spinner.close();
-        },
     });
 
     useEffect(() => {
@@ -68,11 +59,6 @@ export default function EditProjectPage() {
             getProjectMutation.mutate(Number(id));
         }
     }, [id]);
-
-    const { data: user } = useQuery({
-        queryKey: ["isLoggedIn"],
-        queryFn: getUserInfoApi,
-    });
 
     // dueDateFrom, dueDateTo format
     // const now = new Date();
@@ -137,23 +123,15 @@ export default function EditProjectPage() {
     const [toastType, setToastType] = useState<"info" | "error">("info");
     const [toastMessage, setToastMessage] = useState<string>("임시저장 되었습니다.");
 
-    const onEditMutation = useMutation({
-        mutationFn: onEditProjectApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const onEditMutation = useCreateMutation(onEditProjectApi, "onEditProject", {
         onSuccess: (response) => {
             setProjectId(response);
             setIsOpenSuccessModal(true);
         },
         onError: (error: AxiosError) => {
-            console.log(error.response?.data);
             setIsShowToast(true);
             setToastType("error");
             setToastMessage(error.response?.data as string);
-        },
-        onSettled: () => {
-            spinner.close();
         },
     });
 

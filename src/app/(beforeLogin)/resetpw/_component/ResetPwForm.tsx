@@ -1,24 +1,19 @@
 "use client";
 
-import { onResetPwApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useInput } from "@/hooks/hooks";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { validatePassword } from "@/utils/utils";
-import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
+import { onResetPwApi } from "../_api/apis";
 
 export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetStateAction<boolean>> }) {
-    const spinner = useSpinner();
-
     const password = useInput("");
     const passwordCheck = useInput("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [showPasswordCheck, setShowPasswordCheck] = useState(false);
 
     const searchParams = useSearchParams();
     const email = searchParams.get("email");
@@ -29,25 +24,18 @@ export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetSt
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
 
-    const resetPwMutation = useMutation({
-        mutationFn: onResetPwApi,
-        onMutate: () => {
-            spinner.open();
-        },
-        onSuccess: (data) => {
-            console.log("success:::", data);
+    // 비밀번호 재설정 mutation
+    const resetPwMutation = useCreateMutation(onResetPwApi, "resetPw", {
+        onSuccess: () => {
             setIsReset(true);
         },
         onError: (error: AxiosError) => {
-            console.log("error:::", error);
             setShowToast(true);
             setToastMessage(error.response?.data as string);
         },
-        onSettled: () => {
-            spinner.close();
-        },
     });
 
+    // 비밀번호 유효성 검사
     const validate = (password: string, passwordCheck: string) => {
         const newErrors = {
             password: "",
@@ -72,6 +60,7 @@ export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetSt
         return isValid;
     };
 
+    // 비밀번호 재설정
     const handleResetPw = () => {
         const isValid = validate(password.value, passwordCheck.value);
         if (!isValid) return;
@@ -84,20 +73,11 @@ export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetSt
             <h2 className="text-h2 text-n900 text-center mb-2">비밀번호 재설정</h2>
             <div className="text-sm text-n700 text-center mb-8">새롭게 변경할 비밀번호를 입력해주세요</div>
             <div className="w-full flex flex-col gap-5 mb-6 p-10 border border-n400 rounded-lg">
-                <Input
-                    label="비밀번호"
-                    isRequired={true}
-                    type={showPassword ? "text" : "password"}
-                    placeholder="비밀번호"
-                    {...password}
-                    isPassword={true}
-                    isErr={errors.password !== ""}
-                    errMsg={errors.password}
-                />
+                <Input label="비밀번호" isRequired={true} type="password" placeholder="비밀번호" {...password} isPassword={true} isErr={errors.password !== ""} errMsg={errors.password} />
                 <Input
                     label="비밀번호 확인"
                     isRequired={true}
-                    type={showPasswordCheck ? "text" : "password"}
+                    type="password"
                     placeholder="비밀번호 확인"
                     {...passwordCheck}
                     isPassword={true}

@@ -1,26 +1,23 @@
-import { onSendAuthCodeForFindPwApi } from "@/apis/user/userApis";
 import Input from "@/components/Input";
 import { useInput } from "@/hooks/hooks";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { validateEmail } from "@/utils/utils";
-import { useMutation } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
 import Button from "../../Button";
 import Spinner from "../../Spinner";
+import { onSendAuthCodeForFindPwApi } from "./_api/apis";
 
 export default function SendAuthCodeForm({ setIsSendAuthCode, setEmail }: { setIsSendAuthCode: Dispatch<SetStateAction<boolean>>; setEmail: Dispatch<SetStateAction<string>> }) {
     const email = useInput("");
     const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    const sendAuthCodeMutation = useMutation({
-        mutationFn: onSendAuthCodeForFindPwApi,
-        onSuccess: (data, variables, context) => {
-            console.log("인증번호 전송 성공:::", data, variables, context);
+    const sendAuthCodeMutation = useCreateMutation(onSendAuthCodeForFindPwApi, "onSendAuthCodeForFindPw", {
+        onSuccess: () => {
             setEmail(email.value);
             setIsSendAuthCode(true);
         },
         onError: (error) => {
-            console.log("인증번호 전송 실패:::", error);
             setIsError(true);
             setErrorMessage("존재하지 않는 이메일입니다");
         },

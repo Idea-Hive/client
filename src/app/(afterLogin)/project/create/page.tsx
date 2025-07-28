@@ -1,9 +1,9 @@
 "use client";
 
-import { useGetTemporarySavedProjectInfoMutation } from "@/hooks/mutations/useCreateProjectMutation";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { getSkillStackApi } from "./_api/api";
+import { getSkillStackApi, getTemporarySavedProjectInfoApi } from "./_api/api";
 import OptionalInformations from "./_component/OptionalInformations";
 import RegisterButton from "./_component/RegisterButton";
 import RequiredInformations from "./_component/RequiredInformations";
@@ -20,7 +20,7 @@ export default function CreateProject() {
     const { data: rawSkillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
 
     // 임시저장된 프로젝트 정보 가져오기
-    const getProjectMutation = useGetTemporarySavedProjectInfoMutation({
+    const getProjectMutation = useCreateMutation(getTemporarySavedProjectInfoApi, "getTemporarySavedProjectInfo", {
         onSuccess: (response) => {
             const { name, title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact, hashtagNames, projectSkillStacks } = response;
 

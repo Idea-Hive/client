@@ -1,11 +1,12 @@
 import { EmailVerificationCheckIcon } from "@/components/icons/icons";
 import Input from "@/components/Input";
 import Toast from "@/components/Toast";
-import { useEmailVerificationCheckMutation, useEmailVerificationMutation } from "@/hooks/mutations";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { validateEmail } from "@/utils/utils";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import useSignupStore from "../../../store/signupStore";
+import { onCheckEmailVerificationCodeApi, onSendEmailVerificationCodeApi } from "../_api/apis";
 
 export default function EmailVerification() {
     const { formData, setFormData, errors, setErrors, isEmailVerified, setIsEmailVerified } = useSignupStore();
@@ -18,7 +19,7 @@ export default function EmailVerification() {
     const [toastMessage, setToastMessage] = useState("");
 
     // 이메일 인증 요청
-    const handleEmailVerificationMutation = useEmailVerificationMutation({
+    const handleEmailVerificationMutation = useCreateMutation(onSendEmailVerificationCodeApi, "emailVerification", {
         onSuccess: () => {
             setIsTimerFinish(false);
             setIsClickEmailVerification(true);
@@ -37,7 +38,7 @@ export default function EmailVerification() {
     };
 
     // 이메일 인증 확인
-    const handleEmailVerificationCheckMutation = useEmailVerificationCheckMutation({
+    const handleEmailVerificationCheckMutation = useCreateMutation(onCheckEmailVerificationCodeApi, "emailVerificationCheck", {
         onSuccess: () => {
             setIsEmailVerified(true);
         },

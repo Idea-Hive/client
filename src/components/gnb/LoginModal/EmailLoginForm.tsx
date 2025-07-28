@@ -1,18 +1,14 @@
 "use client";
 
-import { onLoginApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import { useSpinner } from "@/components/Spinner";
 import Toast from "@/components/Toast";
 import { useInput } from "@/hooks/hooks";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useState } from "react";
+import { onLoginApi } from "./_api/api";
 
 export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
-    const spinner = useSpinner();
-    const queryClient = useQueryClient();
-
     const email = useInput("");
     const password = useInput("");
 
@@ -50,11 +46,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
 
     const [showToast, setShowToast] = useState(false);
 
-    const loginMutation = useMutation({
-        mutationFn: onLoginApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const loginMutation = useCreateMutation(onLoginApi, "login", {
         onSuccess: async (data) => {
             // 배포 환경과 로컬 환경에 따른 쿠키 설정
             const isProduction = process.env.NODE_ENV === "production";
@@ -70,9 +62,6 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
         onError: (error) => {
             console.error("loginError:::", error);
             setShowToast(true);
-        },
-        onSettled: () => {
-            spinner.close();
         },
     });
 

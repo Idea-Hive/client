@@ -1,9 +1,10 @@
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
-import { useTemporarySaveProjectMutation } from "@/hooks/mutations/useCreateProjectMutation";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
+import { useUserInfo } from "@/hooks/queries";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { onTemporarySaveProjectApi } from "../_api/api";
 import useCreateProjectStore from "../store/createProjectStore";
 
 export default function TemporarySaveButton() {
@@ -16,7 +17,7 @@ export default function TemporarySaveButton() {
     const [toastMessage, setToastMessage] = useState<string>("임시저장 되었습니다.");
 
     // 프로젝트 임시저장 mutation
-    const onTemporarySaveMutation = useTemporarySaveProjectMutation({
+    const onTemporarySaveMutation = useCreateMutation(onTemporarySaveProjectApi, "temporarySaveProject", {
         onSuccess: (response) => {
             setProjectId(response);
             setToastType("info");

@@ -1,16 +1,16 @@
 "use client";
 
-import { getNotificationsApi } from "@/apis/notifications/notificationApis";
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
+import { useUserInfo } from "@/hooks/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { getNotificationsApi } from "./_api/api";
 
 export default function NotificationDropdown() {
     const { user } = useUserInfo();
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
 
-    const { data: notifications, isPending } = useQuery({
+    const { data: notifications } = useQuery({
         queryKey: ["notifications", { userId: user!.id, page, size: 10 }],
         queryFn: getNotificationsApi,
         enabled: !!user?.id,

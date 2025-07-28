@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { CloseBtn } from "../../icons/icons";
 import AuthCodeInputForm from "./AuthCodeInputForm";

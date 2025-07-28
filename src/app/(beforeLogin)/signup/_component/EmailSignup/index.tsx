@@ -1,18 +1,18 @@
 "use client";
 
-import { SignupRequest } from "@/apis/user/userApis";
 import Toast from "@/components/Toast";
-import { useSignupMutation } from "@/hooks/mutations";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
 import useSignupStore from "../../store/signupStore";
 import TOS from "../TOS";
+import { onSignupApi, SignupRequest } from "./_api/apis";
 import RequiredInfoSection from "./_component/RequiredInfoSection";
 
 export default function EmailSignup({ setStep }: { setStep: (step: number) => void }) {
     const { formData, validate, showToast, toastMessage, toastType, setShowToast, setToastMessage, setToastType } = useSignupStore();
     // 회원가입 API 호출
-    const signupMutation = useSignupMutation({
+    const signupMutation = useCreateMutation(onSignupApi, "signup", {
         onError: (error: AxiosError) => {
             setToastType("error");
             setShowToast(true);

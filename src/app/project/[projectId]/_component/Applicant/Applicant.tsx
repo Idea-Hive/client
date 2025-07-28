@@ -1,16 +1,17 @@
 "use client";
 
 import Pagination from "@/components/Pagination";
+import { useUserInfo } from "@/hooks/queries";
 import { useParams } from "next/navigation";
-import { useApplicantInfo, useProjectDetail, useUserInfo } from "../../hooks/Hooks";
+import { useApplicantInfo, useProjectDetail } from "../../hooks/Hooks";
 import ApplicantCard from "./ApplicantCard";
 
 export default function Applicant() {
     const { projectId } = useParams();
 
-    const { user, userIsPending } = useUserInfo();
-    const { project, projectIsPending } = useProjectDetail(Number(projectId), user);
-    const { applicantData, applicantIsPending } = useApplicantInfo(Number(projectId));
+    const { user } = useUserInfo();
+    const { project } = useProjectDetail(Number(projectId), user);
+    const { applicantData } = useApplicantInfo(Number(projectId));
 
     if (!applicantData || !project) return null;
     return (

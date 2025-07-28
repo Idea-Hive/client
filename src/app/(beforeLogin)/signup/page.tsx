@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
+import { useUserInfo } from "@/hooks/queries";
 import { useState } from "react";
 import EmailSignup from "./_component/EmailSignup/index";
 import FinishSignup from "./_component/FinishSignup";

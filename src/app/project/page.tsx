@@ -3,11 +3,11 @@
 import { onSearchProjectsApi } from "@/apis/project/projectApis";
 import Pagination from "@/components/Pagination";
 import Tab from "@/components/Tab";
+import { useUserInfo } from "@/hooks/queries";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useUserInfo } from "./[projectId]/hooks/Hooks";
 import FloatBtn from "./_component/FloatBtn";
 import ProjectGrid from "./_component/ProjectGrid";
 import SearchAndSort from "./_component/SearchAndSort";

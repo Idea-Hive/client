@@ -1,32 +1,24 @@
 import { onStartProjectApi } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import { useSpinner } from "@/components/Spinner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
+import { useUserInfo } from "@/hooks/queries";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useUserInfo } from "../../../hooks/Hooks";
 
 const StartProjectButton = ({ projectId, isNew }: { projectId: number; isNew: boolean }) => {
-    const spinner = useSpinner();
     const queryClient = useQueryClient();
 
     const { user } = useUserInfo();
     const [isOpenStartProjectModal, setIsOpenStartProjectModal] = useState(false);
 
-    const onStartProjectMutation = useMutation({
-        mutationFn: onStartProjectApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const onStartProjectMutation = useCreateMutation(onStartProjectApi, "onStartProject", {
         onSuccess: (data) => {
             console.log("Start Project Success:::", data);
             queryClient.invalidateQueries({ queryKey: ["getProjectDetail", { projectId, userId: user?.id }] });
         },
         onError: (error) => {
             console.log("Start Project Error:::", error);
-        },
-        onSettled: () => {
-            spinner.close();
         },
     });
 

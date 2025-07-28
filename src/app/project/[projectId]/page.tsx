@@ -2,13 +2,14 @@
 
 import Spinner from "@/components/Spinner";
 import Tab from "@/components/Tab";
+import { useUserInfo } from "@/hooks/queries";
 import { useParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import Applicant from "./_component/Applicant/Applicant";
 import BaseInfo from "./_component/BaseInfo";
 import Header from "./_component/Header/Header";
 import Recruitment from "./_component/Recruitment";
-import { useApplicantInfo, useProjectDetail, useProjectViewCnt, useUserInfo } from "./hooks/Hooks";
+import { useApplicantInfo, useProjectDetail, useProjectViewCnt } from "./hooks/Hooks";
 import { useIdsForApplicant } from "./store/store";
 
 export default function ProjectDetail() {

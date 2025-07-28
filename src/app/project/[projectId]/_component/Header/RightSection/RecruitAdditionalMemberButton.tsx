@@ -1,31 +1,22 @@
 import { onRecruitAdditionalMemberApi } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import { useSpinner } from "@/components/Spinner";
-import { useMutation } from "@tanstack/react-query";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const RecruitAdditionalMemberButton = ({ projectId }: { projectId: number }) => {
-    const spinner = useSpinner();
     const router = useRouter();
 
     const [isOpenSuccessModal, setIsOpenSuccessModal] = useState(false);
 
-    const onRecruitAdditionalMemberMutation = useMutation({
-        mutationFn: onRecruitAdditionalMemberApi,
-        onMutate: () => {
-            spinner.open();
-        },
+    const onRecruitAdditionalMemberMutation = useCreateMutation(onRecruitAdditionalMemberApi, "onRecruitAdditionalMember", {
         onSuccess: (data) => {
             console.log("Recruit Additional Member Success:::", data);
             setIsOpenSuccessModal(true);
         },
         onError: (error) => {
             console.log("Recruit Additional Member Error:::", error);
-        },
-        onSettled: () => {
-            spinner.close();
         },
     });
 

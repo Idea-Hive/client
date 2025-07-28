@@ -15,3 +15,14 @@ export const validateEmail = (email: string) => {
 export const validatePassword = (password: string) => {
     return /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 };
+
+/**
+ * 토큰 가져오기
+ * @returns 토큰
+ */
+export const getToken = () => {
+    return document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+};

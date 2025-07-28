@@ -1,5 +1,5 @@
-import { SaveProjectRequest } from "@/apis/project/projectApis";
 import { create } from "zustand";
+import { SaveProjectRequest } from "../_api/api";
 
 // Required Form Data
 export interface CreateProjectRequiredFormData {

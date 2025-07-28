@@ -1,4 +1,5 @@
 import { Apis } from "@/utils/api";
+import { getToken } from "@/utils/utils";
 import { QueryFunction } from "@tanstack/react-query";
 
 export interface Project {
@@ -25,10 +26,7 @@ export interface ProjectInfoRequest {
 export const getMyProjectInfo: QueryFunction<ProjectInfoResponse, [_1: string, ProjectInfoRequest]> = async ({ queryKey }) => {
     try {
         const [_, params] = queryKey;
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         return await Apis.get("/project/manage", {
             params,
@@ -72,10 +70,7 @@ export const getTaskInfoByType: QueryFunction<TaskResponse, [_1: string, TaskReq
     try {
         const [_, params] = queryKey;
 
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         return await Apis.get("/task", {
             params,
@@ -97,10 +92,7 @@ export interface SubmitProjectRequest {
 
 export const onSubmitProjectApi = async (body: SubmitProjectRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.post("/project/submit", body, {
             withCredentials: true,
             headers: {
@@ -121,10 +113,7 @@ export interface UpdateTaskDueDateRequest {
 
 export const onUpdateDueDate = async (body: UpdateTaskDueDateRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.put("/task/duedate", body, {
             withCredentials: true,
             headers: {
@@ -153,10 +142,7 @@ export interface MemberRequest {
 export const getTeamMemberList: QueryFunction<MemberResponse[], [_1: string, MemberRequest]> = async ({ queryKey }) => {
     try {
         const [_, params] = queryKey;
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         return await Apis.get("/project/members", {
             params,
@@ -180,10 +166,7 @@ export interface UpdateTaskManagerRequest {
 
 export const onUpdateManager = async (body: UpdateTaskManagerRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.put("/task/pic", body, {
             withCredentials: true,
             headers: {
@@ -204,10 +187,7 @@ export interface UpdateLinkRequest {
 
 export const onUploadLink = async (body: UpdateLinkRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         return await Apis.post("/task/attach-link", body, {
             withCredentials: true,
             headers: {
@@ -227,10 +207,7 @@ export interface FileUploadRequest {
 }
 export const onUploadFile = async (request: FileUploadRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
         const formData = new FormData();
 
         if (request.file != null) {
@@ -265,10 +242,7 @@ export interface CreateCustomTaskRequest {
 //과제 추가 api
 export const onCreateCustomTask = async (body: CreateCustomTaskRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         const response = await Apis.post("/task/option", body, {
             withCredentials: true,
@@ -290,10 +264,7 @@ export interface WithdrawProjectRequest {
 }
 export const onWithdrawProjectApi = async (body: WithdrawProjectRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         const response = await Apis.delete(`/project/leave`, body, {
             withCredentials: true,
@@ -315,10 +286,7 @@ export interface DeleteProjectRequest {
 }
 export const onDeleteProjectApi = async (body: DeleteProjectRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         const response = await Apis.delete(`/project`, body, {
             withCredentials: true,
@@ -341,10 +309,7 @@ export interface ChangeLeaderRequest {
 }
 export const onChangeLeaderApi = async (body: ChangeLeaderRequest) => {
     try {
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
+        const token = getToken();
 
         const response = await Apis.put(`/project/leader/change`, body, {
             withCredentials: true,

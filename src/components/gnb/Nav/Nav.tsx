@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserInfo } from "@/app/project/[projectId]/hooks/Hooks";
+import { useUserInfo } from "@/hooks/queries";
 import Link from "next/link";
 import { useState } from "react";
 import { LogoIcon } from "../../icons/icons";

@@ -1,19 +1,15 @@
 "use client";
 
 import { getMyProjectApi } from "@/apis/project/projectApis";
-import { getUserInfoApi } from "@/apis/user/userApis";
 import Button from "@/components/Button";
+import { useUserInfo } from "@/hooks/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 export default function LNB() {
     const router = useRouter();
 
-    const { data: user } = useQuery({
-        queryKey: ["isLoggedIn"],
-        queryFn: getUserInfoApi,
-        refetchInterval: 5 * 60 * 1000, // 5분마다 리페치
-    });
+    const { user } = useUserInfo();
 
     const { data: projectData, isPending } = useQuery({
         queryKey: ["myProjects", 1],

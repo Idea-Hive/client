@@ -1,5 +1,4 @@
 import { Apis } from "@/utils/api";
-import { getToken } from "@/utils/utils";
 import { QueryFunction } from "@tanstack/react-query";
 
 // 캘린더 태스크 조회
@@ -35,24 +34,13 @@ export const getCalendarTasksApi: QueryFunction<GetCalendarTasksResponse, [_1: s
     try {
         const [_, memberId, projectId] = queryKey;
 
-        const token = getToken();
-
-        if (!token) {
-            throw new Error("토큰이 없습니다.");
-            return null;
-        }
-
         if (!memberId || !projectId) {
             throw new Error("memberId 또는 projectId가 없습니다.");
             return null;
         }
 
-        return await Apis.get("/project/calender", {
+        return await Apis.getAuth("/project/calender", {
             params: { memberId, projectId },
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
         });
     } catch (error) {
         console.error("캘린더 태스크 조회 중 오류 발생:", error);

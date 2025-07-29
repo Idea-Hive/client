@@ -1,6 +1,5 @@
 import { User } from "@/types/user";
 import { Apis } from "@/utils/api";
-import { getToken } from "@/utils/utils";
 
 export interface EditUserInfoRequest {
     name: string;
@@ -9,17 +8,8 @@ export interface EditUserInfoRequest {
     skillStackIds: number[];
 }
 export const onEditUserInfoApi = async (body: EditUserInfoRequest): Promise<User> => {
-    const token = getToken();
-
-    if (!token) throw new Error("토큰이 없습니다.");
-
     try {
-        return await Apis.put("/member/update", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.putAuth("/member/update", body);
     } catch (err) {
         console.error("API Error:", err);
         throw err;

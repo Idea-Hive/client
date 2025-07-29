@@ -1,5 +1,4 @@
 import { Apis } from "@/utils/api";
-import { getToken } from "@/utils/utils";
 import { QueryFunction } from "@tanstack/react-query";
 
 // 프로젝트 검색
@@ -152,13 +151,7 @@ export interface StartProjectRequest {
 
 export const onStartProjectApi = async (body: StartProjectRequest) => {
     try {
-        const token = getToken();
-        return await Apis.post("/project/start", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/start", body);
     } catch (error) {
         console.error("프로젝트 시작 중 오류 발생:", error);
         throw error;
@@ -172,13 +165,7 @@ export interface RecruitAdditionalMemberRequest {
 
 export const onRecruitAdditionalMemberApi = async (body: RecruitAdditionalMemberRequest) => {
     try {
-        const token = getToken();
-        return await Apis.post("/project/recruit", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/recruit", body);
     } catch (error) {
         console.error("추가 멤버 모집 중 오류 발생:", error);
         throw error;
@@ -194,13 +181,7 @@ export interface LikeProjectRequest {
 
 export const onLikeProjectApi = async (body: LikeProjectRequest) => {
     try {
-        const token = getToken();
-        return await Apis.post("/project/like", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/like", body);
     } catch (error) {
         console.error("프로젝트 좋아요 처리 중 오류 발생:", error);
         throw error;
@@ -214,15 +195,9 @@ export interface TemporarySavedProject {
 }
 export const getTemporarySavedProjectApi = async (userId: number): Promise<TemporarySavedProject[]> => {
     try {
-        const token = getToken();
-
-        return await Apis.get("/project/tempsaved", {
+        return await Apis.getAuth("/project/tempsaved", {
             params: {
                 userId,
-            },
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
             },
         });
     } catch (error) {
@@ -240,13 +215,7 @@ export interface ApplyProjectRequest {
 
 export const onApplyProjectApi = async (body: ApplyProjectRequest) => {
     try {
-        const token = getToken();
-        return await Apis.post("/project/apply", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/apply", body);
     } catch (error) {
         console.error("프로젝트 지원하기 처리 중 오류 발생:", error);
         throw error;
@@ -260,13 +229,7 @@ export interface CancelApplicantRequest {
 
 export const onCancelApplicantApi = async (body: CancelApplicantRequest) => {
     try {
-        const token = getToken();
-        return await Apis.delete("/project/apply", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.deleteAuth("/project/apply", body);
     } catch (error) {
         console.error("프로젝트 지원 취소 처리 중 오류 발생:", error);
         throw error;
@@ -303,19 +266,8 @@ export const getMyProjectApi: QueryFunction<GetMyProjectResponse, [_1: string, p
     try {
         const [_, page] = queryKey;
 
-        const token = getToken();
-
-        if (!token) {
-            throw new Error("토큰이 없습니다.");
-            return null;
-        }
-
-        return await Apis.get("/project/all", {
+        return await Apis.getAuth("/project/all", {
             params: { page },
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
         });
     } catch (error) {
         console.error("프로젝트 상세 정보 조회 중 오류 발생:", error);

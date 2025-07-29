@@ -1,4 +1,4 @@
-import { CalendarTaskType } from "@/apis/project/projectApis";
+import { CalendarTaskType } from "@/app/(afterLogin)/mypage/project/_component/rightSection/manage/_api/apis";
 import clsx from "clsx";
 import { useState } from "react";
 import Selectbox from "../Selectbox";

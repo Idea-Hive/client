@@ -1,5 +1,4 @@
 import { Apis } from "@/utils/api";
-import { getToken } from "@/utils/utils";
 
 interface HandleApplicantDecisionRequest {
     projectId: number;
@@ -11,14 +10,7 @@ interface HandleApplicantDecisionRequest {
 
 export const handleApplicantDecisionApi = async (body: HandleApplicantDecisionRequest) => {
     try {
-        const token = getToken();
-
-        return await Apis.post("/project/apply/decision", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/apply/decision", body);
     } catch (error) {
         console.error("onHandleApplicantDecision Error:::", error);
         throw error;
@@ -35,13 +27,7 @@ interface UpdateApplicantApplicationMessageRequest {
 
 export const updateApplicantApplicationMessageApi = async (body: UpdateApplicantApplicationMessageRequest) => {
     try {
-        const token = getToken();
-        return await Apis.post("/project/apply/update", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/apply/update", body);
     } catch (error) {
         console.error("onUpdateApplicantApplicationMessage Error:::", error);
         throw error;

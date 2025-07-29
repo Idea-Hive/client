@@ -34,14 +34,7 @@ export interface EditProjectRequest {
 
 export const onEditProjectApi = async (body: EditProjectRequest) => {
     try {
-        const token = getToken();
-
-        return await Apis.post("/project/update", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/update", body);
     } catch (error) {
         console.error("프로젝트 수정 중 오류 발생:", error);
         throw error;

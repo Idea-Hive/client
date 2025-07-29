@@ -38,14 +38,8 @@ export interface TemporarySavedProjectInfo {
 }
 export const getTemporarySavedProjectInfoApi = async (projectId: number): Promise<TemporarySavedProjectInfo> => {
     try {
-        const token = getToken();
-
-        return await Apis.get("/project/tempsaved/info", {
+        return await Apis.getAuth("/project/tempsaved/info", {
             params: { projectId },
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
         });
     } catch (error) {
         console.error("임시저장 프로젝트 상세 정보 조회 중 오류 발생:", error);
@@ -71,13 +65,7 @@ export interface SaveProjectRequest {
 }
 export const onSaveProjectApi = async (body: SaveProjectRequest): Promise<number> => {
     try {
-        const token = getToken();
-        return await Apis.post("/project/create", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/create", body);
     } catch (error) {
         console.error("프로젝트 저장 중 오류 발생:", error);
         throw error;
@@ -86,13 +74,7 @@ export const onSaveProjectApi = async (body: SaveProjectRequest): Promise<number
 
 export const onTemporarySaveProjectApi = async (body: SaveProjectRequest) => {
     try {
-        const token = getToken();
-        return await Apis.post("/project/create", body, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        return await Apis.postAuth("/project/create", body);
     } catch (error) {
         console.error("프로젝트 임시저장 중 오류 발생:", error);
         throw error;

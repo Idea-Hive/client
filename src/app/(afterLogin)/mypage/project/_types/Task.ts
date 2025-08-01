@@ -6,6 +6,7 @@ export interface Task {
     dueDate?: string | null;
     attachedLink?: string | null; //링크 1개
     file?: string | null; //파일 1개
+    fileUploadLink?: string | null;
     isSelectedAssignee?: boolean;
     isSelectedDate?: boolean;
     isSubmittedContent?: boolean;

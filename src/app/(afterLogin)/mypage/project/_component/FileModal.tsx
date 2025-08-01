@@ -18,14 +18,15 @@ interface FileModalProps {
     onSuccess: (taskId: number, updates?: Partial<Task>) => void;
     originLink?: string | null;
     originFileName?: string | null;
+    originFileUploadLink?: string | null;
     projectId: string;
     taskType: "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
 }
 
-const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSuccess, originLink, originFileName, projectId, taskType }) => {
+const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSuccess, originLink, originFileName, originFileUploadLink, projectId, taskType }) => {
     const queryClient = useQueryClient();
 
-    console.log("originLink :: ", originLink);
+    console.log("originLink :: ", originFileUploadLink);
     console.log("originFileName :: ", originFileName);
     /** 링크/파일 제출 버튼 토글 */
     const [isLinkType, setIsLinkType] = useState(!!originLink);
@@ -35,7 +36,7 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSucces
     const [linkName, setLinkName] = useState(originLink ?? "");
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState(originFileName ?? null);
-    const [fileLink, setFileLink] = useState(originLink ?? null);
+    const [fileLink, setFileLink] = useState(originFileUploadLink ?? null);
 
     //링크 업로드
     const { mutate } = useMutation({

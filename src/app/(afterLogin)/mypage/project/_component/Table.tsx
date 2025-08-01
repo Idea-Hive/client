@@ -62,10 +62,7 @@ const Table: React.FC<TaskTableProps> = ({ projectId, taskType, tasks, onSelectA
                                 <Dropbox
                                     task={task}
                                     index={task.id}
-                                    assigneeList={[
-                                        { label: "선택 없음", value: "", profileUrl: "" },
-                                        ...(members?.map((item) => ({ label: item.name, value: String(item.id), profileUrl: item.profileUrl })) ?? []),
-                                    ]}
+                                    assigneeList={[...(members?.map((item) => ({ label: item.name, value: String(item.id), profileUrl: item.profileUrl })) ?? [])]}
                                     onSelectAssignee={onSelectAssignee}
                                 />
                             </td>
@@ -98,6 +95,7 @@ const Table: React.FC<TaskTableProps> = ({ projectId, taskType, tasks, onSelectA
                     onSuccess={onSubmitLink}
                     originLink={tasks[openFileModalIndex].attachedLink}
                     originFileName={tasks[openFileModalIndex].file}
+                    originFileUploadLink={tasks[openFileModalIndex].fileUploadLink}
                     projectId={projectId}
                     taskType={taskType}
                 />

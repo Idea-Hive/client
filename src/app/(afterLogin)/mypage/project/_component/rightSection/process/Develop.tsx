@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { AssigneeOption, Task } from "../../../_types/Task";
+import { onUpdateDueDate } from "@/apis/project/manageApis";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon } from "@/components/icons/icons";
-import Table from "../../Table";
-import { useTasksByType, useAssigneeUpdater } from "../../../_hook/hook";
 import { useMutation } from "@tanstack/react-query";
-import { onUpdateDueDate } from "@/apis/project/manageApis";
 import { useParams } from "next/navigation";
+import { useState } from "react";
+import { useAssigneeUpdater, useTasksByType } from "../../../_hook/hook";
+import { AssigneeOption, Task } from "../../../_types/Task";
+import Table from "../../Table";
 
 export default function Develop() {
     const projectId = (useParams()?.projectId as string) || ""; //path 용
@@ -65,15 +65,11 @@ export default function Develop() {
             }
         );
     };
-    
+
     //파일/링크 제출
-    const handleContentsSuccess = (index: number, updates?: object) => { //파일/링크 제출에 성공한 taskId
-        const update = (tasks: Task[]) =>
-            tasks.map((item) => 
-                item.id === index ? 
-                { ...item, ...updates} 
-            : item
-        );
+    const handleContentsSuccess = (index: number, updates?: object) => {
+        //파일/링크 제출에 성공한 taskId
+        const update = (tasks: Task[]) => tasks.map((item) => (item.id === index ? { ...item, ...updates } : item));
         setRequiredTasks((prev) => update(prev));
         setOptionalTasks((prev) => update(prev));
     };
@@ -104,6 +100,8 @@ export default function Develop() {
                     onSubmitLink={(index, updates) => handleContentsSuccess(index, updates)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, requiredTasks)}
+                    projectId={projectId}
+                    taskType="DEVELOP"
                 />
             </div>
             <div className="mt-[40px] flex flex-col">
@@ -117,6 +115,8 @@ export default function Develop() {
                     onSubmitLink={(index, updates) => handleContentsSuccess(index, updates)}
                     checkedIds={checkedIds}
                     onCheck={(ids) => handleCheckedIdsFromTable(ids, optionalTasks)}
+                    projectId={projectId}
+                    taskType="DEVELOP"
                 />
             </div>
         </div>

@@ -7,7 +7,7 @@ import FileModal from "./FileModal";
 import TableDatePicker from "./TableDatePicker";
 import Dropbox from "./TableDropbox";
 
-const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate, onSubmitLink, checkedIds = [], onCheck }) => {
+const Table: React.FC<TaskTableProps> = ({ projectId, taskType, tasks, onSelectAssignee, onSelectDate, onSubmitLink, checkedIds = [], onCheck }) => {
     console.log("tasks :: ", tasks);
     //담당자
     const { members } = useTeamStore();
@@ -98,6 +98,8 @@ const Table: React.FC<TaskTableProps> = ({ tasks, onSelectAssignee, onSelectDate
                     onSuccess={onSubmitLink}
                     originLink={tasks[openFileModalIndex].attachedLink}
                     originFileName={tasks[openFileModalIndex].file}
+                    projectId={projectId}
+                    taskType={taskType}
                 />
             )}
         </div>

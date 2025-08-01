@@ -49,6 +49,7 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
                 dueDate: task.dueDate ?? undefined,
                 attachedLink: task.attachedLink ?? undefined,
                 file: task.originalFileName ?? undefined,
+                fileUploadLink: task.fileUploadLink ?? undefined,
                 isSelectedAssignee: task.picId != null,
                 isSelectedDate: task.dueDate != null,
                 isSubmittedContent: !!task.originalFileName || !!task.attachedLink,

@@ -49,6 +49,7 @@ export interface Task {
     title: string;
     taskType: "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
     attachedLink: string | null;
+    fileUploadLink: string | null;
     originalFileName: string;
     pic: string;
     dueDate: string | null;

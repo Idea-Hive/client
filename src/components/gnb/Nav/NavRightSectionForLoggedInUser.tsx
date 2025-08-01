@@ -51,8 +51,9 @@ export default function NavRightSectionForLoggedInUser() {
     const onLogout = useCallback(() => {
         const prod = process.env.NODE_ENV === "production";
 
-        if (prod) logout();
-        else deleteAccessTokenAndInvalidateQueries();
+        logout();
+        // if (prod) logout();
+        // else deleteAccessTokenAndInvalidateQueries();
     }, [logout, deleteAccessTokenAndInvalidateQueries]);
 
     return (

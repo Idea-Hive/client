@@ -7,7 +7,7 @@
 import { FileUploadRequest, onUploadFile, onUploadLink, UpdateLinkRequest } from "@/apis/project/manageApis";
 import Button from "@/components/Button";
 import { CloseIcon, DownloadSimpleIcon, LinkSimpleIcon, PlusCircleIcon } from "@/components/icons/icons";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { Task } from "../_types/Task";
 
@@ -18,9 +18,13 @@ interface FileModalProps {
     onSuccess: (taskId: number, updates?: Partial<Task>) => void;
     originLink?: string | null;
     originFileName?: string | null;
+    projectId: string;
+    taskType: "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
 }
 
-const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSuccess, originLink, originFileName }) => {
+const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSuccess, originLink, originFileName, projectId, taskType }) => {
+    const queryClient = useQueryClient();
+
     console.log("originLink :: ", originLink);
     console.log("originFileName :: ", originFileName);
     /** 링크/파일 제출 버튼 토글 */
@@ -31,6 +35,7 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSucces
     const [linkName, setLinkName] = useState(originLink ?? "");
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState(originFileName ?? null);
+    const [fileLink, setFileLink] = useState(originLink ?? null);
 
     //링크 업로드
     const { mutate } = useMutation({
@@ -42,6 +47,7 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSucces
                 isSubmittedContent: true,
                 attachedLink: linkName,
             });
+            queryClient.invalidateQueries({ queryKey: ["getTaskInfoByType", { projectId: Number(projectId), taskType }] });
             onClose();
             console.log("제출함");
         },
@@ -61,6 +67,7 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSucces
                 isSubmittedContent: true,
                 file: file?.name,
             }); // 부모에게 성공 알림
+            queryClient.invalidateQueries({ queryKey: ["getTaskInfoByType", { projectId: Number(projectId), taskType }] });
             onClose(); // 모달 닫기
             console.log("업로드 성공");
         },
@@ -100,7 +107,7 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSucces
                 <div className="mt-6 flex flex-col gap-6">
                     <div className="flex flex-col gap-4">
                         {isLinkType && <LinkInput linkName={linkName} setLinkName={setLinkName} />}
-                        {isFileType && <FileInput file={file} setFile={setFile} originFileName={fileName ?? null} />}
+                        {isFileType && <FileInput file={file} setFile={setFile} originFileName={fileName ?? null} fileLink={fileLink} />}
                     </div>
                     <div className="flex gap-2">
                         <Button className="flex-1" label="링크 업로드" icLeft={<LinkSimpleIcon />} size="medium" btnType="line" onClick={() => toggleLinkButton()} />
@@ -182,9 +189,10 @@ interface FileInputProps {
     file: File | null;
     setFile: (f: File | null) => void;
     originFileName: string | null; //이미 등록된 파일이름
+    fileLink: string | null;
 }
 
-const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName }) => {
+const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName, fileLink }) => {
     /** 파일 */
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [inputValue, setInputValue] = useState<string>(originFileName || "");
@@ -195,13 +203,13 @@ const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName }) 
 
     //아이콘 클릭 시, 파일 다운로드
     const handleFileIconClick = () => {
-        if (!inputValue) return;
-        // TODO : 서버 측에서 클라우드 s3 환경 구축 후 (250706 현재는 로컬로만 파일을 올릴 수 있음.), return 받은 url로 다운 가능 가능하게 할 예정
-        // const fileUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}${inputValue}`;
-        // const link = document.createElement("a");
-        // link.href = fileUrl;
-        // link.download = inputValue; // 다운로드 시 저장될 이름
-        // link.click();
+        if (!inputValue || !fileLink) return;
+        const link = document.createElement("a");
+        link.href = fileLink;
+        link.download = inputValue; // 저장될 이름 (무시될 수도 있음)
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

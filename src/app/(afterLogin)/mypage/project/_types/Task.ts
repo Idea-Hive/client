@@ -5,7 +5,7 @@ export interface Task {
     assignee?: AssigneeOption;
     dueDate?: string | null;
     attachedLink?: string | null; //링크 1개
-    file?: string | null;         //파일 1개
+    file?: string | null; //파일 1개
     isSelectedAssignee?: boolean;
     isSelectedDate?: boolean;
     isSubmittedContent?: boolean;
@@ -13,6 +13,8 @@ export interface Task {
 }
 
 export interface TaskTableProps {
+    projectId: string;
+    taskType: "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
     tasks: Task[];
     onSelectAssignee: (index: number, assignee: AssigneeOption) => void;
     onSelectDate: (index: number, date: string) => void;

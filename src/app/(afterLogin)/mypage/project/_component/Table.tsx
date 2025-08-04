@@ -3,7 +3,7 @@ import { FolderIcon, UploadSimpleIcon } from "@/components/icons/icons";
 import { useState } from "react";
 import { useTeamStore } from "../_store/teamStore";
 import { TaskTableProps } from "../_types/Task";
-import FileModal from "./FileModal";
+import FileModal from "./FileModal/FileModal";
 import TableDatePicker from "./TableDatePicker";
 import Dropbox from "./TableDropbox";
 

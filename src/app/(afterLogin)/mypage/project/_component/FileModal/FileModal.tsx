@@ -224,13 +224,13 @@ const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName, fi
     //아이콘 클릭 시, 파일 다운로드
     const handleFileIconClick = () => {
         if (!inputValue || !fileLink) return;
-        downloadFileMutate({ taskId });
-        // const link = document.createElement("a");
-        // link.href = fileLink;
-        // link.download = inputValue;
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
+        // downloadFileMutate({ taskId });
+        const link = document.createElement("a");
+        link.href = fileLink;
+        link.download = inputValue;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

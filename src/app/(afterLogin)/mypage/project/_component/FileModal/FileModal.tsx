@@ -7,9 +7,12 @@
 import { FileUploadRequest, onUploadFile, onUploadLink, UpdateLinkRequest } from "@/apis/project/manageApis";
 import Button from "@/components/Button";
 import { CloseIcon, DownloadSimpleIcon, LinkSimpleIcon, PlusCircleIcon } from "@/components/icons/icons";
+import Toast from "@/components/Toast";
+import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { Task } from "../_types/Task";
+import { Task } from "../../_types/Task";
+import { downloadFileApi } from "./_api/apis";
 
 interface FileModalProps {
     isOpen: boolean;
@@ -106,7 +109,7 @@ const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSucces
                 <div className="mt-6 flex flex-col gap-6">
                     <div className="flex flex-col gap-4">
                         {isLinkType && <LinkInput linkName={linkName} setLinkName={setLinkName} />}
-                        {isFileType && <FileInput file={file} setFile={setFile} originFileName={fileName ?? null} fileLink={fileLink} />}
+                        {isFileType && <FileInput file={file} setFile={setFile} originFileName={fileName ?? null} fileLink={fileLink} taskId={taskId} />}
                     </div>
                     <div className="flex gap-2">
                         <Button className="flex-1" label="링크 업로드" icLeft={<LinkSimpleIcon />} size="medium" btnType="line" onClick={() => toggleLinkButton()} />
@@ -124,6 +127,10 @@ interface LinkInputProps {
     setLinkName: (value: string) => void;
 }
 const LinkInput: React.FC<LinkInputProps> = ({ linkName, setLinkName }) => {
+    const [showToast, setShowToast] = useState(false);
+    const [toastType, setToastType] = useState<"success" | "error">("success");
+    const [toastMessage, setToastMessage] = useState("");
+
     /** 링크 */
     const linkInputRef = useRef<HTMLInputElement | null>(null);
     const [linkError, setLinkError] = useState("");
@@ -133,8 +140,18 @@ const LinkInput: React.FC<LinkInputProps> = ({ linkName, setLinkName }) => {
         if (value) {
             navigator.clipboard
                 .writeText(value)
-                .then(() => console.log("복사 됨."))
-                .catch(() => console.log("복사 안됨."));
+                .then(() => {
+                    console.log("복사 됨.");
+                    setToastType("success");
+                    setShowToast(true);
+                    setToastMessage("링크가 복사되었습니다.");
+                })
+                .catch(() => {
+                    console.log("복사 안됨.");
+                    setToastType("error");
+                    setShowToast(true);
+                    setToastMessage("링크 복사에 실패했습니다.");
+                });
         }
     };
 
@@ -180,6 +197,7 @@ const LinkInput: React.FC<LinkInputProps> = ({ linkName, setLinkName }) => {
                 </div>
             </div>
             {linkError && <p className="text-red text-xs">{linkError}</p>}
+            {showToast && <Toast type={toastType} message={toastMessage} onClose={() => setShowToast(false)} />}
         </>
     );
 };
@@ -189,9 +207,10 @@ interface FileInputProps {
     setFile: (f: File | null) => void;
     originFileName: string | null; //이미 등록된 파일이름
     fileLink: string | null;
+    taskId: number;
 }
 
-const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName, fileLink }) => {
+const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName, fileLink, taskId }) => {
     /** 파일 */
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [inputValue, setInputValue] = useState<string>(originFileName || "");
@@ -200,24 +219,18 @@ const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName, fi
         fileInputRef.current?.click();
     };
 
-    //아이콘 클릭 시, 파일 다운로드
-    const handleFileIconClick = async () => {
-        if (!inputValue || !fileLink) return;
-        try {
-            const response = await fetch(fileLink);
-            const blob = await response.blob();
+    const { mutate: downloadFileMutate } = useCreateMutation(() => downloadFileApi({ taskId }), "downloadFile");
 
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = inputValue || "downloaded_file";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error("다운로드 실패:", error);
-        }
+    //아이콘 클릭 시, 파일 다운로드
+    const handleFileIconClick = () => {
+        if (!inputValue || !fileLink) return;
+        downloadFileMutate({ taskId });
+        // const link = document.createElement("a");
+        // link.href = fileLink;
+        // link.download = inputValue;
+        // document.body.appendChild(link);
+        // link.click();
+        // document.body.removeChild(link);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

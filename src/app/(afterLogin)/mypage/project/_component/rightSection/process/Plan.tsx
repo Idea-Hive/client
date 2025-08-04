@@ -3,7 +3,7 @@
 import { onUpdateDueDate } from "@/apis/project/manageApis";
 import Button from "@/components/Button";
 import { DownloadSimpleIcon } from "@/components/icons/icons";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useAssigneeUpdater, useTasksByType } from "../../../_hook/hook";
@@ -12,6 +12,7 @@ import Table from "../../Table";
 
 export default function Plan() {
     const projectId = (useParams()?.projectId as string) || ""; //path 용
+    const queryClient = useQueryClient();
     const { requiredTasks, optionalTasks, setRequiredTasks, setOptionalTasks } = useTasksByType({
         taskType: "PLANNING",
     });
@@ -42,6 +43,16 @@ export default function Plan() {
     //마감기한
     const { mutate } = useMutation({
         mutationFn: onUpdateDueDate,
+        onSuccess: () => {
+            console.log("마감기한 업데이트 성공");
+            // 마감기한 업데이트 성공 후 관련 쿼리들 무효화
+            queryClient.invalidateQueries({
+                queryKey: ["getTasks"],
+            });
+        },
+        onError: () => {
+            console.error("마감기한 업데이트 실패");
+        },
     });
     const handleSelectDate = (index: number, value: string) => {
         mutate(
@@ -75,6 +86,10 @@ export default function Plan() {
         const update = (tasks: Task[]) => tasks.map((item) => (item.id === index ? { ...item, ...updates } : item));
         setRequiredTasks((prev) => update(prev));
         setOptionalTasks((prev) => update(prev));
+        // 파일/링크 제출 후 쿼리 무효화하여 최신 데이터 가져오기
+        queryClient.invalidateQueries({
+            queryKey: ["getTasks"],
+        });
     };
 
     return (

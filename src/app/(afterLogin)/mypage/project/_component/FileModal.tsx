@@ -26,8 +26,6 @@ interface FileModalProps {
 const FileModal: React.FC<FileModalProps> = ({ isOpen, onClose, taskId, onSuccess, originLink, originFileName, originFileUploadLink, projectId, taskType }) => {
     const queryClient = useQueryClient();
 
-    console.log("originLink :: ", originFileUploadLink);
-    console.log("originFileName :: ", originFileName);
     /** 링크/파일 제출 버튼 토글 */
     const [isLinkType, setIsLinkType] = useState(!!originLink);
     const [isFileType, setIsFileType] = useState(!!originFileName);
@@ -203,14 +201,23 @@ const FileInput: React.FC<FileInputProps> = ({ file, setFile, originFileName, fi
     };
 
     //아이콘 클릭 시, 파일 다운로드
-    const handleFileIconClick = () => {
+    const handleFileIconClick = async () => {
         if (!inputValue || !fileLink) return;
-        const link = document.createElement("a");
-        link.href = fileLink;
-        link.download = inputValue; // 저장될 이름 (무시될 수도 있음)
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        try {
+            const response = await fetch(fileLink);
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = inputValue || "downloaded_file";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("다운로드 실패:", error);
+        }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

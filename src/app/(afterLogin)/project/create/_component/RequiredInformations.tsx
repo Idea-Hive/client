@@ -27,6 +27,22 @@ const RequiredInformations = () => {
 
             <div className="space-y-5">
                 <Input
+                    label="게시글 제목"
+                    value={requiredFormData.title}
+                    onChange={(e) => {
+                        setRequiredFormData("title", e.target.value);
+                        setErrors("title", "");
+                    }}
+                    placeholder="게시글 제목을 입력해주세요"
+                    type="text"
+                    isRequired={true}
+                    children={<div className="text-xs text-n700">{requiredFormData.title.length}/20</div>}
+                    maxLength={20}
+                    isErr={errors.title !== ""}
+                    errMsg={errors.title}
+                />
+
+                <Input
                     label="프로젝트명"
                     value={requiredFormData.name}
                     onChange={(e) => {
@@ -40,22 +56,6 @@ const RequiredInformations = () => {
                     maxLength={20}
                     isErr={errors.name !== ""}
                     errMsg={errors.name}
-                />
-
-                <Input
-                    label="프로젝트 제목"
-                    value={requiredFormData.title}
-                    onChange={(e) => {
-                        setRequiredFormData("title", e.target.value);
-                        setErrors("title", "");
-                    }}
-                    placeholder="프로젝트 제목을 입력해주세요"
-                    type="text"
-                    isRequired={true}
-                    children={<div className="text-xs text-n700">{requiredFormData.title.length}/20</div>}
-                    maxLength={20}
-                    isErr={errors.title !== ""}
-                    errMsg={errors.title}
                 />
 
                 <ToastEditor

@@ -1,5 +1,5 @@
 import { getMyProjectInfo, getTaskInfoByType, getTeamMemberList, onUpdateManager } from "@/apis/project/manageApis";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTeamStore } from "../_store/teamStore";
@@ -7,6 +7,7 @@ import type { AssigneeOption, Task } from "../_types/Task";
 type TaskType = "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
 
 export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
+    console.log("taskType :: ", taskType);
     const projectId = (useParams()?.projectId as string) || "";
 
     const [requiredTasks, setRequiredTasks] = useState<Task[]>([]);
@@ -16,10 +17,13 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
         queryKey: ["getTasks", { projectId: Number(projectId!), taskType }],
         queryFn: getTaskInfoByType,
         enabled: !!projectId,
+        staleTime: 0, // 항상 최신 데이터를 가져오도록 설정
+        refetchOnWindowFocus: true, // 윈도우 포커스 시 자동 리페치
     });
 
     useEffect(() => {
         if (data) {
+            console.log("data :: ", data);
             const allTasks = [...data.requiredTasks, ...data.optionalTasks];
 
             let prefix = "";
@@ -59,7 +63,9 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
             setRequiredTasks(mappedTasks.filter((item) => item.isRequired));
             setOptionalTasks(mappedTasks.filter((item) => !item.isRequired));
         }
-    }, [data]);
+    }, [data, taskType]);
+
+    console.log("requiredTasks ::test ", requiredTasks);
 
     return {
         requiredTasks,
@@ -157,10 +163,16 @@ export const useProjectWithTeam = (projectId?: string) => {
 
 // 담당자 선택 + 상태 업데이트 + 서버 호출
 export const useAssigneeUpdater = (projectId: string) => {
+    const queryClient = useQueryClient();
+
     const { mutate } = useMutation({
         mutationFn: onUpdateManager,
         onSuccess: () => {
             console.log("업데이트 성공");
+            // 담당자 업데이트 성공 후 관련 쿼리들 무효화
+            queryClient.invalidateQueries({
+                queryKey: ["getTasks"],
+            });
         },
         onError: () => {
             console.log("업데이트 실패");

@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${pretendard.variable} ${montserrat.variable} font-pretendard`}>
+            <body className={`${pretendard.variable} ${montserrat.variable} font-pretendard min-w-[1024px]`}>
                 <QueryProviderWrapper>
                     <SpinnerProvider>
                         <Nav />

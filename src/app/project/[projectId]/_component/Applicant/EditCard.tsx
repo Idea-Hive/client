@@ -1,6 +1,6 @@
 import { Applicant } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -8,11 +8,10 @@ import { useIdsForApplicant } from "../../store/store";
 import { updateApplicantApplicationMessageApi } from "./_api/apis";
 
 export default function EditCard({ setIsEdit, applicant }: { setIsEdit: Dispatch<SetStateAction<boolean>>; applicant: Applicant }) {
+    const { showToast } = useToast();
     const { projectId } = useIdsForApplicant();
 
     const queryClient = useQueryClient();
-
-    const [isError, setIsError] = useState<boolean>(false);
 
     const [value, setValue] = useState<string>(applicant.applicationMessage);
     const onChangeApplicationMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -20,14 +19,12 @@ export default function EditCard({ setIsEdit, applicant }: { setIsEdit: Dispatch
     };
 
     const onUpdateApplicationMessageMutation = useCreateMutation(updateApplicantApplicationMessageApi, "updateApplicantApplicationMessage", {
-        onSuccess: (response) => {
-            console.log("onUpdateApplicationMessageMutation Success:::", response);
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["getApplicantInfo", { projectId: Number(projectId), page: 1, size: 4 }] });
             setIsEdit(false);
         },
-        onError: (error) => {
-            console.error("onUpdateApplicationMessageMutation Error:::", error);
-            setIsError(true);
+        onError: () => {
+            showToast("error", "지원 메시지 수정에 실패했습니다.");
         },
     });
 
@@ -55,8 +52,6 @@ export default function EditCard({ setIsEdit, applicant }: { setIsEdit: Dispatch
                 <Button btnType="line" label="취소" size="small" className="w-[74px] !rounded-[4px]" onClick={() => setIsEdit(false)} />
                 <Button btnType="primary" label="저장" size="small" className="w-[74px] !rounded-[4px]" onClick={onUpdateApplicationMessage} />
             </div>
-
-            {isError && <Toast message="지원 메시지 수정에 실패했습니다." onClose={() => setIsError(false)} />}
         </>
     );
 }

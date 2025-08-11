@@ -3,31 +3,27 @@
 import { onApplyProjectApi } from "@/apis/project/projectApis";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 const ApplicantButton = ({ projectId, memberId }: { projectId: number; memberId: number }) => {
+    const { showToast } = useToast();
+
     const [isOpenApplicantModal, setIsOpenApplicantModal] = useState<boolean>(false);
     const [isOpenApplicantSuccessModal, setIsOpenApplicantSuccessModal] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
-    const [isToastOpen, setIsToastOpen] = useState<boolean>(false);
-    const [toastMessage, setToastMessage] = useState<string>("");
-    const [toastType, setToastType] = useState<"success" | "warning" | "error" | "info">("success");
+
     const queryClient = useQueryClient();
 
     const onApplicantMutation = useCreateMutation(onApplyProjectApi, "onApplyProject", {
-        onSuccess: (response) => {
-            console.log("onApplicantMutation onSuccess:::", response);
+        onSuccess: () => {
             setIsOpenApplicantModal(false);
             setIsOpenApplicantSuccessModal(true);
         },
-        onError: (error) => {
-            console.log("onApplicantMutation onError:::", error);
-            setToastMessage("지원에 실패했습니다");
-            setToastType("error");
-            setIsToastOpen(true);
+        onError: () => {
+            showToast("error", "지원에 실패했습니다");
         },
     });
 
@@ -68,8 +64,6 @@ const ApplicantButton = ({ projectId, memberId }: { projectId: number; memberId:
                     setIsOpenApplicantModal(false);
                 }}
             />
-
-            {isToastOpen && <Toast message={toastMessage} type={toastType} onClose={() => setIsToastOpen(false)} />}
         </>
     );
 };

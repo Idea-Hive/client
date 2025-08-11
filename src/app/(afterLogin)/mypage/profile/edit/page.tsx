@@ -6,7 +6,7 @@ import Input from "@/components/Input";
 import Modal from "@/components/Modal";
 import Selectbox from "@/components/Selectbox";
 import Spinner from "@/components/Spinner";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useInput } from "@/hooks/hooks";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useUserInfo } from "@/hooks/queries";
@@ -17,6 +17,7 @@ import { onEditUserInfoApi } from "./apis/apis";
 
 export default function EditProfile() {
     const router = useRouter();
+    const { showToast } = useToast();
 
     const { user, userIsPending } = useUserInfo();
     const { data: rawSkillStacks } = useQuery({ queryKey: ["skillStacks"], queryFn: getSkillStackApi });
@@ -27,9 +28,6 @@ export default function EditProfile() {
     const [career, setCareer] = useState<string>(""); // 경력
 
     const [showModal, setShowModal] = useState(false);
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
-    const [toastType, setToastType] = useState<"success" | "error">("success");
 
     useEffect(() => {
         if (user) {
@@ -87,9 +85,7 @@ export default function EditProfile() {
             setShowModal(true);
         },
         onError: () => {
-            setToastType("error");
-            setShowToast(true);
-            setToastMessage("프로필 수정에 실패했습니다.");
+            showToast("error", "프로필 수정에 실패했습니다.");
         },
     });
 
@@ -202,7 +198,6 @@ export default function EditProfile() {
                     router.push("/mypage/profile");
                 }}
             />
-            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} type={toastType} />}
         </>
     );
 }

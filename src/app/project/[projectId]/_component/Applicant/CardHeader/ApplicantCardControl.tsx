@@ -1,52 +1,37 @@
 import { Applicant, onCancelApplicantApi } from "@/apis/project/projectApis";
 import { HamburgerIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
+import { useClickOutside } from "@/hooks/hooks";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useQueryClient } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useIdsForApplicant } from "../../../store/store";
 import ProjectApplicantApplicantCardDropdown from "../ProjectApplicantApplicantCardDropdown";
 
 // 지원자 3DotsVertical
 export default function ApplicantCardControl({ setIsEdit, applicant }: { setIsEdit: Dispatch<SetStateAction<boolean>>; applicant: Applicant }) {
+    const { showToast } = useToast();
     const { projectId, loginUserId } = useIdsForApplicant();
 
     const queryClient = useQueryClient();
 
     const [isDotsThreeVerticalOpen, setIsDotsThreeVerticalOpen] = useState(false); // DotsThreeVertical Dropdown 오픈
     const dotsThreeVerticalRef = useRef<HTMLDivElement>(null);
-
-    // DotsThreeVertical Dropdown 오픈 외부 클릭 시 닫기
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dotsThreeVerticalRef.current && !dotsThreeVerticalRef.current.contains(event.target as Node)) {
-                setIsDotsThreeVerticalOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+    useClickOutside(dotsThreeVerticalRef, () => {
+        if (isDotsThreeVerticalOpen) setIsDotsThreeVerticalOpen(false);
+    });
 
     const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false); // 지원 취소 모달 오픈
-
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false); // 성공 모달 오픈
-    const [isErrorToastOpen, setIsErrorToastOpen] = useState<boolean>(false); // 에러메세지 토스트 오픈
-    const [errorMessage, setErrorMessage] = useState<string>(""); // 에러메세지
 
     const onCancelApplicantMutation = useCreateMutation(onCancelApplicantApi, "cancelApplicant", {
-        onSuccess: (response) => {
-            console.log("onCancelApplicantMutation Success:::", response);
+        onSuccess: () => {
             setIsCancelModalOpen(false);
             setIsSuccessModalOpen(true);
         },
-        onError: (error) => {
-            console.error("onCancelApplicantMutation Error:::", error);
-            setErrorMessage("지원 취소 중 오류가 발생했습니다.");
-            setIsErrorToastOpen(true);
+        onError: () => {
+            showToast("error", "지원 취소 중 오류가 발생했습니다.");
         },
     });
 
@@ -84,8 +69,6 @@ export default function ApplicantCardControl({ setIsEdit, applicant }: { setIsEd
                     setIsSuccessModalOpen(false);
                 }}
             />
-
-            {isErrorToastOpen && <Toast message={errorMessage} onClose={() => setIsErrorToastOpen(false)} />}
         </>
     );
 }

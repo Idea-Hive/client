@@ -2,13 +2,14 @@
 
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useInput } from "@/hooks/hooks";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useState } from "react";
 import { onLoginApi } from "./_api/api";
 
 export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
+    const { showToast } = useToast();
     const email = useInput("");
     const password = useInput("");
 
@@ -44,8 +45,6 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
         return isValid;
     };
 
-    const [showToast, setShowToast] = useState(false);
-
     const loginMutation = useCreateMutation(onLoginApi, "login", {
         onSuccess: async (data) => {
             // 배포 환경과 로컬 환경에 따른 쿠키 설정
@@ -60,8 +59,7 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             onClose();
         },
         onError: (error) => {
-            console.error("loginError:::", error);
-            setShowToast(true);
+            showToast("error", (error.response?.data as string) || "아이디 / 비밀번호를 다시 확인해주세요.");
         },
     });
 
@@ -112,8 +110,6 @@ export default function EmailLoginForm({ onClose }: { onClose: () => void }) {
             </div>
 
             <Button label="이메일로 로그인" type="submit" onClick={() => {}}></Button>
-
-            {showToast && <Toast message="아이디 / 비밀번호를 다시 확인해주세요" onClose={() => setShowToast(false)} />}
         </form>
     );
 }

@@ -2,6 +2,7 @@
 
 interface SubItem {
     label: string;
+    isSubmitted?: boolean;
 }
 
 interface MenuProps {
@@ -26,12 +27,8 @@ const Menu: React.FC<MenuProps> = ({ label, subItems, defaultOpen = false, icon,
                 {subItems?.map((item) => {
                     const isSelected = selectedItem === item.label;
                     return (
-                        <div
-                            key={item.label}
-                            onClick={() => onSelect(item.label)}
-                            className={`h-10 leading-10 ml-2 px-10 rounded-md cursor-pointer ${isSelected ? "bg-n75" : "bg-n0"} hover:bg-n200`}
-                        >
-                            <span className="text-n900 text-sm">{item.label}</span>
+                        <div key={item.label} onClick={() => onSelect(item.label)} className={`h-10 leading-10 ml-2 px-10 rounded-md cursor-pointer ${isSelected ? "bg-n75" : "bg-n0"} hover:bg-n200`}>
+                            <span className={`text-n900 text-sm ${!item.isSubmitted && "text-red"}`}>{item.label}</span>
                         </div>
                     );
                 })}

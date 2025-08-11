@@ -1,6 +1,7 @@
+import { useClickOutside } from "@/hooks/hooks";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import "react-calendar/dist/Calendar.css";
 import { LooseValue } from "react-calendar/dist/shared/types.js";
 import "./DatePicker.css";
@@ -20,19 +21,9 @@ interface DatePickerProps {
 
 export default function DatePicker({ isRange, defaultValue, onChange, isOpen, onClose, minDate }: DatePickerProps) {
     const calendarRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (calendarRef.current && !calendarRef.current.contains(event.target as Node) && onClose) {
-                onClose();
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [onClose]);
+    useClickOutside(calendarRef, () => {
+        if (isOpen) onClose?.();
+    });
 
     if (!isOpen) return null;
 

@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -8,27 +8,25 @@ import { useIdsForApplicant } from "../../store/store";
 import { handleApplicantDecisionApi } from "./_api/apis";
 
 export default function RejectCard({ applicantMemberId, applicantId, setIsReject }: { applicantMemberId: number; applicantId: number; setIsReject: Dispatch<SetStateAction<boolean>> }) {
+    const { showToast } = useToast();
+
     const queryClient = useQueryClient();
     const { projectId } = useIdsForApplicant();
-
     const [rejectionMessage, setRejectionMessage] = useState<string>("");
     const onChangeRejectionMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setRejectionMessage(e.target.value);
     };
 
-    const [isError, setIsError] = useState<boolean>(false); // 에러메세지 토스트 오픈
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false); // 성공 모달 오픈
 
     const handleApplicantDecisionMutation = useCreateMutation(handleApplicantDecisionApi, "handleApplicantDecision", {
         onSuccess: (response) => {
-            console.log("handleApplicantDecisionMutation Success:::", response);
             setIsSuccessModalOpen(true);
             queryClient.invalidateQueries({ queryKey: ["getApplicantInfo", { projectId: Number(projectId), page: 1, size: 4 }] });
             setIsReject(false);
         },
         onError: (error) => {
-            console.error("handleApplicantDecisionMutation Error:::", error);
-            setIsError(true);
+            showToast("error", "지원 거절에 실패했습니다.");
         },
     });
 
@@ -63,7 +61,6 @@ export default function RejectCard({ applicantMemberId, applicantId, setIsReject
                     setIsSuccessModalOpen(false);
                 }}
             />
-            {isError && <Toast message="지원 거절에 실패했습니다." onClose={() => setIsError(false)} />}
         </>
     );
 }

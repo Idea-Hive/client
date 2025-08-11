@@ -1,7 +1,7 @@
 import { onDeleteProjectApi, onWithdrawProjectApi } from "@/apis/project/manageApis";
 import { GearSixIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useClickOutside } from "@/hooks/hooks";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useUserInfo } from "@/hooks/queries";
@@ -13,9 +13,8 @@ import Dropbox from "../Dropbox";
 export default function ProjectSettingDropDown({ projectId }: { projectId: string }) {
     const { user } = useUserInfo();
     const router = useRouter();
+    const { showToast } = useToast();
 
-    const [isToast, setIsToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
     const [isModal, setIsModal] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
     const [modalMessage, setModalMessage] = useState("");
@@ -33,8 +32,7 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
             setModalMessage("프로젝트가 삭제되었습니다.");
         },
         onError: (err: AxiosError) => {
-            setIsToast(true);
-            setToastMessage(err.response?.data as string);
+            showToast("error", (err.response?.data as string) || "프로젝트 삭제에 실패했습니다.");
         },
     });
 
@@ -49,8 +47,7 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
             setModalMessage("프로젝트 탈퇴가 완료되었습니다.");
         },
         onError: (err: AxiosError) => {
-            setIsToast(true);
-            setToastMessage(err.response?.data as string);
+            showToast("error", (err.response?.data as string) || "프로젝트 탈퇴에 실패했습니다.");
         },
     });
 
@@ -81,15 +78,6 @@ export default function ProjectSettingDropDown({ projectId }: { projectId: strin
                         },
                     ]}
                     dropBoxRef={dropBoxRef}
-                />
-            )}
-            {isToast && (
-                <Toast
-                    message={toastMessage}
-                    type="error"
-                    onClose={() => {
-                        setIsToast(false);
-                    }}
                 />
             )}
             <Modal

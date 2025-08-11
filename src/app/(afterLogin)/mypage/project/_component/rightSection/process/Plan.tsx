@@ -17,8 +17,6 @@ export default function Plan() {
         taskType: "PLANNING",
     });
 
-    console.log("requiredTasks :: ", requiredTasks);
-
     //체크박스
     const [checkedIds, setCheckedIds] = useState<string[]>([]);
     const handleCheckedIdsFromTable = (checkedFromTable: string[], tableTasks: Task[]) => {

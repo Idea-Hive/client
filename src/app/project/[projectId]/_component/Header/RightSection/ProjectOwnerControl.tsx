@@ -1,5 +1,5 @@
 import { HamburgerIcon } from "@/components/icons/icons";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useClickOutside } from "@/hooks/hooks";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { AxiosError } from "axios";
@@ -9,6 +9,7 @@ import { onPullUpProjectApi } from "../../../_api/api";
 
 export default function ProjectOwnerControl() {
     const { projectId } = useParams();
+    const { showToast } = useToast();
 
     const [isDotsThreeVerticalOpen, setIsDotsThreeVerticalOpen] = useState(false); // DotsThreeVertical Dropdown 오픈
     const dotsThreeVerticalRef = useRef<HTMLDivElement>(null);
@@ -21,20 +22,12 @@ export default function ProjectOwnerControl() {
         router.push(`/project/edit/${projectId}`);
     };
 
-    const [showToast, setShowToast] = useState<boolean>(false);
-    const [toastMessage, setToastMessage] = useState<string>("");
-    const [toastType, setToastType] = useState<"success" | "error">("success");
-
     const pullUpMutation = useCreateMutation(onPullUpProjectApi, "pullUpProject", {
         onSuccess: () => {
-            setToastMessage("끌어올리기 처리가 완료되었습니다.");
-            setToastType("success");
-            setShowToast(true);
+            showToast("success", "끌어올리기 처리가 완료되었습니다.");
         },
         onError: (error: AxiosError) => {
-            setToastMessage(error.response?.data as string);
-            setToastType("error");
-            setShowToast(true);
+            showToast("error", (error.response?.data as string) || "끌어올리기 처리에 실패했습니다.");
         },
     });
     const onClickPullUp = () => {
@@ -62,8 +55,6 @@ export default function ProjectOwnerControl() {
                     </div>
                 )}
             </div>
-
-            {showToast && <Toast message={toastMessage} type={toastType} onClose={() => setShowToast(false)} />}
         </div>
     );
 }

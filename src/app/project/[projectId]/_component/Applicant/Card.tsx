@@ -11,7 +11,6 @@ export default function Card({ state, applicant, projectCreatorName }: { state: 
     const [isEdit, setIsEdit] = useState<boolean>(false); // 수정 모드 변경
     const [isReject, setIsReject] = useState<boolean>(false); // 거절 모드 변경
 
-    console.log("applicant:::", applicant);
     return (
         <div className="w-full border border-n400 rounded-lg p-6 flex flex-col gap-4">
             {/* 프로젝트 지원자(projectCreatorId !== memberId) or 프로젝트 개설자 (어차피 프로젝트 개설자는 지원 자체를 못함) */}

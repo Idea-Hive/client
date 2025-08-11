@@ -5,22 +5,21 @@ export type ToastType = "success" | "warning" | "error" | "info";
 interface ToastProps {
     type?: ToastType;
     message: string;
-    duration?: number;
     onClose?: () => void;
     className?: string;
 }
 
-export default function Toast({ type = "error", message, duration = 3000, onClose, className }: ToastProps) {
+export default function Toast({ type = "error", message, onClose, className }: ToastProps) {
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(false);
             onClose?.();
-        }, duration);
+        }, 3000);
 
         return () => clearTimeout(timer);
-    }, [duration, onClose]);
+    }, [onClose]);
 
     if (!isVisible) return null;
 

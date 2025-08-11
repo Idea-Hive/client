@@ -7,7 +7,6 @@ import type { AssigneeOption, Task } from "../_types/Task";
 type TaskType = "PLANNING" | "DESIGN" | "DEVELOP" | "DEPLOY" | "COMPLETE";
 
 export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
-    console.log("taskType :: ", taskType);
     const projectId = (useParams()?.projectId as string) || "";
 
     const [requiredTasks, setRequiredTasks] = useState<Task[]>([]);
@@ -23,7 +22,6 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
 
     useEffect(() => {
         if (data) {
-            console.log("data :: ", data);
             const allTasks = [...data.requiredTasks, ...data.optionalTasks];
 
             let prefix = "";
@@ -64,8 +62,6 @@ export const useTasksByType = ({ taskType }: { taskType: TaskType }) => {
             setOptionalTasks(mappedTasks.filter((item) => !item.isRequired));
         }
     }, [data, taskType]);
-
-    console.log("requiredTasks ::test ", requiredTasks);
 
     return {
         requiredTasks,

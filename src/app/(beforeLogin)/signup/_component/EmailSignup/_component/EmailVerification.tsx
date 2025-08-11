@@ -1,6 +1,6 @@
 import { EmailVerificationCheckIcon } from "@/components/icons/icons";
 import Input from "@/components/Input";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { validateEmail } from "@/utils/utils";
 import { AxiosError } from "axios";
@@ -9,14 +9,11 @@ import useSignupStore from "../../../store/signupStore";
 import { onCheckEmailVerificationCodeApi, onSendEmailVerificationCodeApi } from "../_api/apis";
 
 export default function EmailVerification() {
+    const { showToast } = useToast();
     const { formData, setFormData, errors, setErrors, isEmailVerified, setIsEmailVerified } = useSignupStore();
 
     // 인증 요청 버튼 클릭 flag
     const [isClickEmailVerification, setIsClickEmailVerification] = useState(false);
-
-    // Toast
-    const [isToast, setIsToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
 
     // 이메일 인증 요청
     const handleEmailVerificationMutation = useCreateMutation(onSendEmailVerificationCodeApi, "emailVerification", {
@@ -26,14 +23,17 @@ export default function EmailVerification() {
             setTimerResetKey((prev) => prev + 1); // 타이머 리셋
         },
         onError: (error: AxiosError) => {
-            console.log(error.response?.data);
-            setIsToast(true);
-            setToastMessage(error.response?.data as string);
+            showToast("error", (error.response?.data as string) || "이메일 전송에 실패했습니다.");
         },
     });
 
     // 이메일 인증 요청 버튼 클릭 시 호출
     const handleEmailVerification = () => {
+        if (!validateEmail(formData.email)) {
+            showToast("error", "이메일 형식에 맞게 입력해주세요");
+            return;
+        }
+        setErrors({ ...errors, email: undefined });
         handleEmailVerificationMutation.mutate(formData.email);
     };
 
@@ -43,8 +43,7 @@ export default function EmailVerification() {
             setIsEmailVerified(true);
         },
         onError: (error: AxiosError) => {
-            console.error(error);
-            window.alert("인증번호를 확인해주세요.");
+            showToast("error", "인증번호를 확인해주세요.");
         },
     });
 
@@ -52,8 +51,7 @@ export default function EmailVerification() {
     const handleEmailVerificationCheck = () => {
         // 타이머 종료 시 return
         if (isTimerFinish) {
-            setIsToast(true);
-            setToastMessage("인증번호 유효기간이 만료되었습니다. 인증번호를 다시 요청해주세요.");
+            showToast("error", "인증번호 유효기간이 만료되었습니다. 인증번호를 다시 요청해주세요.");
             return;
         }
 
@@ -70,8 +68,7 @@ export default function EmailVerification() {
     // 타이머 종료 시 호출
     const finishTimer = () => {
         setIsTimerFinish(true);
-        setIsToast(true);
-        setToastMessage("인증번호 유효기간이 만료되었습니다. 인증번호를 다시 요청해주세요.");
+        showToast("error", "인증번호 유효기간이 만료되었습니다. 인증번호를 다시 요청해주세요.");
     };
 
     return (
@@ -137,7 +134,6 @@ export default function EmailVerification() {
                     </button>
                 </div>
             )}
-            {isToast && <Toast type="error" message={toastMessage} onClose={() => setIsToast(false)} />}
         </div>
     );
 }

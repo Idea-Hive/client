@@ -1,6 +1,6 @@
 "use client";
 
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
@@ -10,13 +10,13 @@ import { onSignupApi, SignupRequest } from "./_api/apis";
 import RequiredInfoSection from "./_component/RequiredInfoSection";
 
 export default function EmailSignup({ setStep }: { setStep: (step: number) => void }) {
-    const { formData, validate, showToast, toastMessage, toastType, setShowToast, setToastMessage, setToastType } = useSignupStore();
+    const { showToast } = useToast();
+    const { formData, validate } = useSignupStore();
+
     // 회원가입 API 호출
     const signupMutation = useCreateMutation(onSignupApi, "signup", {
         onError: (error: AxiosError) => {
-            setToastType("error");
-            setShowToast(true);
-            setToastMessage(error.response?.data as string);
+            showToast("error", (error.response?.data as string) || "회원가입에 실패했습니다.");
         },
         onSuccess: () => {
             // 회원가입 성공 시, 회원가입 성공 페이지로 전환
@@ -33,8 +33,7 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
             if (validate()) {
                 // validate에 포함되면 좋겠지만 toast message 중복 처리 때문에 따로 처리(이용약관 동의가 후순위)
                 if (!terms1 || !terms2) {
-                    setShowToast(true);
-                    setToastMessage("필수 이용약관에 동의해주세요.");
+                    showToast("error", "필수 이용약관에 동의해주세요.");
                     return;
                 }
 
@@ -55,22 +54,25 @@ export default function EmailSignup({ setStep }: { setStep: (step: number) => vo
     );
 
     return (
-        <form onSubmit={handleSubmit}>
-            {/** 필수 정보(이전에 선택정보가 있었으나 사라짐) */}
-            <div className="flex flex-col gap-4 mb-6">
-                <RequiredInfoSection />
-            </div>
+        <div>
+            <h1 className="text-center text-2xl font-semibold mb-8">회원가입</h1>
 
-            {/** 이용약관 */}
-            <TOS />
+            <form onSubmit={handleSubmit}>
+                {/** 필수 정보(이전에 선택정보가 있었으나 사라짐) */}
+                <div className="flex flex-col gap-4 mb-6">
+                    <RequiredInfoSection />
+                </div>
 
-            {/** 가입하기 버튼 */}
-            <div className="w-full flex justify-center gap-2 mt-6">
-                <button type="submit" className="flex-1 h-12 bg-[#ff6363] text-white rounded-md">
-                    가입하기
-                </button>
-            </div>
-            {showToast && <Toast type={toastType} message={toastMessage} onClose={() => setShowToast(false)} />}
-        </form>
+                {/** 이용약관 */}
+                <TOS />
+
+                {/** 가입하기 버튼 */}
+                <div className="w-full flex justify-center gap-2 mt-6">
+                    <button type="submit" className="flex-1 h-12 bg-[#ff6363] text-white rounded-md">
+                        가입하기
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 }

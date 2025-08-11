@@ -1,5 +1,6 @@
 "use client";
 
+import { useClickOutside } from "@/hooks/hooks";
 import React, { useEffect, useRef, useState } from "react";
 
 /**
@@ -28,6 +29,9 @@ const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, p
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
     const selectboxRef = useRef<HTMLDivElement>(null);
+    useClickOutside(selectboxRef, () => {
+        if (isOpen) setIsOpen(false);
+    });
 
     useEffect(() => {
         if (initialValue) {
@@ -35,19 +39,6 @@ const Selectbox: React.FC<SelectboxProps> = ({ label = "", isRequired = false, p
             if (option) setSelectedOption(option.label);
         }
     }, [initialValue]);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (selectboxRef.current && !selectboxRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
 
     const handleSelect = (option: string) => {
         setSelectedOption(options.filter((v) => v.value === option)[0].label);

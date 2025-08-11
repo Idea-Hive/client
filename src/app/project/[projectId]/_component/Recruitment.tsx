@@ -1,9 +1,8 @@
 import { ProjectDetailData } from "@/apis/project/projectApis";
-import Toast from "@/components/Toast";
-import { useState } from "react";
+import { useToast } from "@/components/Toast/ToastProvider";
 
 export default function Recruitment({ data }: { data: ProjectDetailData }) {
-    const [isCopied, setIsCopied] = useState<boolean>(false);
+    const { showToast } = useToast();
 
     return (
         <div>
@@ -21,7 +20,7 @@ export default function Recruitment({ data }: { data: ProjectDetailData }) {
                         className="underline cursor-pointer"
                         onClick={() => {
                             navigator.clipboard.writeText(data.contact);
-                            setIsCopied(true);
+                            showToast("success", "연락 수단이 복사되었습니다.");
                         }}
                     >
                         {data.contact}
@@ -51,8 +50,6 @@ export default function Recruitment({ data }: { data: ProjectDetailData }) {
                     </div>
                 )}
             </div>
-
-            {isCopied && <Toast message="연락 수단이 복사되었습니다." type="success" onClose={() => setIsCopied(false)} />}
         </div>
     );
 }

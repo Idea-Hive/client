@@ -2,7 +2,7 @@ import { MemberResponse, onChangeLeaderApi } from "@/apis/project/manageApis";
 import { CTAButton, ProfileLargerIcon } from "@/components/icons/icons";
 import Modal from "@/components/Modal";
 import { useSpinner } from "@/components/Spinner";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useClickOutside } from "@/hooks/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -46,6 +46,7 @@ const MemberCard = ({ userId, member, currentLeaderId, projectId }: MemberCardPr
 
 const MemberSettingDropDown = ({ beforeLeaderId, afterLeaderId, projectId }: { beforeLeaderId: number; afterLeaderId: number; projectId: number }) => {
     const spinner = useSpinner();
+    const { showToast } = useToast();
     const queryClient = useQueryClient();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -57,9 +58,6 @@ const MemberSettingDropDown = ({ beforeLeaderId, afterLeaderId, projectId }: { b
     const [isModal, setIsModal] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
     const [modalMessage, setModalMessage] = useState("");
-
-    const [isToast, setIsToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
 
     // const deleteMemberMutation = useMutation({
     //     mutationFn: onDeleteMemberApi,
@@ -91,8 +89,7 @@ const MemberSettingDropDown = ({ beforeLeaderId, afterLeaderId, projectId }: { b
         },
         onError: (err: AxiosError) => {
             console.error("팀장 변경 오류:", err);
-            setIsToast(true);
-            setToastMessage("팀장 변경에 실패했습니다.");
+            showToast("error", "팀장 변경에 실패했습니다.");
         },
         onSettled: () => {
             spinner.close();
@@ -131,8 +128,7 @@ const MemberSettingDropDown = ({ beforeLeaderId, afterLeaderId, projectId }: { b
                 onConfirm={() => {
                     setIsModal(false);
                 }}
-            />
-            {isToast && <Toast message={toastMessage} onClose={() => setIsToast(false)} />}
+            />{" "}
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useUserInfo } from "@/hooks/queries";
 import { AxiosError } from "axios";
@@ -10,15 +10,11 @@ import { onSaveProjectApi } from "../_api/api";
 import useCreateProjectStore from "../store/createProjectStore";
 
 export default function RegisterButton() {
+    const { showToast } = useToast();
     const { user } = useUserInfo();
     const { getRequestBody, validate, projectId, setProjectId } = useCreateProjectStore();
 
     const router = useRouter();
-
-    // Toast
-    const [isToastOpen, setIsToastOpen] = useState(false);
-    const [toastType, setToastType] = useState<"info" | "error">("info");
-    const [toastMessage, setToastMessage] = useState<string>("임시저장 되었습니다.");
 
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
 
@@ -29,9 +25,7 @@ export default function RegisterButton() {
             setIsSuccessModalOpen(true);
         },
         onError: (error: AxiosError) => {
-            setIsToastOpen(true);
-            setToastType("error");
-            setToastMessage(error.response?.data as string);
+            showToast("error", (error.response?.data as string) || "프로젝트 등록에 실패했습니다.");
         },
     });
 
@@ -47,7 +41,6 @@ export default function RegisterButton() {
     return (
         <>
             <Button label="등록" type="button" btnType="primary" className="w-[191px]" onClick={onSave}></Button>
-            {isToastOpen && <Toast type={toastType} message={toastMessage} onClose={() => setIsToastOpen(false)} />}
             <Modal
                 isOpen={isSuccessModalOpen}
                 title="등록 완료"

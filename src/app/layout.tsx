@@ -1,6 +1,7 @@
 import { montserrat, pretendard } from "@/assets/fonts/fonts";
 import Nav from "@/components/gnb/Nav/Nav";
 import { SpinnerProvider } from "@/components/Spinner";
+import { ToastProvider } from "@/components/Toast/ToastProvider";
 import QueryProviderWrapper from "@/components/wrappers/QueryProviderWrapper";
 import "./globals.css";
 
@@ -21,8 +22,10 @@ export default function RootLayout({
             <body className={`${pretendard.variable} ${montserrat.variable} font-pretendard min-w-[1024px]`}>
                 <QueryProviderWrapper>
                     <SpinnerProvider>
-                        <Nav />
-                        {children}
+                        <ToastProvider>
+                            <Nav />
+                            {children}
+                        </ToastProvider>
                     </SpinnerProvider>
                 </QueryProviderWrapper>
             </body>

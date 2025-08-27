@@ -1,4 +1,4 @@
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -8,23 +8,14 @@ import { onCheckAuthCodeForFindPwApi, onSendAuthCodeForFindPwApi } from "./_api/
 
 export default function AuthCodeInputForm({ onClose, email }: { onClose: () => void; email: string }) {
     const router = useRouter();
-
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
-    const [toastType, setToastType] = useState<"error" | "success">("error");
+    const { showToast } = useToast();
 
     const sendAuthCodeMutation = useCreateMutation(onSendAuthCodeForFindPwApi, "sendAuthCodeForFindPw", {
         onSuccess: (data, variables, context) => {
-            console.log("인증번호 전송 성공:::", data, variables, context);
-            setShowToast(true);
-            setToastMessage("인증번호가 재전송되었습니다");
-            setToastType("success");
+            showToast("success", "인증번호가 재전송되었습니다");
         },
         onError: (error: AxiosError) => {
-            console.log("인증번호 전송 실패:::", error);
-            setShowToast(true);
-            setToastMessage(error.response?.data as string);
-            setToastType("error");
+            showToast("error", (error.response?.data as string) || "인증번호 전송에 실패했습니다.");
         },
     });
 
@@ -40,10 +31,7 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
             onClose();
         },
         onError: (error: AxiosError) => {
-            console.log("onCheckAuthCodeMutation error:::", error.response?.data);
-            setShowToast(true);
-            setToastMessage(error.response?.data as string);
-            setToastType("error");
+            showToast("error", (error.response?.data as string) || "인증번호를 확인해주세요.");
         },
     });
 
@@ -64,9 +52,7 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
         e.preventDefault();
 
         if (authCode.some((code) => code === "")) {
-            setShowToast(true);
-            setToastMessage("인증번호를 입력해주세요");
-            setToastType("error");
+            showToast("error", "인증번호를 입력해주세요");
             return;
         }
 
@@ -100,8 +86,6 @@ export default function AuthCodeInputForm({ onClose, email }: { onClose: () => v
                 <Button btnType="line_red" label="인증번호 재전송" size="large" className="flex-1" type="button" onClick={resendAuthCode} />
                 <Button btnType="primary" label="확인" size="large" className="flex-1" type="button" onClick={handleSubmit} />
             </div>
-
-            {showToast && <Toast type={toastType} message={toastMessage} onClose={() => setShowToast(false)} />}
         </div>
     );
 }

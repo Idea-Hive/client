@@ -2,7 +2,7 @@
 
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
@@ -21,12 +21,12 @@ export default function EditProjectPage() {
     const [projectId, setProjectId] = useState<number | null>(null);
 
     const router = useRouter();
+    const { showToast } = useToast();
 
     const [tempSavedSkills, setTempSavedSkills] = useState<string[]>([]);
     const getProjectMutation = useCreateMutation(getTemporarySavedProjectInfoApi, "getTemporarySavedProjectInfo", {
         onSuccess: (response) => {
             const { title, description, idea, maxMembers, dueDateFrom, dueDateTo, contact, hashtagNames, projectSkillStacks } = response;
-            console.log("project info:::", response);
 
             // Convert ISO date strings to Korean timezone ISO format (YYYY-MM-DDTHH:mm:ss.SSS+09:00)
             const formatToKoreanDate = (isoString: string) => {
@@ -119,19 +119,13 @@ export default function EditProjectPage() {
         return isValid;
     };
 
-    const [isShowToast, setIsShowToast] = useState<boolean>(false);
-    const [toastType, setToastType] = useState<"info" | "error">("info");
-    const [toastMessage, setToastMessage] = useState<string>("임시저장 되었습니다.");
-
     const onEditMutation = useCreateMutation(onEditProjectApi, "onEditProject", {
         onSuccess: (response) => {
             setProjectId(response);
             setIsOpenSuccessModal(true);
         },
         onError: (error: AxiosError) => {
-            setIsShowToast(true);
-            setToastType("error");
-            setToastMessage(error.response?.data as string);
+            showToast("error", (error.response?.data as string) || "프로젝트 수정에 실패했습니다.");
         },
     });
 
@@ -184,7 +178,6 @@ export default function EditProjectPage() {
                     router.push(`/project/${projectId}`);
                 }}
             />
-            {isShowToast && <Toast type={toastType} message={toastMessage} onClose={() => setIsShowToast(false)} />}
         </div>
     );
 }

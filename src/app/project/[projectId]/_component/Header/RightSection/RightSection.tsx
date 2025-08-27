@@ -1,9 +1,8 @@
 import Button from "@/components/Button";
 import { ShareIcon, ViewIcon } from "@/components/icons/icons";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useUserInfo } from "@/hooks/queries";
 import { useParams } from "next/navigation";
-import { useState } from "react";
 import { useProjectDetail } from "../../../hooks/Hooks";
 import ApplicantButton from "./ApplicantButton";
 import Like from "./Like";
@@ -12,11 +11,10 @@ import RecruitAdditionalMemberButton from "./RecruitAdditionalMemberButton";
 import StartProjectButton from "./StartProjectButton";
 
 export default function RightSection() {
+    const { showToast } = useToast();
     const { projectId } = useParams();
     const { user } = useUserInfo();
     const { project } = useProjectDetail(Number(projectId), user);
-
-    const [isCopied, setIsCopied] = useState<boolean>(false);
 
     if (!project) return null;
     return (
@@ -26,7 +24,7 @@ export default function RightSection() {
                     className="flex gap-1.5 items-center cursor-pointer"
                     onClick={() => {
                         navigator.clipboard.writeText(window.location.href);
-                        setIsCopied(true);
+                        showToast("success", "링크가 복사되었습니다.");
                     }}
                 >
                     <ShareIcon />
@@ -55,7 +53,6 @@ export default function RightSection() {
                     {project.creatorId !== user.id && project.isApply && <Button label="지원완료" disabled={true} className="w-fit px-6" onClick={() => {}} />}
                 </div>
             )}
-            {isCopied && <Toast message="링크가 복사되었습니다." type="success" onClose={() => setIsCopied(false)} />}
         </div>
     );
 }

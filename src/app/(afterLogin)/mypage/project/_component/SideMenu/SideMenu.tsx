@@ -8,6 +8,7 @@ import { useProjectWithTeam } from "../../_hook/hook";
 import Menu from "../Menu";
 import ProjectSettingDropDown from "./ProjectSettingDropDown";
 import ProjectSubmitButton from "./ProjectSubmitButton";
+import { useUnSubmittedTaskStore } from "./store/store";
 
 interface SideMenuProps {
     selectedMenu: string;
@@ -15,6 +16,8 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) => {
+    const { unSubmittedTask } = useUnSubmittedTaskStore();
+
     const router = useRouter();
     const projectId = (useParams()?.projectId as string) || ""; //path 용
     const { myProjects, loading, error } = useProjectWithTeam(projectId);
@@ -50,14 +53,23 @@ const SideMenu: React.FC<SideMenuProps> = ({ selectedMenu, setSelectedMenu }) =>
                     <div className="relative">
                         <Menu
                             label="프로젝트"
-                            subItems={[{ label: "기획" }, { label: "디자인" }, { label: "개발" }, { label: "배포" }, { label: "완료" }]}
+                            subItems={[
+                                { label: "기획", isSubmitted: !unSubmittedTask.some((task) => [1, 2, 3, 4, 5, 6, 7].includes(task)) },
+                                { label: "디자인", isSubmitted: !unSubmittedTask.some((task) => [13, 14].includes(task)) },
+                                { label: "개발", isSubmitted: !unSubmittedTask.some((task) => [17, 18, 19, 20].includes(task)) },
+                                { label: "배포", isSubmitted: !unSubmittedTask.some((task) => [22].includes(task)) },
+                                { label: "완료", isSubmitted: !unSubmittedTask.some((task) => [23].includes(task)) },
+                            ]}
                             icon={<FolderIcon width={20} height={20} />}
                             selectedItem={selectedMenu}
                             onSelect={setSelectedMenu}
                         />
                         <Menu
                             label="관리"
-                            subItems={[{ label: "캘린더" }, { label: "팀" }]}
+                            subItems={[
+                                { label: "캘린더", isSubmitted: true },
+                                { label: "팀", isSubmitted: true },
+                            ]}
                             icon={
                                 <div className="w-[20px] h-[20px] p-[3px]">
                                     <SquaresFourIcon />

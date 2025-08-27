@@ -1,28 +1,22 @@
 import Button from "@/components/Button";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { useUserInfo } from "@/hooks/queries";
 import { AxiosError } from "axios";
-import { useState } from "react";
 import { onTemporarySaveProjectApi } from "../_api/api";
 import useCreateProjectStore from "../store/createProjectStore";
 
 export default function TemporarySaveButton() {
+    const { showToast } = useToast();
     const { user } = useUserInfo();
 
     const { setMultipleErrors, getRequestBody, projectId, setProjectId } = useCreateProjectStore();
-
-    const [isToastOpen, setIsToastOpen] = useState(false);
-    const [toastType, setToastType] = useState<"info" | "error">("info");
-    const [toastMessage, setToastMessage] = useState<string>("임시저장 되었습니다.");
 
     // 프로젝트 임시저장 mutation
     const onTemporarySaveMutation = useCreateMutation(onTemporarySaveProjectApi, "temporarySaveProject", {
         onSuccess: (response) => {
             setProjectId(response);
-            setToastType("info");
-            setToastMessage("임시저장 되었습니다.");
-            setIsToastOpen(true);
+            showToast("info", "임시저장 되었습니다.");
             setMultipleErrors({
                 name: "",
                 title: "",
@@ -34,9 +28,7 @@ export default function TemporarySaveButton() {
             });
         },
         onError: (error: AxiosError) => {
-            setIsToastOpen(true);
-            setToastType("error");
-            setToastMessage(error.response?.data as string);
+            showToast("error", (error.response?.data as string) || "임시저장에 실패했습니다.");
         },
     });
 
@@ -62,19 +54,12 @@ export default function TemporarySaveButton() {
                 behavior: "smooth",
             });
 
-            setIsToastOpen(true);
-            setToastType("error");
-            setToastMessage("프로젝트명을 입력해주세요.");
+            showToast("error", "프로젝트명을 입력해주세요.");
             return;
         }
 
         onTemporarySaveMutation.mutate({ ...requestBody, isSave: false });
     };
 
-    return (
-        <>
-            <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>
-            {isToastOpen && <Toast type={toastType} message={toastMessage} onClose={() => setIsToastOpen(false)} />}
-        </>
-    );
+    return <Button label="임시저장" type="button" btnType="line" className="w-[191px]" onClick={onTemporarySave}></Button>;
 }

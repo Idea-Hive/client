@@ -1,4 +1,3 @@
-import { ToastType } from "@/components/Toast";
 import { validateEmail, validatePassword } from "@/utils/utils";
 import { create } from "zustand";
 
@@ -26,14 +25,6 @@ interface SignupStore {
     errors: Partial<SignupFormData>;
     setIsEmailVerified: (isEmailVerified: boolean) => void;
     setErrors: (errors: Partial<SignupFormData>) => void;
-
-    // Toast
-    showToast: boolean;
-    toastMessage: string;
-    toastType: ToastType;
-    setShowToast: (showToast: boolean) => void;
-    setToastMessage: (toastMessage: string) => void;
-    setToastType: (toastType: ToastType) => void;
 }
 
 const initialState: SignupFormData = {
@@ -61,7 +52,7 @@ const useSignupStore = create<SignupStore>((set, get) => ({
 
     // 유틸리티
     validate: () => {
-        const { formData, isEmailVerified, setToastType, setShowToast, setToastMessage, setErrors } = get();
+        const { formData, isEmailVerified, setErrors } = get();
         const { email, password, passwordConfirm, nickname, verificationCode } = formData;
 
         const newErrors: Partial<SignupFormData> = {};
@@ -85,9 +76,7 @@ const useSignupStore = create<SignupStore>((set, get) => ({
             newErrors.nickname = "닉네임을 입력해주세요.";
         }
         if (!isEmailVerified) {
-            setToastType("error");
-            setShowToast(true);
-            setToastMessage("이메일 인증을 완료해주세요.");
+            newErrors.email = "이메일 인증을 완료해주세요.";
         } else if (verificationCode === "") {
             newErrors.verificationCode = "인증 코드를 입력해주세요.";
         }
@@ -102,14 +91,6 @@ const useSignupStore = create<SignupStore>((set, get) => ({
     setIsEmailVerified: (isEmailVerified) => set({ isEmailVerified }),
     errors: {},
     setErrors: (errors) => set({ errors }),
-
-    // Toast
-    showToast: false,
-    toastMessage: "",
-    toastType: "error",
-    setShowToast: (showToast) => set({ showToast }),
-    setToastMessage: (toastMessage) => set({ toastMessage }),
-    setToastType: (toastType) => set({ toastType }),
 }));
 
 export default useSignupStore;

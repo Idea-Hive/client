@@ -2,7 +2,7 @@
 
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import Toast from "@/components/Toast";
+import { useToast } from "@/components/Toast/ToastProvider";
 import { useInput } from "@/hooks/hooks";
 import { useCreateMutation } from "@/hooks/mutations/hooks";
 import { validatePassword } from "@/utils/utils";
@@ -12,6 +12,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { onResetPwApi } from "../_api/apis";
 
 export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetStateAction<boolean>> }) {
+    const { showToast } = useToast();
     const password = useInput("");
     const passwordCheck = useInput("");
 
@@ -21,8 +22,6 @@ export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetSt
         password: "",
         passwordConfirm: "",
     });
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
 
     // 비밀번호 재설정 mutation
     const resetPwMutation = useCreateMutation(onResetPwApi, "resetPw", {
@@ -30,8 +29,7 @@ export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetSt
             setIsReset(true);
         },
         onError: (error: AxiosError) => {
-            setShowToast(true);
-            setToastMessage(error.response?.data as string);
+            showToast("error", (error.response?.data as string) || "비밀번호 재설정에 실패했습니다.");
         },
     });
 
@@ -86,7 +84,6 @@ export default function ResetPwForm({ setIsReset }: { setIsReset: Dispatch<SetSt
                 />
             </div>
             <Button btnType="primary" label="확인" size="large" className="w-full" disabled={password.value === "" || passwordCheck.value === ""} onClick={handleResetPw} />
-            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
         </div>
     );
 }

@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useTeamStore } from "../_store/teamStore";
 import { TaskTableProps } from "../_types/Task";
 import FileModal from "./FileModal/FileModal";
+import { useUnSubmittedTaskStore } from "./SideMenu/store/store";
 import TableDatePicker from "./TableDatePicker";
 import Dropbox from "./TableDropbox";
 
 const Table: React.FC<TaskTableProps> = ({ projectId, taskType, tasks, onSelectAssignee, onSelectDate, onSubmitLink, checkedIds = [], onCheck }) => {
-    console.log("tasks :: ", tasks);
+    const { unSubmittedTask } = useUnSubmittedTaskStore();
     //담당자
     const { members } = useTeamStore();
 
@@ -52,7 +53,7 @@ const Table: React.FC<TaskTableProps> = ({ projectId, taskType, tasks, onSelectA
                 </thead>
                 <tbody className="bg-n0 text-sm">
                     {tasks.map((task, index) => (
-                        <tr key={task.key} className={`border-t h-[42px] ${index === tasks.length - 1 ? "last-row" : ""}`}>
+                        <tr key={task.key} className={`border-t h-[42px] ${index === tasks.length - 1 ? "last-row" : ""} ${unSubmittedTask.includes(task.id) && "text-red"}`}>
                             <td className={`p-3 text-center ${index === tasks.length - 1 ? "rounded-bl-xl" : "border-b"}`}>
                                 <Checkbox checked={checkedIds.includes(task.key)} value="1" onClick={() => handleCheckBox(task.key)} inTable={true} />
                             </td>
